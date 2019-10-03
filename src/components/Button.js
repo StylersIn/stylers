@@ -16,10 +16,10 @@ const propTypes = ({
     btnTxtStyles: PropTypes.object,
 })
 
-const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, }) => {
+const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, onPress, }) => {
     const mainStyles = [{
-        width: size === 'sm' ? 103 : 328,
-        height: size === 'sm' ? 36 : 54,
+        width: size === 'sm' ? 103 : "100%",
+        height: size === 'sm' ? 36 : 48,
         backgroundColor: '#000000',
         borderRadius: 5,
         justifyContent: "center",
@@ -29,7 +29,7 @@ const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, }) => {
         fontSize: 12,
         color: '#FFFFFF',
         textAlign: 'center',
-        fontFamily: fonts.default,
+        fontFamily: fonts.bold,
     }
 
     if (styles) {
@@ -43,9 +43,10 @@ const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, }) => {
         <Button
             light
             style={mainStyles}
+            onPress={() => onPress()}
         // full={size = "lg" ? true : false}
         >
-            <Text style={txtStyles, btnTxtStyles}>{btnTxt}</Text>
+            <Text style={txtStyles}>{btnTxt}</Text>
         </Button>
     )
 }

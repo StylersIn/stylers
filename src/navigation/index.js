@@ -4,9 +4,13 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator, DrawerNavigatorItems } from "react-navigation-drawer";
 import { Container, Header, Body, Image, Thumbnail, Content } from "native-base";
 import AuthScreen from '../screens/Auth';
+import LoginScreen from '../screens/Auth/Login';
+import RegisterScreen from '../screens/Auth/Register';
 
 const AppNavigator = createStackNavigator({
     Auth: AuthScreen,
+    Login: LoginScreen,
+    Register: RegisterScreen,
 },
     {
         initialRouteName: "Auth",
