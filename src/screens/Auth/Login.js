@@ -11,8 +11,10 @@ import {
     Input,
 } from 'native-base';
 import Button from '../../components/Button';
-import { fonts } from '../../constants/DefaultProps';
+import { fonts, colors } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
+import { FacebookIcon, GoogleIcon } from './AuthAssets';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 class Login extends React.Component {
     constructor(props) {
@@ -20,7 +22,7 @@ class Login extends React.Component {
     }
 
     handleClick = () => {
-        alert('Hi there!!');
+        this.props.navigation.navigate('Home')
     }
 
     render() {
@@ -45,8 +47,36 @@ class Login extends React.Component {
                         onPress={this.handleClick.bind(this)}
                         btnTxt={"LOG IN"}
                         size={"lg"}
+                        styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
+                        btnTxtStyles={{ color: colors.black, fontFamily: fonts.default }}
+                    />
+                </View>
+
+                <View style={{ alignItems: "center", paddingVertical: 10 }}>
+                    <Text style={{ fontFamily: fonts.bold }}>OR</Text>
+                </View>
+
+                <View>
+                    <Button
+                        onPress={this.handleClick.bind(this)}
+                        size={"lg"}
+                        Icon={<FacebookIcon />}
+                        btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
+                    />
+                </View>
+                <View style={{ marginTop: 20 }}>
+                    <Button
+                        onPress={this.handleClick.bind(this)}
+                        size={"lg"}
+                        Icon={<GoogleIcon />}
                         btnTxtStyles={{ color: "white", fontFamily: fonts.default }}
                     />
+                </View>
+
+                <View style={{ position: "absolute", bottom: 50, padding: 20, }}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
+                        <Text>Dont't have an account? Sign up</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         )

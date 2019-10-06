@@ -2,15 +2,27 @@ import React from 'react';
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator, DrawerNavigatorItems } from "react-navigation-drawer";
-import { Container, Header, Body, Image, Thumbnail, Content } from "native-base";
+import { Container, Header, Body, Image, Thumbnail, Content, Icon } from "native-base";
 import AuthScreen from '../screens/Auth';
 import LoginScreen from '../screens/Auth/Login';
 import RegisterScreen from '../screens/Auth/Register';
+import HomeScreen from '../screens/Home';
+import { HamburgerIcon } from './assets';
+import ServiceScreen from '../screens/Services';
 
 const AppNavigator = createStackNavigator({
     Auth: AuthScreen,
     Login: LoginScreen,
     Register: RegisterScreen,
+    Home: {
+        screen: HomeScreen,
+        navigationOptions: ({ navigation }) => ({
+            title: "Home",
+            headerLeft: <HamburgerIcon />
+            // headerLeft: <Icon type="Ionicons" name="menu" size={35} onPress={() => navigation.toggleDrawer()} />
+        })
+    },
+    Service: ServiceScreen,
 },
     {
         initialRouteName: "Auth",

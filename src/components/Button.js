@@ -46,7 +46,8 @@ const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, onPress
             onPress={() => onPress()}
         // full={size = "lg" ? true : false}
         >
-            <Text style={txtStyles}>{btnTxt}</Text>
+            {Icon ? Icon : null}
+            {btnTxt ? <Text style={txtStyles, btnTxtStyles}>{btnTxt}</Text> : null}
         </Button>
     )
 }
