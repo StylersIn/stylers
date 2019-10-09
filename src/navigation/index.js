@@ -9,6 +9,7 @@ import RegisterScreen from '../screens/Auth/Register';
 import HomeScreen from '../screens/Home';
 import { HamburgerIcon } from './assets';
 import ServiceScreen from '../screens/Services';
+import ServiceDetails from '../screens/Services/Details';
 
 const AppNavigator = createStackNavigator({
     Auth: AuthScreen,
@@ -23,6 +24,7 @@ const AppNavigator = createStackNavigator({
         })
     },
     Service: ServiceScreen,
+    ServiceDetails: ServiceDetails,
 },
     {
         initialRouteName: "Auth",

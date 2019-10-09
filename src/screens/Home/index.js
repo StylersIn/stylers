@@ -3,6 +3,7 @@ import {
     View,
     StyleSheet,
     Platform,
+    SafeAreaView,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -22,23 +23,25 @@ class Home extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <Header
-                    title={"Browse Services"}
-                />
-                <GenderList {...this.props} />
-                <ServiceList {...this.props} />
-            </View>
+            <SafeAreaView>
+                <View style={styles.container}>
+                    <Header
+                        title={"Browse Services"}
+                    />
+                    <GenderList {...this.props} />
+                    <ServiceList {...this.props} />
+                </View>
+            </SafeAreaView>
         )
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         padding: 20,
-        justifyContent: "center",
-        marginTop: Platform.OS == "ios" ? 50 : 0
+        // justifyContent: "center",
+        // marginTop: Platform.OS == "ios" ? 50 : 0
     }
 })
 
