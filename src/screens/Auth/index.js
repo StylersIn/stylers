@@ -17,6 +17,7 @@ const AuthScreen = (props) => {
             <View>
                 <Button
                     btnTxt={"CLIENT"}
+                    onPress={() => props.navigation.navigate('Register')}
                     size={"lg"}
                     btnTxtStyles={{ color: "white", fontFamily: fonts.default }}
                 />
@@ -31,10 +32,10 @@ const AuthScreen = (props) => {
             </View>
             <View style={{ padding: 10, alignItems: "center" }}>
                 <TouchableOpacity
+                    style={{ flexDirection: "row" }}
                     onPress={() => props.navigation.navigate('Login')}>
-                    <Text style={{ fontFamily: fonts.default, }} >Already a registered user?
-                        <Text style={{ color: colors.yellow, marginLeft: 10, }}>Log in</Text>
-                    </Text>
+                    <Text style={{ fontFamily: fonts.default, }} >Already a registered user?</Text>
+                    <Text style={{ color: colors.yellow, paddingHorizontal: 5, }}>Log in</Text>
                 </TouchableOpacity>
             </View>
         </View>
