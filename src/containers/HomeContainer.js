@@ -1,4 +1,7 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import * as actionAcreators from '../actions';
+import { connect } from 'react-redux';
 import Component from '../screens/Home';
 
 const Home = (props) => <Component {...props} />

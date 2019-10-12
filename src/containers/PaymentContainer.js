@@ -2,14 +2,14 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
-import Component from '../screens/Services';
+import Component from '../screens/Payment';
 
-const Services = (props) => <Component {...props} />
+const Payment = (props) => <Component {...props} />
 
 const mapStateToProps = state => ({
-    home: state.home,
+    payment: state.payment,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Services);
+export default connect(mapStateToProps, mapDispatchToProps)(Payment);

@@ -19,7 +19,7 @@ const AuthScreen = (props) => {
                     btnTxt={"CLIENT"}
                     onPress={() => props.navigation.navigate('Register')}
                     size={"lg"}
-                    btnTxtStyles={{ color: "white", fontFamily: fonts.default }}
+                    btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                 />
             </View>
 
@@ -27,7 +27,7 @@ const AuthScreen = (props) => {
                 <Button
                     btnTxt={"STYLER"}
                     size={"lg"}
-                    btnTxtStyles={{ color: "white", fontFamily: fonts.default }}
+                    btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                 />
             </View>
             <View style={{ padding: 10, alignItems: "center" }}>

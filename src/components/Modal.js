@@ -2,35 +2,49 @@ import React from 'react';
 import {
     StyleSheet,
     View,
-    ActivityIndicator,
-    Text,
-    TouchableOpacity
+    Dimensions,
 } from 'react-native';
 import { Icon } from 'native-base';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const Modal = (props) => {
-    const { loading, text } = props;
+const { width, height } = Dimensions.get('window');
+class Modal extends React.Component {
+    state = {
+        isVisible: false,
+    }
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.activityIndicatorWrapper}>
-                {props.children}
-            </View>
-        </View>
+    componentWillMount() {
+        this.props.closeModal();
+    }
+    
+    componentWillUnmount() {
+        this.props.closeModal();
+    }
 
-        // <View style={styles.container}>
-        // <View style={styles.activityIndicatorWrapper}>
-        //     {/* <ActivityIndicator animating={loading} /> */}
-        //     <Icon style={{ fontSize: 70, color: "#bbb", marginBottom: -30 }} type="Ionicons" name="ios-information-circle-outline" />
-        //     {text && <Text>{text}</Text>}
-        //     <TouchableOpacity style={{ borderTopWidth: 1, borderTopColor: "#F1F1F3", width: "100%", alignItems: "center" }}>
-        //         <View style={{ marginTop: 8 }}>
-        //             <Text>Close</Text>
-        //         </View>
-        //     </TouchableOpacity>
-        // </View>
-        // </View>
-    )
+    render() {
+        // const { isVisible, } = this.state;
+        const { isVisible, } = this.props;
+
+        return (
+            <>
+                {isVisible ? <View style={styles.container}>
+                    <View style={{ position: "absolute", top: 30, right: 0, padding: 30, }}>
+                        <TouchableOpacity
+                            onPress={() => this.props.closeModal()}
+                            activeOpacity={0.7}>
+                            <Icon
+                                style={{ fontSize: 60, color: "#ffffff" }}
+                                type="Ionicons"
+                                name="ios-close" />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.child___container}>
+                        {this.props.children}
+                    </View>
+                </View> : null}
+            </>
+        )
+    }
 };
 
 const styles = StyleSheet.create({
@@ -45,18 +59,29 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'space-around',
-        backgroundColor: '#00000040'
+        backgroundColor: 'rgba(0,0,0,0.5)'
     },
-    activityIndicatorWrapper: {
+    child___container: {
         backgroundColor: '#FFFFFF',
-        height: 200,
-        width: 200,
+        height: 450,
+        width: "89%",
         zIndex: 500,
-        borderRadius: 10,
+        borderRadius: 5,
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-around'
-    }
+        position: "absolute",
+        bottom: 30,
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        // justifyContent: 'space-around',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderBottomWidth: 0,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 1,
+    },
 });
 
 export default Modal;
