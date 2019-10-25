@@ -8,7 +8,6 @@ import {
     apiMiddleware
 } from 'redux-api-middleware';
 import appReducer from '../reducers/index';
-// import AsyncStorage from '@react-native-community/async-storage';
 // import apiAuthInjector from '../middlewares/apiAuthInjector';
 import defaultState from '../reducers/DefaultState';
 import constants from '../constants/ActionTypes';

@@ -24,6 +24,7 @@
 		9018A7862345471200895608 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9018A77F2345471200895608 /* Lato-Italic.ttf */; };
 		9018A7872345471200895608 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9018A7802345471200895608 /* Lato-Medium.ttf */; };
 		9018A7882345471200895608 /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9018A7812345471200895608 /* Lato-Black.ttf */; };
+		90DE94AC23591CDC0043E065 /* libreact-native-config.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90DE94AB23591CDC0043E065 /* libreact-native-config.a */; };
 		929B2D08C0CC3B9EE75383CF /* libPods-stylers-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D172B88D88D6CAE5D2A4F7A9 /* libPods-stylers-tvOSTests.a */; };
 		EB8940B7D52A52DB5C4B78E2 /* libPods-stylersTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B62BB296FC4510C6F7E3746 /* libPods-stylersTests.a */; };
 		EE833D6421090D83935CA277 /* libPods-stylers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A8F49F6C346A2AE1DACEF77 /* libPods-stylers.a */; };
@@ -74,6 +75,7 @@
 		9018A77F2345471200895608 /* Lato-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Italic.ttf"; sourceTree = "<group>"; };
 		9018A7802345471200895608 /* Lato-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Medium.ttf"; sourceTree = "<group>"; };
 		9018A7812345471200895608 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
+		90DE94AB23591CDC0043E065 /* libreact-native-config.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libreact-native-config.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A92F09B6B6AA6BE413BCE1F /* Pods-stylers.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-stylers.debug.xcconfig"; path = "Target Support Files/Pods-stylers/Pods-stylers.debug.xcconfig"; sourceTree = "<group>"; };
 		BFAFE2B061BD78CAAE55427C /* Pods-stylers-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-stylers-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-stylers-tvOS/Pods-stylers-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		D0A586D7F44F97323B49A703 /* Pods-stylersTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-stylersTests.release.xcconfig"; path = "Target Support Files/Pods-stylersTests/Pods-stylersTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90DE94AC23591CDC0043E065 /* libreact-native-config.a in Frameworks */,
 				EE833D6421090D83935CA277 /* libPods-stylers.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -153,6 +156,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				90DE94AB23591CDC0043E065 /* libreact-native-config.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				2A8F49F6C346A2AE1DACEF77 /* libPods-stylers.a */,
@@ -519,6 +523,8 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-stylers/Pods-stylers-resources.sh",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/QBImagePickerController/QBImagePicker.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -535,9 +541,12 @@
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+				"${PODS_ROOT}/RSKImageCropper/RSKImageCropper/RSKImageCropperStrings.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
@@ -554,6 +563,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RSKImageCropperStrings.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

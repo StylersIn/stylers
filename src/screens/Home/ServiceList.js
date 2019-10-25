@@ -2,15 +2,10 @@ import React from 'react';
 import {
     View,
     StyleSheet,
+    TouchableOpacity,
     Image,
 } from 'react-native';
 import { fonts, colors } from '../../constants/DefaultProps';
-import {
-    Item,
-    Input,
-    Icon,
-    Thumbnail,
-} from 'native-base';
 import Service1 from '../../../assets/imgs/photo-1529982412356-901cc3a363cf.jpeg';
 import Service2 from '../../../assets/imgs/ricardo-mancia-214428-unsplash.jpg';
 import nail__fixing from '../../../assets/imgs/nail__fixing.jpeg';
@@ -19,57 +14,32 @@ import hair__cut from '../../../assets/imgs/hair__cut.jpeg';
 import make__up from '../../../assets/imgs/make__up.jpeg';
 import eye__lashes from '../../../assets/imgs/eye__lashes.jpeg';
 import Text from '../../config/AppText';
-import { TouchableOpacity, FlatList } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
+import Loader from '../../components/Loader';
 
 const ServiceList = (props) => {
-    const services = [
-        {
-            name: "HAIRCUTS",
-            img: hair__cut,
-        },
-        {
-            name: "HAIR DRESSING",
-            img: hair__dressing,
-        },
-        {
-            name: "EYE LASHES",
-            img: eye__lashes,
-        },
-        {
-            name: "MAKE-UP",
-            img: make__up,
-        }
-        , {
-            name: "MANICURE & PEDICURE",
-            img: hair__cut,
-        }
-        , {
-            name: "NAIL FIXING",
-            img: nail__fixing,
-        },
-        {
-            name: "CONTACT LENSES",
-            img: hair__cut,
-        }
-    ]
+    const {
+        service__list,
+        isProcessing,
+    } = props;
+
     const _keyExtractor = (item, index) => item.name;
     return (
         <View style={styles.child__container}>
             <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text>
-            <View style={styles.grid__main}>
+            {!isProcessing ? <View style={styles.grid__main}>
                 <FlatList
-                    // contentContainerStyle={{ backgroundColor:"red" }}
-                    data={services}
+                    data={service__list && service__list.credentials && service__list.credentials.message}
                     numColumns={2}
                     keyExtractor={_keyExtractor}
                     renderItem={({ item }) =>
                         <View style={{ flex: 1 / 2, paddingEnd: 10, justifyContent: "space-between" }}>
                             <TouchableOpacity
-                                onPress={() => props.navigation.navigate('Service')}
+                                onPress={() => props.navigation.navigate('Service', { service: item })}
                                 activeOpacity={0.7}>
                                 <Image
                                     style={styles.img}
-                                    source={item.img} />
+                                    source={eye__lashes} />
                                 <View style={styles.overlay} />
                                 <View style={{ position: "relative", bottom: "50%" }}>
                                     <Text style={styles.genderTxt}>{item.name}</Text>
@@ -78,14 +48,14 @@ const ServiceList = (props) => {
                         </View>
                     }
                 />
-            </View>
+            </View> : Loader()}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     child__container: {
-        // flex: 1,
+        flex: 1,
         marginTop: 20,
     },
     grid__main: {

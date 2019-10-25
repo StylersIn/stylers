@@ -5,6 +5,7 @@ import {
     Platform,
     Image,
     SafeAreaView,
+    TouchableOpacity,
     Dimensions,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
@@ -19,7 +20,6 @@ import {
 import Button from '../../components/Button';
 import { fonts, colors } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { PaymentIcon } from './PaymentAssests';
 import { PaymentNavIcon } from '../../navigation/assets';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, } from 'react-native';
-import { createAppContainer } from "react-navigation";
+import { createAppContainer, NavigationActions, StackActions } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator, DrawerNavigatorItems } from "react-navigation-drawer";
 import { Container, Header, Body, Image, Thumbnail, Content, Icon } from "native-base";
@@ -13,10 +13,18 @@ import ServiceScreen from '../containers/ServiceContainer';
 import ServiceDetails from '../screens/Services/Details';
 import PaymentScreen from '../containers/PaymentContainer';
 import NoDebitScreen from '../screens/Payment/NoDebit';
-import AppointmentScreen from '../containers/AppointmentContainer'; 
+import AppointmentScreen from '../containers/AppointmentContainer';
 import ContactUsScreen from '../screens/ContactUs';
+import StylersScreen from '../screens/Auth/Stylers';
+import StylersCompleteRegScreen from '../containers/StylersContainer';
 import { colors } from '../constants/DefaultProps';
 import Text from '../config/AppText';
+import InitializeApp from '../screens/InitializeApp';
+
+export const resetAction = (routeName) => StackActions.reset({
+    index: 0,
+    actions: [NavigationActions.navigate({ routeName })],
+});
 
 const drawerContentComponents = (props) => (
     <Container style={{ backgroundColor: colors.black }}>
@@ -56,11 +64,17 @@ const MyDrawerNavigator = createDrawerNavigator({
 });
 
 const AppNavigator = createStackNavigator({
+    InitializeApp: InitializeApp,
     Auth: AuthScreen,
     Login: LoginScreen,
     Register: RegisterScreen,
+    Stylers: StylersScreen,
+    StylersCompleteReg: StylersCompleteRegScreen,
+    Appointment: {
+        screen: MyDrawerNavigator
+    },
     Home: {
-        screen: MyDrawerNavigator,
+        screen: HomeScreen,
         // navigationOptions: ({ navigation }) => ({
         //     title: "Home",
         //     headerLeft: <HamburgerIcon />
@@ -73,7 +87,7 @@ const AppNavigator = createStackNavigator({
     NoDebit: NoDebitScreen,
 },
     {
-        initialRouteName: "Auth",
+        initialRouteName: "InitializeApp",
         headerMode: "none"
     }
 );

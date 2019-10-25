@@ -3,6 +3,7 @@ import {
     View,
     StyleSheet,
     Image,
+    TouchableOpacity,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -16,7 +17,7 @@ import {
 import Button from '../../components/Button';
 import { fonts, colors } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
-import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
+import { TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import StylerServiceList from './StylerServiceList';
@@ -90,8 +91,7 @@ class ServiceDetails extends React.Component {
                         source={service__1}
                     />
                 </View>
-                <ScrollView style={styles.container}>
-                    <SafeAreaView>
+                    <ScrollView style={styles.container}>
                         <View>
                             <Text style={{ fontFamily: fonts.bold, fontSize: 24, paddingBottom: 5, }}>Thor Odinson</Text>
                             <Text>No 9 Centenary City , Enugu</Text>
@@ -136,11 +136,11 @@ class ServiceDetails extends React.Component {
                             </View>
 
                             <StylerServiceList {...this.props} />
-                            <View style={{ alignSelf: "flex-end" }}>
+                            <View style={{ alignSelf: "flex-end", marginTop: 10 }}>
                                 <Text style={{ fontFamily: fonts.bold, fontSize: 22, }}>TOT - NGN4000</Text>
                             </View>
 
-                            <View style={{ paddingVertical: 20 }}>
+                            <View style={{ marginVertical: 50 }}>
                                 <Button
                                     onPress={() => this.setState({ isVisible: !this.state.isVisible })}
                                     btnTxt={"Schedule Appointment"}
@@ -149,8 +149,7 @@ class ServiceDetails extends React.Component {
                                 />
                             </View>
                         </View>
-                    </SafeAreaView>
-                </ScrollView>
+                    </ScrollView>
                 <Modal
                     closeModal={this.closeModal}
                     isVisible={this.state.isVisible}

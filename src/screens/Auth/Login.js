@@ -2,6 +2,7 @@ import React from 'react';
 import {
     View,
     StyleSheet,
+    TouchableOpacity,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -11,14 +12,44 @@ import {
     Input,
 } from 'native-base';
 import Button from '../../components/Button';
-import { fonts, colors } from '../../constants/DefaultProps';
+import { fonts, colors, toastType } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { FacebookIcon, GoogleIcon } from './AuthAssets';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import ShowToast from '../../components/ShowToast';
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isProcessing: false,
+        }
+    }
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
+            this.props.navigation.navigate('Home');
+        }
+        if (nextProps.user.error && nextProps.user.error != this.props.user.error) {
+            this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);
+        }
+    }
+    doLogin = () => {
+        this.setState({ isProcessing: true });
+        let email = this.email;
+        let password = this.password;
+        if (!email || !password) {
+            this.showToast('Invalid login credentials!', toastType.danger);
+        } else {
+            return this.props.doLogin({
+                email: email,
+                password: password,
+            })
+        }
+    }
+
+    showToast = (text, type) => {
+        ShowToast(text, type);
+        this.setState({ isProcessing: false });
     }
 
     handleClick = () => {
@@ -33,20 +64,24 @@ class Login extends React.Component {
                 </View>
                 <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                     <Input
+                        onChangeText={e => this.email = e}
+                        autoCapitalize={'none'}
                         style={{ fontFamily: fonts.default, fontSize: 13 }}
                         placeholder='Email' />
                 </Item>
                 <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                     <Input
+                        onChangeText={e => this.password = e}
+                        secureTextEntry={true}
                         style={{ fontFamily: fonts.default, fontSize: 13 }}
                         placeholder='Password' />
                 </Item>
-
                 <View style={{ marginTop: 20 }}>
                     <Button
-                        onPress={this.handleClick.bind(this)}
+                        onPress={this.doLogin}
                         btnTxt={"LOG IN"}
                         size={"lg"}
+                        loading={this.state.isProcessing ? true : false}
                         styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
                         btnTxtStyles={{ color: colors.black, fontFamily: fonts.default }}
                     />
@@ -73,7 +108,7 @@ class Login extends React.Component {
                     />
                 </View>
 
-                <View style={{ position: "absolute", bottom: 50, padding: 20, }}>
+                <View style={{ marginVertical: 20, }}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
                         <Text>Dont't have an account? Sign up</Text>
                     </TouchableOpacity>

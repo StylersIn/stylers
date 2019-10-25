@@ -3,9 +3,9 @@ import {
     StyleSheet,
     View,
     Dimensions,
+    TouchableOpacity,
 } from 'react-native';
 import { Icon } from 'native-base';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
 class Modal extends React.Component {

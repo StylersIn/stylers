@@ -3,10 +3,12 @@ import {
     View,
     StyleSheet,
     SafeAreaView,
+    ScrollView,
 } from 'react-native';
 import ServiceList from './ServiceList';
 import GenderList from './GenderList';
 import Header from '../../components/Header';
+import { Spinner } from 'native-base';
 
 class Home extends React.Component {
     constructor(props) {
@@ -19,14 +21,16 @@ class Home extends React.Component {
 
     render() {
         return (
-            <SafeAreaView>
-                <View style={styles.container}>
-                    <Header
-                        title={"Browse Services"}
-                    />
-                    <GenderList {...this.props} />
-                    <ServiceList {...this.props} />
-                </View>
+            <SafeAreaView style={{ flex: 1 }}>
+                {/* <ScrollView contentContainerStyle={{ flexGrow: 1, }}> */}
+                    <View style={styles.container}>
+                        <Header
+                            title={"Browse Services"}
+                        />
+                        <GenderList {...this.props} />
+                        <ServiceList {...this.props} />
+                    </View>
+                {/* </ScrollView> */}
             </SafeAreaView>
         )
     }
@@ -34,7 +38,7 @@ class Home extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flex: 1,
         padding: 20,
     }
 })

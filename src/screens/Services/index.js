@@ -20,6 +20,7 @@ import Header from '../../components/Header';
 import { BarberIcon } from './ServiceAssets';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import ServiceStylers from './ServiceStylers';
 
 class Services extends React.Component {
     constructor(props) {
@@ -28,6 +29,10 @@ class Services extends React.Component {
             showList: false,
             selected: 0,
         }
+    }
+
+    componentDidMount() {
+        // this.
     }
 
     handleClick = () => {
@@ -46,63 +51,22 @@ class Services extends React.Component {
 
     render() {
         const { showList } = this.state;
+        const { navigation } = this.props;
+        const service = navigation.getParam('service', '');
         return (
             <SafeAreaView>
                 <View style={styles.container}>
                     <View style={{ zIndex: 1 }}>
                         <Header
                             list
-                            title={"Haircuts"}
+                            title={service.name}
                             onChange={this.handleChange}
                             showList={this.state.showList}
                             selectListItem={this.selectListItem}
                             selected={this.state.selected}
                         />
                     </View>
-                    <View>
-                        <View style={{ marginTop: 20, }}>
-                            <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text>
-                            <Card>
-                                <CardItem>
-                                    <Left>
-                                        <Image
-                                            style={{ width: 80, height: 80, borderRadius: 5, }}
-                                            source={service__1}
-                                        />
-                                    </Left>
-                                    <Body style={{ position: "relative", right: 15, }}>
-                                        <Text style={{ fontFamily: fonts.bold }}>Thor Odinson</Text>
-                                        <Text style={{ fontSize: 10, marginTop: 10, }}>No 9 Centenary City, Enugu</Text>
-                                        <Text style={{ fontSize: 10, }}>Starts at NGN1000 </Text>
-                                        <View style={{ marginTop: 7, flexDirection: "row" }}>
-                                            <Rating
-                                                type='star'
-                                                ratingCount={3}
-                                                imageSize={12}
-                                                showRating={false}
-                                                onFinishRating={this.ratingCompleted}
-                                            />
-                                            <Text style={{ fontSize: 10, marginLeft: 7, }}>6 <Text style={{ fontSize: 10, }}>Reviews</Text> </Text>
-                                        </View>
-                                    </Body>
-                                    <View style={{ flexDirection: "column", justifyContent: "space-between", position: "relative", left: 10, }}>
-                                        <View style={{ alignSelf: "flex-end" }}>
-                                            <BarberIcon />
-                                        </View>
-                                        <View style={{ marginTop: "30%" }}>
-                                            <Button
-                                                onPress={() => this.props.navigation.navigate('ServiceDetails')}
-                                                btnTxt={"Place booking"}
-                                                size={"sm"}
-                                                btnTxtStyles={{ color: colors.white, fontSize: 10, fontFamily: fonts.bold, }}
-                                                styles={{ height: 24 }}
-                                            />
-                                        </View>
-                                    </View>
-                                </CardItem>
-                            </Card>
-                        </View>
-                    </View>
+                    <ServiceStylers {...this.props} />
                 </View>
             </SafeAreaView>
         )
@@ -114,10 +78,6 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         padding: 20,
     }
-})
-
-const mapStateToProps = state => ({
-    services: state.services,
 })
 
 export default Services;

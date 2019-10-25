@@ -3,6 +3,7 @@ import {
     View,
     StyleSheet,
     Dimensions,
+    TouchableOpacity,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -15,13 +16,39 @@ import Button from '../../components/Button';
 import { fonts, colors } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { FacebookIcon, GoogleIcon } from './AuthAssets';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+// import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('screen');
 
 class Register extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        if (nextProps.register.created && nextProps.register.created != this.props.register.created) {
+            this.showToast('Account has been created successfully. Kindly proceed to login.', 'success');
+            setTimeout(() => {
+                this.props.navigation.dispatch(resetAction('OnBoard'));
+            }, 2000);
+        }
+    }
+
+    doRegister = () => {
+        this.setState({ isProcessing: true });
+        let email = this.email;
+        let username = this.username;
+        let password = this.password;
+        if (!username || !email || !password) {
+            this.showToast('Invalid user credentials!', 'danger');
+        } else {
+            return this.props.doRegister({
+                email: email,
+                username: username,
+                password: password,
+                role: 'admin'
+            })
+        }
     }
 
     handleClick = () => {
@@ -81,7 +108,7 @@ class Register extends React.Component {
                     />
                 </View>
 
-                <View style={{ position: "absolute", bottom: 50, padding: 20, }}>
+                <View style={{ marginVertical: 20, }}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>
                         <Text>Already a member? Login</Text>
                     </TouchableOpacity>

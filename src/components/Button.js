@@ -4,25 +4,27 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types'
 import {
-    Button,
+    Button, Spinner,
 } from 'native-base';
 import Text from '../config/AppText';
-import { fonts } from '../constants/DefaultProps';
+import { fonts, colors } from '../constants/DefaultProps';
 
 const propTypes = ({
     btnTxt: PropTypes.string,
     Icon: PropTypes.element,
     size: PropTypes.string,
     btnTxtStyles: PropTypes.object,
+    onPress: PropTypes.func,
+    loading: PropTypes.bool,
 })
 
-const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, onPress, }) => {
+const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, onPress, loading, }) => {
     const mainStyles = [{
         width: size === 'sm' ? 103 : "100%",
         height: size === 'sm' ? 36 : 48,
         backgroundColor: '#000000',
         borderRadius: 5,
-        justifyContent: "center",
+        justifyContent: "center"
     }];
 
     const txtStyles = {
@@ -42,12 +44,13 @@ const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, onPress
     return (
         <Button
             light
+            disabled={loading ? true : false}
             style={mainStyles}
             onPress={() => onPress()}
-        // full={size = "lg" ? true : false}
         >
             {Icon ? Icon : null}
-            {btnTxt ? <Text style={txtStyles, btnTxtStyles}>{btnTxt}</Text> : null}
+            {btnTxt && !loading ? <Text style={txtStyles, btnTxtStyles}>{btnTxt}</Text> : null}
+            {loading ? <Spinner color={colors.info} size="large" /> : null}
         </Button>
     )
 }

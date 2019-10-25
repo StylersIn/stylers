@@ -3,6 +3,7 @@ import {
     View,
     StyleSheet,
     Image,
+    TouchableOpacity,
 } from 'react-native';
 import { fonts, colors } from '../../constants/DefaultProps';
 import {
@@ -14,7 +15,6 @@ import {
 import Gender1 from '../../../assets/imgs/photo-1508835277982-1c1b0e205603.jpeg';
 import Gender2 from '../../../assets/imgs/ricardo-mancia-214428-unsplash.jpg';
 import Text from '../../config/AppText';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const GenderList = () => {
     return (

@@ -4,6 +4,7 @@ import {
     StyleSheet,
     Platform,
     Image,
+    TouchableOpacity,
     SafeAreaView,
 } from 'react-native';
 import {
@@ -15,7 +16,7 @@ import {
 import Button from '../../components/Button';
 import { fonts, colors } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import mastercard from '../../../assets/imgs/mastercard.png';
 import Modal from '../../components/Modal';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
@@ -111,7 +112,7 @@ class Payment extends React.Component {
                             <Text style={{ paddingLeft: 20, marginTop: 1, fontFamily: fonts.medium, }}>Save card data for future payments</Text>
                         </View>
 
-                        <View style={{ paddingVertical: 20, marginTop: 20, }}>
+                        <View style={{ paddingVertical: 20, marginTop: 20, zIndex: -1, }}>
                             <Button
                                 onPress={() => this.setState({ isVisible: true })}
                                 btnTxt={"Confirm"}
