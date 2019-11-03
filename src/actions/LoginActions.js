@@ -22,7 +22,7 @@ export const doLogin = credentials => ({
                 type: constants.AUTH_USER_FAILURE,
                 meta: (action, state, res) => {
                     return {
-                        status: res.status
+                        status: res
                     };
                 }
             }
@@ -36,9 +36,3 @@ export const doLogin = credentials => ({
         credentials: "same-origin"
     }
 });
-
-export const logOut = _ => {
-    return (dispatch) => {
-        dispatch({ type: constants.LOGOUT })
-    }
-}

@@ -50,6 +50,11 @@ export default function stylerReducer(state = initialState, action) {
                 isProcessing: false,
                 error: `${action.meta.error}`
             })
+        case constants.UPDATE_SELECTED_SERVICE:
+            return {
+                ...state,
+                selectedService: action.payload
+            }
         default:
             return state;
     }

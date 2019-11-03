@@ -44,14 +44,14 @@ const AuthScreen = (props) => {
                 />
             </View>
 
-            <View style={{ paddingTop: 20 }}>
+            {/* <View style={{ paddingTop: 20 }}>
                 <Button
                     onPress={() => openImg()}
                     btnTxt={"GET IMAGE"}
                     size={"lg"}
                     btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                 />
-            </View>
+            </View> */}
 
             <View style={{ padding: 10, alignItems: "center" }}>
                 <TouchableOpacity

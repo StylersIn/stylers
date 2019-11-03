@@ -15,17 +15,18 @@ import Text from '../../config/AppText';
 import { BarberIcon } from './ServiceAssets';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import Loader from '../../components/Loader';
 
 export default ServiceStylers = (props) => {
     const {
-        styler,
+        stylers,
+        isProcessing,
     } = props;
-    console.log(styler)
     return (
-        <View>
-            <View style={{ marginTop: 20, }}>
+        <View style={{ flex: 1, }}>
+            {!isProcessing ? <View style={{ marginTop: 20, }}>
                 <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text>
-                {styler && styler.map((item, i) => <Card key={i}>
+                {stylers && stylers.map((item, i) => <Card key={i}>
                     <CardItem>
                         <Left>
                             <Image
@@ -34,7 +35,7 @@ export default ServiceStylers = (props) => {
                             />
                         </Left>
                         <Body style={{ position: "relative", right: 15, }}>
-                            <Text style={{ fontFamily: fonts.bold }}>{item.fullName}</Text>
+                            <Text style={{ fontFamily: fonts.bold }}>{item.name}</Text>
                             <Text style={{ fontSize: 10, marginTop: 10, }}>{item.address}</Text>
                             <Text style={{ fontSize: 10, }}>Starts at NGN1000 </Text>
                             <View style={{ marginTop: 7, flexDirection: "row" }}>
@@ -54,7 +55,7 @@ export default ServiceStylers = (props) => {
                             </View>
                             <View style={{ marginTop: "30%" }}>
                                 <Button
-                                    onPress={() => props.navigation.navigate('ServiceDetails')}
+                                    onPress={() => props.navigation.navigate('ServiceDetails', { styler: item })}
                                     btnTxt={"Place booking"}
                                     size={"sm"}
                                     btnTxtStyles={{ color: colors.white, fontSize: 10, fontFamily: fonts.bold, }}
@@ -64,7 +65,7 @@ export default ServiceStylers = (props) => {
                         </View>
                     </CardItem>
                 </Card>)}
-            </View>
+            </View> : Loader()}
         </View>
     )
 }

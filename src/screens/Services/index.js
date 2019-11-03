@@ -54,7 +54,7 @@ class Services extends React.Component {
         const { navigation } = this.props;
         const service = navigation.getParam('service', '');
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{ flex: 1, }}>
                 <View style={styles.container}>
                     <View style={{ zIndex: 1 }}>
                         <Header
@@ -75,7 +75,7 @@ class Services extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flex: 1,
         padding: 20,
     }
 })

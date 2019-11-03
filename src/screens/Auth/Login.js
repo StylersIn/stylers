@@ -16,6 +16,7 @@ import { fonts, colors, toastType } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { FacebookIcon, GoogleIcon } from './AuthAssets';
 import ShowToast from '../../components/ShowToast';
+import { resetAction } from '../../navigation';
 
 class Login extends React.Component {
     constructor(props) {
@@ -27,9 +28,15 @@ class Login extends React.Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
-            this.props.navigation.navigate('Home');
+            this.setState({ isProcessing: false });
+            this.props.navigation.dispatch(resetAction('Home'));
+        }
+        if (nextProps.user.status == false && nextProps.user.status != this.props.user.status) {
+            this.setState({ isProcessing: false });
+            this.showToast(`Error: ${nextProps.user.message}`, toastType.danger);
         }
         if (nextProps.user.error && nextProps.user.error != this.props.user.error) {
+            this.setState({ isProcessing: false });
             this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);
         }
     }
@@ -66,14 +73,14 @@ class Login extends React.Component {
                     <Input
                         onChangeText={e => this.email = e}
                         autoCapitalize={'none'}
-                        style={{ fontFamily: fonts.default, fontSize: 13 }}
+                        style={{ fontFamily: fonts.medium, fontSize: 13 }}
                         placeholder='Email' />
                 </Item>
                 <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                     <Input
                         onChangeText={e => this.password = e}
                         secureTextEntry={true}
-                        style={{ fontFamily: fonts.default, fontSize: 13 }}
+                        style={{ fontFamily: fonts.medium, fontSize: 13 }}
                         placeholder='Password' />
                 </Item>
                 <View style={{ marginTop: 20 }}>
@@ -83,7 +90,7 @@ class Login extends React.Component {
                         size={"lg"}
                         loading={this.state.isProcessing ? true : false}
                         styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
-                        btnTxtStyles={{ color: colors.black, fontFamily: fonts.default }}
+                        btnTxtStyles={{ color: colors.black, fontFamily: fonts.medium }}
                     />
                 </View>
 
@@ -104,7 +111,7 @@ class Login extends React.Component {
                         onPress={this.handleClick.bind(this)}
                         size={"lg"}
                         Icon={<GoogleIcon />}
-                        btnTxtStyles={{ color: "white", fontFamily: fonts.default }}
+                        btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
                     />
                 </View>
 

@@ -120,33 +120,33 @@ class Register extends React.Component {
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
                             onChangeText={e => this.name = e}
-                            style={{ fontFamily: fonts.default, fontSize: 13 }}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Your name' />
                     </Item>
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
                             onChangeText={e => this.email = e}
                             autoCapitalize={"none"}
-                            style={{ fontFamily: fonts.default, fontSize: 13 }}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Email' />
                     </Item>
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
                             onChangeText={e => this.phone = e}
-                            style={{ fontFamily: fonts.default, fontSize: 13 }}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Phone Number' />
                     </Item>
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
                             onChangeText={e => this.address = e}
-                            style={{ fontFamily: fonts.default, fontSize: 13 }}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Address' />
                     </Item>
                     <Form style={{ marginTop: 10, }} regular>
                         <Textarea
                             onChangeText={e => this.description = e}
                             rowSpan={5}
-                            style={{ fontFamily: fonts.default, fontSize: 13, borderRadius: 5, }}
+                            style={{ fontFamily: fonts.medium, fontSize: 13, borderRadius: 5, }}
                             bordered
                             placeholder="Description" />
                     </Form>
@@ -154,14 +154,14 @@ class Register extends React.Component {
                         <Input
                             onChangeText={e => this.password = e}
                             secureTextEntry={true}
-                            style={{ fontFamily: fonts.default, fontSize: 13 }}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Password' />
                     </Item>
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
                             onChangeText={e => this.confirmPassword = e}
                             secureTextEntry={true}
-                            style={{ fontFamily: fonts.default, fontSize: 13 }}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Re-Password' />
                     </Item>
 

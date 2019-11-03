@@ -24,7 +24,7 @@ class InitializeApp extends React.Component {
     componentDidMount() {
         AsyncStorage.getItem(constants.TOKEN)
             .then((token) => {
-                if (!token) this.props.navigation.navigate('Login');
+                if (!token) this.props.navigation.navigate('Auth');
                 this.props.InitializeApp({ token });
             })
     }
@@ -34,7 +34,7 @@ class InitializeApp extends React.Component {
             this.props.navigation.navigate('Home');
         }
         if (nextProps.user.auth__failed && nextProps.user.auth__failed != this.props.user.auth__failed) {
-            this.props.navigation.navigate('Login');
+            this.props.navigation.navigate('Auth');
         }
         // if (nextProps.resident.verified && nextProps.resident.verified != this.props.resident.verified) {
         //     setTimeout(() => {

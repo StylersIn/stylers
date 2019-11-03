@@ -2,7 +2,11 @@ import React from 'react';
 import {
     StyleSheet,
     TouchableOpacity,
+    Dimensions,
 } from 'react-native';
+import { bindActionCreators } from 'redux';
+import * as actionAcreators from '../actions';
+import { connect } from 'react-redux';
 import { HamburgerIcon } from '../navigation/assets';
 import { View, Item, Icon, Input, Card, CardItem, Body, Left, Radio, CheckBox } from 'native-base';
 import { ListIcon } from './assets';
@@ -10,6 +14,7 @@ import Text from '../config/AppText';
 import PropTypes from 'prop-types';
 import { fonts } from '../constants/DefaultProps';
 import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
+import { NavigationActions } from 'react-navigation';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
@@ -22,64 +27,67 @@ const propTypes = {
     search: PropTypes.bool,
 }
 
+const { width, height } = Dimensions.get('screen');
 const options = ['Rating', 'Location', 'Price'];
-
-const Header = ({
-    title,
-    list = false,
-    onChange,
-    showList,
-    selectListItem,
-    selected,
-    hamburger,
-    search,
-}) => {
-    return (
-        <View>
-            {hamburger ? <HamburgerIcon /> : null}
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 15, }}>
-                <View>
-                    <Text style={{ fontFamily: fonts.bold, fontSize: 24, }}>{title}</Text>
+class Header extends React.Component {
+    render() {
+        return (
+            <View>
+                {this.props.hamburger ? <HamburgerIcon /> : null}
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 15, }}>
+                    <View>
+                        <Text style={{ fontFamily: fonts.bold, fontSize: 24, }}>{this.props.title}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', }}>
+                        <View style={{ marginRight: 15, marginTop: -4, }}>
+                            <TouchableOpacity
+                                onPress={() => this.props.logout()}
+                                activeOpacity={0.5}>
+                                <Icon name='ios-log-out' />
+                            </TouchableOpacity>
+                        </View>
+                        {this.props.list ? <View>
+                            <TouchableOpacity
+                                onPress={() => this.props.onChange()}
+                                activeOpacity={0.5}>
+                                <ListIcon />
+                            </TouchableOpacity></View> : null}
+                    </View>
+                    {this.props.showList ? <View style={{ position: "absolute", right: -20, top: 25, zIndex: 1, }}>
+                        <Card style={styles.cardStyle}>
+                            <RadioGroup
+                                size={15}
+                                thickness={2}
+                                color='#606060'
+                                // selectedIndex={1}
+                                onSelect={(index, value) => this.props.selectListItem(index, value)}
+                            >
+                                {options.map((option, i) =>
+                                    <RadioButton
+                                        key={i}
+                                        style={{ margin: 3, padding: 1, paddingHorizontal: 5, }}
+                                        value={'item1'} >
+                                        <Text style={{ fontSize: 12, fontFamily: fonts.bold }}>{option}</Text>
+                                    </RadioButton>)}
+                            </RadioGroup>
+                        </Card>
+                    </View> : null}
                 </View>
-                {list ? <TouchableOpacity
-                    onPress={() => onChange()}
-                    activeOpacity={0.5}>
-                    <ListIcon />
-                </TouchableOpacity> : null}
-                {showList ? <View style={{ position: "absolute", right: -20, top: 25, zIndex: 1, }}>
-                    <Card style={styles.cardStyle}>
-                        <RadioGroup
-                            size={15}
-                            thickness={2}
-                            color='#606060'
-                            // selectedIndex={1}
-                            onSelect={(index, value) => selectListItem(index, value)}
-                        >
-                            {options.map((option, i) =>
-                                <RadioButton
-                                    key={i}
-                                    style={{ margin: 3, padding: 1, paddingHorizontal: 5, }}
-                                    value={'item1'} >
-                                    <Text style={{ fontSize: 12, fontFamily: fonts.bold }}>{option}</Text>
-                                </RadioButton>)}
-                        </RadioGroup>
-                    </Card>
+                {this.props.search ? <View style={{ zIndex: -1 }}>
+                    <Item style={{ marginTop: 10, borderRadius: 5, backgroundColor: "#C4C4C4", }} regular>
+                        <Icon type="Ionicons" name="ios-search" />
+                        <Input
+                            style={{
+                                fontFamily: fonts.default,
+                                fontSize: 13,
+                                height: 35,
+                            }}
+                            placeholder='' />
+                    </Item>
                 </View> : null}
             </View>
-            {search ? <View style={{ zIndex: -1 }}>
-                <Item style={{ marginTop: 10, borderRadius: 5, backgroundColor: "#C4C4C4", }} regular>
-                    <Icon type="Ionicons" name="ios-search" />
-                    <Input
-                        style={{
-                            fontFamily: fonts.default,
-                            fontSize: 13,
-                            height: 35,
-                        }}
-                        placeholder='' />
-                </Item>
-            </View> : null}
-        </View>
-    )
+        )
+    }
 }
 
 const styles = StyleSheet.create({
@@ -101,4 +109,10 @@ const styles = StyleSheet.create({
 
 Header.propTypes = propTypes;
 
-export default Header;
+const mapStateToProps = state => ({
+    user: state.user,
+})
+
+const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

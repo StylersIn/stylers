@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, } from 'react-native';
 import {
     Card,
     List,
@@ -11,45 +11,82 @@ import Text from '../../config/AppText';
 import { fonts } from '../../constants/DefaultProps';
 
 const services = ['Barbing', 'Shaving', 'Relaxing', 'Hair Dye'];
-const StylerServiceList = () => {
+const StylerServiceList = ({
+    styler,
+    selected,
+    // adult,
+    // child,
+    onSelectService,
+    onChangeOption,
+}) => {
     return (
         <View style={{ marginTop: 20 }}>
             <Text style={{ fontFamily: fonts.bold, fontSize: 18 }}>Services</Text>
             <Card style={styles.cardStyle}>
                 <List>
-                    {services.map((service, i) => <ListItem key={i} style={{ marginVertical: -5, }}>
-                        <View style={{ marginRight: 10, }}>
-                            <CheckBox
-                                color={"#606060"}
-                                style={{ width: 15, height: 15, alignItems: "center", justifyContent: "center", }}
-                                checked={i === 1 ? true : false} />
-                        </View>
-                        <Text style={{ fontSize: 14, fontFamily: fonts.bold, }}>{service}</Text>
-                        <Text style={styles.service__txt__0}>Adult</Text>
-                        <Icon
-                            style={{ fontSize: 16, color: "#606060", }}
-                            type="Ionicons"
-                            name="ios-add-circle" />
-                        <View style={styles.selector__input}>
-                            <Text style={{ fontSize: 12 }}>1</Text>
-                        </View>
-                        <Icon
-                            style={{ fontSize: 16, color: "#606060", }}
-                            type="Ionicons"
-                            name="ios-remove-circle" />
-                        <Text style={styles.service__txt__0}>Child</Text>
-                        <Icon
-                            style={{ fontSize: 16, color: "#606060", }}
-                            type="Ionicons"
-                            name="ios-add-circle" />
-                        <View style={styles.selector__input}>
-                            <Text style={{ fontSize: 12 }}>0</Text>
-                        </View>
-                        <Icon
-                            style={{ fontSize: 16, color: "#606060", }}
-                            type="Ionicons"
-                            name="ios-remove-circle" />
-                    </ListItem>)}
+                    {styler.services.map((service, i) => {
+                        const { _id, name, } = service.serviceId;
+                        const single = selected.find(e => e.id === _id);
+                        const adult = single && single['adult'] || 0;
+                        const child = single && single['child'] || 0;
+                        return (
+                            <ListItem key={i} style={{ marginVertical: -5, }}>
+                                {/* {alert(selected.includes(_id))} */}
+                                <View style={{ marginRight: 10, }}>
+                                    <CheckBox
+                                        onPress={() => onSelectService(_id)}
+                                        color={"#606060"}
+                                        style={{ width: 18, height: 18, alignSelf: "center", }}
+                                        checked={selected.findIndex(e => e.id === _id) === -1 ? false : true}
+                                    />
+                                </View>
+                                <Text style={{ fontSize: 14, fontFamily: fonts.bold, }}>{name}</Text>
+                                <Text style={styles.service__txt__0}>Adult</Text>
+                                <TouchableOpacity
+                                    onPress={() => onChangeOption(_id, 'adult', 'add')}
+                                >
+                                    <Icon
+                                        style={{ fontSize: 16, color: "#606060", }}
+                                        type="Ionicons"
+                                        name="ios-add-circle" />
+                                </TouchableOpacity>
+
+                                <View style={styles.selector__input}>
+                                    <Text style={{ fontSize: 12 }}>{adult}</Text>
+                                </View>
+                                <TouchableOpacity
+                                    disabled={adult === 0 ? true : false}
+                                    onPress={() => onChangeOption(_id, 'adult', 'sub')}
+                                >
+                                    <Icon
+                                        style={{ fontSize: 16, color: "#606060", }}
+                                        type="Ionicons"
+                                        name="ios-remove-circle" />
+                                </TouchableOpacity>
+                                <Text style={styles.service__txt__0}>Child</Text>
+                                <TouchableOpacity
+                                    onPress={() => onChangeOption(_id, 'child', 'add')}
+                                >
+                                    <Icon
+                                        style={{ fontSize: 16, color: "#606060", }}
+                                        type="Ionicons"
+                                        name="ios-add-circle" />
+                                </TouchableOpacity>
+                                <View style={styles.selector__input}>
+                                    <Text style={{ fontSize: 12 }}>{child}</Text>
+                                </View>
+                                <TouchableOpacity
+                                    disabled={child === 0 ? true : false}
+                                    onPress={() => onChangeOption(_id, 'child', 'sub')}
+                                >
+                                    <Icon
+                                        style={{ fontSize: 16, color: "#606060", }}
+                                        type="Ionicons"
+                                        name="ios-remove-circle" />
+                                </TouchableOpacity>
+                            </ListItem>
+                        )
+                    })}
                 </List>
             </Card>
         </View>

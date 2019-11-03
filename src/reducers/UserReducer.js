@@ -21,10 +21,18 @@ export default function userReducer(state = initialState, action) {
         case constants.AUTH_USER:
             return Object.assign({}, state, {
                 authenticated: false,
-                error: undefined
+                error: undefined,
+                status: undefined,
             })
         case constants.AUTH_USER_SUCCESS:
-            if (action.payload.response.data.token) {
+            if (!action.payload.response.success) {
+                return {
+                    ...state,
+                    status: false,
+                    message: action.payload.response.message,
+                }
+            }
+            if (action.payload.response.data && action.payload.response.data.token) {
                 AsyncStorage.setItem(constants.TOKEN, action.payload.response.data.token);
                 return {
                     ...state,
@@ -52,7 +60,15 @@ export default function userReducer(state = initialState, action) {
                 error: `Login failed due to ${action.payload.error}`
             })
         case constants.LOGOUT:
-            return { ...state }
+            if (action.payload === 'loggedOut') {
+                return {
+                    loggedOut: true,
+                }
+            }
+            return {
+                loggingOut: true,
+            }
+
         default:
             return state;
     }

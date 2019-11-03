@@ -37,7 +37,7 @@ class Stylers extends React.Component {
 
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{ flex: 1, }}>
                 <View style={styles.container}>
                     <Header
                         title={"My Services"}
@@ -47,7 +47,7 @@ class Stylers extends React.Component {
                         selected={this.state.selected}
                         removeSelected={this.removeSelected}
                     />
-                    <ScrollView>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, }}>
                         <ServiceList
                             {...this.props}
                             onSelect={this.handleSelect}

@@ -7,28 +7,22 @@ import config from '../config';
 
 export const doRegister = details => ({
     [RSAA]: {
-        endpoint: `${config.api.host}/api/users`,
+        endpoint: `${config.api.host}/api/auth/register`,
         method: 'POST',
         types: [
-            constants.REGISTER,
+            constants.AUTH_USER,
             {
-                type: constants.REGISTER_SUCCESS,
-                payload: (action, state, response) => response.json().then(credentials => (console.log(credentials), {
-                    credentials
+                type: constants.AUTH_USER_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response
                 }))
             },
             {
-                type: constants.REGISTER_FAILURE,
+                type: constants.AUTH_USER_FAILURE,
                 meta: (action, state, res) => {
-                    if (res) {
-                        return {
-                            status: res.status
-                        };
-                    } else {
-                        return {
-                            status: 'Network request failed'
-                        }
-                    }
+                    return {
+                        status: res.status
+                    };
                 }
             }
         ],

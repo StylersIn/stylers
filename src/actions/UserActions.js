@@ -108,24 +108,35 @@ export const fetchUsers = _ => ({
     }
 });
 
-export const logout = _ => ({
-    [RSAA]: {
-        endpoint: `${API_URL}/api/logout`,
-        method: 'GET',
-        types: [
-            constants.REQUEST(constants.LOGOUT),
-            {
-                type: constants.REQUEST_SUCCESS(constants.LOGOUT),
-                payload: (action, state, response) => response.json().then(result => {
-                    alert("Logged Out")
-                })
+// export const logout = _ => ({
+//     [RSAA]: {
+//         endpoint: `${API_URL}/api/logout`,
+//         method: 'GET',
+//         types: [
+//             constants.REQUEST(constants.LOGOUT),
+//             {
+//                 type: constants.REQUEST_SUCCESS(constants.LOGOUT),
+//                 payload: (action, state, response) => response.json().then(result => {
+//                     alert("Logged Out")
+//                 })
+//             }
+//         ],
+//         options: { timeout: 60000 },
+//         headers: {
+//             Accept: "application/json",
+//             "Content-Type": "application/json"
+//         },
+//         credentials: "same-origin"
+//     }
+// })
+
+export const logout = _ => {
+    return (dispatch) => {
+        dispatch({ type: constants.LOGOUT })
+        AsyncStorage.clear((err) => {
+            if (!err) {
+                dispatch({ type: constants.LOGOUT, payload: 'loggedOut' })
             }
-        ],
-        options: { timeout: 60000 },
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-        },
-        credentials: "same-origin"
+        })
     }
-})
+}

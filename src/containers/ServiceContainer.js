@@ -6,19 +6,29 @@ import Component from '../screens/Services';
 
 // const Services = (props) => <Component {...props} />
 class Services extends React.Component {
+    state = {
+        isProcessing: true
+    }
     componentDidMount() {
         const { navigation } = this.props;
         const service = navigation.getParam('service', '');
-        this.props.getServiceStylers(service._id);
+        setTimeout(() => {
+            this.props.getServiceStylers(service._id);
+        }, 3000);
+    }
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        if (nextProps.stylers && nextProps.stylers !== this.props.stylers) {
+            this.setState({ isProcessing: false });
+        }
     }
     render() {
-        return <Component {...this.props} />
+        return <Component {...this.props} {...this.state} />
     }
 }
 
 const mapStateToProps = state => ({
     service: state.service,
-    styler: state.styler.service__stylers,
+    stylers: state.styler.service__stylers,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);
