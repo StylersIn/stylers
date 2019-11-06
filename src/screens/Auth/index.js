@@ -31,6 +31,7 @@ const AuthScreen = (props) => {
                     btnTxt={"CLIENT"}
                     onPress={() => props.navigation.navigate('Register')}
                     size={"lg"}
+                    styles={{ backgroundColor: colors.pink }}
                     btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                 />
             </View>

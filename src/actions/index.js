@@ -3,6 +3,7 @@ import * as loginActions from './LoginActions';
 import * as registerActions from './RegisterActions';
 import * as serviceActions from './ServiceActions';
 import * as stylerActions from './StylerActions';
+import * as bookingActions from './BookingActions';
 
 export const doLogin = loginActions.doLogin;
 export const logout = userActions.logout;
@@ -17,3 +18,7 @@ export const listStylers = stylerActions.listStylers;
 export const getServiceStylers = stylerActions.getServiceStylers;
 export const updateSelectedService = stylerActions.updateSelectedService;
 export const updateSelectedOption = stylerActions.updateSelectedOption;
+export const updateDate = bookingActions.updateDate;
+export const updateLocation = bookingActions.updateLocation;
+export const saveBooking = bookingActions.saveBooking;
+export const listBookings = bookingActions.listBookings;

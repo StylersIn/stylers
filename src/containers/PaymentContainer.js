@@ -8,6 +8,10 @@ const Payment = (props) => <Component {...props} />
 
 const mapStateToProps = state => ({
     payment: state.payment,
+    booked: state.booking.booked,
+    date: state.booking.date,
+    location: state.booking.location,
+    services: state.styler.selectedService,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

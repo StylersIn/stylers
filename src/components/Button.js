@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     StyleSheet,
+    View,
 } from 'react-native';
 import PropTypes from 'prop-types'
 import {
@@ -48,7 +49,7 @@ const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, onPress
             style={mainStyles}
             onPress={() => onPress()}
         >
-            {Icon ? Icon : null}
+            {Icon ? <View style={{ paddingHorizontal: 10, }}>{Icon}</View> : null}
             {btnTxt && !loading ? <Text style={txtStyles, btnTxtStyles}>{btnTxt}</Text> : null}
             {loading ? <Spinner color={colors.info} size="large" /> : null}
         </Button>

@@ -6,7 +6,7 @@ import {
 import config from '../config';
 const BASE_URL = () => `${config.api.host}/api/StylerAuth`;
 
-export const addStyler = credentials => (console.log(credentials), {
+export const addStyler = credentials => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/register`,
         method: 'POST',
@@ -97,42 +97,38 @@ export const getServiceStylers = (service, pageSize = 10, pageNumber = 1) => ({
     }
 });
 
-export const updateSelectedOption = (id, type, option, min = 0, max = 5) => {
+export const updateSelectedOption = (serviceId, type, option, min = 0, max = 5) => {
     return (dispatch, store) => {
         let service = store().styler.selectedService || [];
-        let prev = service.find(e => e.id === id);
+        let prev = service.find(e => e.serviceId === serviceId);
         let prevCount = prev && prev[type] || 0;
         let added = prevCount < max ? prevCount + 1 : max,
             subtracted = prevCount > min ? prevCount - 1 : 0 || 0;
-        console.log(service.findIndex(e => e.id === id))
-        if (service.findIndex(e => e.id === id) === -1) {
-            // console.log(service)
+        if (service.findIndex(e => e.serviceId === serviceId) === -1) {
             dispatch({
                 type: constants.UPDATE_SELECTED_SERVICE,
-                payload: service.concat({ id, [type]: option === 'add' ? added : subtracted, })
+                payload: service.concat({ serviceId, [type]: option === 'add' ? added : subtracted, })
             })
         } else {
-            let temp = service.filter(c => c.id !== id);
-            // console.log(temp)
+            let temp = service.filter(c => c.serviceId !== serviceId);
             dispatch({
                 type: constants.UPDATE_SELECTED_SERVICE,
-                payload: temp.concat(Object.assign(prev, { id, [type]: option === 'add' ? added : subtracted, }))
+                payload: temp.concat(Object.assign(prev, { serviceId, [type]: option === 'add' ? added : subtracted, }))
             })
         }
     }
 }
 
-export const updateSelectedService = (id) => {
+export const updateSelectedService = (serviceId) => {
     return (dispatch, store) => {
         let service = store().styler.selectedService || [];
-        let prev = service.find(e => e.id === id);
-        if (service.findIndex(e => e.id === id) === -1) {
+        if (service.findIndex(e => e.serviceId === serviceId) === -1) {
             dispatch({
                 type: constants.UPDATE_SELECTED_SERVICE,
-                payload: service.concat({ id })
+                payload: service.concat({ serviceId })
             })
         } else {
-            let temp = service.filter(c => c.id !== id);
+            let temp = service.filter(c => c.serviceId !== serviceId);
             dispatch({
                 type: constants.UPDATE_SELECTED_SERVICE,
                 payload: temp

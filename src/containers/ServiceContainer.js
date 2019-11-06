@@ -12,9 +12,7 @@ class Services extends React.Component {
     componentDidMount() {
         const { navigation } = this.props;
         const service = navigation.getParam('service', '');
-        setTimeout(() => {
-            this.props.getServiceStylers(service._id);
-        }, 3000);
+        this.props.getServiceStylers(service._id);
     }
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.stylers && nextProps.stylers !== this.props.stylers) {

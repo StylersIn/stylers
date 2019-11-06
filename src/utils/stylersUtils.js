@@ -15,7 +15,7 @@ export const getRating = (ratings) => {
 export const calcTotalPrice = (styler, selected) => {
     let total = 0;
     selected.map(e => {
-        let service = styler.services.find(r => r.serviceId._id === e.id);
+        let service = styler.services.find(r => r.serviceId._id === e.serviceId);
         const { adult, child } = service;
         total += (e.adult * adult || 0) + (e.child * child || 0)
     })

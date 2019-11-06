@@ -16,7 +16,7 @@ class Modal extends React.Component {
     componentWillMount() {
         this.props.closeModal();
     }
-    
+
     componentWillUnmount() {
         this.props.closeModal();
     }
@@ -28,7 +28,7 @@ class Modal extends React.Component {
         return (
             <>
                 {isVisible ? <View style={styles.container}>
-                    <View style={{ position: "absolute", top: 30, right: 0, padding: 30, }}>
+                    {!this.props.hideCloseBtn ? <View style={{ position: "absolute", top: 30, right: 0, padding: 30, }}>
                         <TouchableOpacity
                             onPress={() => this.props.closeModal()}
                             activeOpacity={0.7}>
@@ -37,9 +37,14 @@ class Modal extends React.Component {
                                 type="Ionicons"
                                 name="ios-close" />
                         </TouchableOpacity>
-                    </View>
+                    </View> : null}
                     <View style={styles.child___container}>
-                        {this.props.children}
+                        {this.props.header ? <View style={{ height: 70, backgroundColor: '#E9E5E5', }}>
+                            {this.props.header}
+                        </View> : null}
+                        <View style={{ paddingVertical: 15, paddingHorizontal: 30, }}>
+                            {this.props.children}
+                        </View>
                     </View>
                 </View> : null}
             </>
@@ -63,15 +68,14 @@ const styles = StyleSheet.create({
     },
     child___container: {
         backgroundColor: '#FFFFFF',
-        height: 450,
+        // height: 550,
         width: "89%",
         zIndex: 500,
         borderRadius: 5,
         display: 'flex',
         position: "absolute",
+        // top: '30%',
         bottom: 30,
-        paddingVertical: 15,
-        paddingHorizontal: 30,
         // justifyContent: 'space-around',
         borderWidth: 1,
         borderColor: '#ddd',

@@ -6,6 +6,17 @@ import Component from '../screens/Appointments';
 import { AppointmentIcon } from '../navigation/assets';
 
 class Appointments extends React.Component {
+    state = {
+        isProcessing: true
+    }
+    componentDidMount() {
+        this.props.listBookings();
+    }
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        if (nextProps.bookings && nextProps.bookings !== this.props.bookings) {
+            this.setState({ isProcessing: false });
+        }
+    }
     static navigationOptions = {
         drawerIcon: ({ tintColor }) => (
             <AppointmentIcon tintColor={"none"} />
@@ -13,13 +24,13 @@ class Appointments extends React.Component {
     }
     render() {
         return (
-            <Component {...this.props} />
+            <Component {...this.props} {...this.state} />
         )
     }
 }
 
 const mapStateToProps = state => ({
-    appointment: state.appointment,
+    bookings: state.booking.bookings,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

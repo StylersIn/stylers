@@ -3,6 +3,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Dimensions,
+    Platform,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
@@ -14,7 +15,7 @@ import Text from '../config/AppText';
 import PropTypes from 'prop-types';
 import { fonts } from '../constants/DefaultProps';
 import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
-import { NavigationActions } from 'react-navigation';
+import NavigationService from '../navigation/NavigationService';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
@@ -32,8 +33,13 @@ const options = ['Rating', 'Location', 'Price'];
 class Header extends React.Component {
     render() {
         return (
-            <View>
-                {this.props.hamburger ? <HamburgerIcon /> : null}
+            <View style={{ marginTop: Platform.OS === 'ios' ? 20 : null }}>
+                {this.props.hamburger ? <TouchableOpacity
+                    onPress={() => NavigationService.toggleDrawer()}
+                    activeOpacity={0.7}
+                >
+                    <HamburgerIcon />
+                </TouchableOpacity> : null}
                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 15, }}>
                     <View>
                         <Text style={{ fontFamily: fonts.bold, fontSize: 24, }}>{this.props.title}</Text>
@@ -74,11 +80,11 @@ class Header extends React.Component {
                     </View> : null}
                 </View>
                 {this.props.search ? <View style={{ zIndex: -1 }}>
-                    <Item style={{ marginTop: 10, borderRadius: 5, backgroundColor: "#C4C4C4", }} regular>
+                    <Item style={{ marginTop: 20, borderRadius: 5, backgroundColor: "#C4C4C4", }} regular>
                         <Icon type="Ionicons" name="ios-search" />
                         <Input
                             style={{
-                                fontFamily: fonts.default,
+                                fontFamily: fonts.medium,
                                 fontSize: 13,
                                 height: 35,
                             }}

@@ -9,6 +9,7 @@ export const colors = {
     success: "#4CB04F",
     info: "#4BB0C0",
     warning: "#FF9601",
+    pink: "#DE408B",
 }
 
 export const fonts = {

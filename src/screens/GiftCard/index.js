@@ -9,24 +9,7 @@ import {
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
 import { connect } from 'react-redux';
-import {
-    Item,
-    Input,
-    Icon,
-    Card,
-    CardItem,
-    Body,
-    Left,
-    Right,
-} from 'native-base';
-import Button from '../../components/Button';
-import { fonts, colors } from '../../constants/DefaultProps';
-import Text from '../../config/AppText';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import Header from '../../components/Header';
-import { BarberIcon } from './ServiceAssets';
-import service__1 from '../../../assets/imgs/service__1.jpeg';
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { GiftCardIcon } from '../../navigation/assets';
 
 class GiftCard extends React.Component {
     constructor(props) {
@@ -34,6 +17,12 @@ class GiftCard extends React.Component {
         this.state = {
 
         }
+    }
+
+    static navigationOptions = {
+        drawerIcon: ({ tintColor }) => (
+            <GiftCardIcon tintColor={"none"} />
+        )
     }
 
     render() {

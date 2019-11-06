@@ -6,7 +6,7 @@ import { Icon } from 'native-base';
 import Text from '../config/AppText';
 
 const danger = "danger", success = "success", info = "info", warning = "warning";
-const ShowToast = (text, type) => {
+const ShowToast = (text, type, duration = 2000) => {
     let bgColor = type === danger ? colors.danger :
         type === success ? colors.success :
             type === info ? colors.info :
@@ -27,7 +27,7 @@ const ShowToast = (text, type) => {
     // You can manually hide the Toast, or it will automatically disappear after a `duration` ms timeout.
     setTimeout(function () {
         Toast.hide(toast);
-    }, 2000);
+    }, duration);
 }
 
 

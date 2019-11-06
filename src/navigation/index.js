@@ -20,11 +20,7 @@ import StylersCompleteRegScreen from '../containers/StylersContainer';
 import { colors } from '../constants/DefaultProps';
 import Text from '../config/AppText';
 import InitializeApp from '../screens/InitializeApp';
-
-export const resetAction = (routeName) => StackActions.reset({
-    index: 0,
-    actions: [NavigationActions.navigate({ routeName })],
-});
+import GiftCardScreen from '../screens/GiftCard';
 
 const drawerContentComponents = (props) => (
     <Container style={{ backgroundColor: colors.black }}>
@@ -63,6 +59,30 @@ const MyDrawerNavigator = createDrawerNavigator({
     contentComponent: drawerContentComponents,
 });
 
+const ClientDrawerNavigator = createDrawerNavigator({
+    Home: {
+        screen: HomeScreen,
+    },
+    Appointments: {
+        screen: AppointmentScreen,
+    },
+    'Payment Methods': {
+        screen: NoDebitScreen
+    },
+    'Gift Cards': {
+        screen: GiftCardScreen
+    },
+    Help: {
+        screen: ContactUsScreen
+    },
+    Settings: {
+        screen: NoDebitScreen
+    }
+}, {
+    contentComponent: drawerContentComponents,
+    initialRouteName: 'Home'
+});
+
 const AppNavigator = createStackNavigator({
     InitializeApp: InitializeApp,
     Auth: AuthScreen,
@@ -74,7 +94,7 @@ const AppNavigator = createStackNavigator({
         screen: MyDrawerNavigator
     },
     Home: {
-        screen: HomeScreen,
+        screen: ClientDrawerNavigator,
         // navigationOptions: ({ navigation }) => ({
         //     title: "Home",
         //     headerLeft: <HamburgerIcon />

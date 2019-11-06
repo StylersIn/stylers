@@ -1,4 +1,5 @@
 import { NavigationActions, StackActions } from 'react-navigation';
+import { DrawerActions } from 'react-navigation-drawer';
 
 let _navigator;
 
@@ -18,6 +19,16 @@ function navigate(routeName, params) {
     );
 }
 
+function toggleDrawer(routeName, params) {
+    _navigator.dispatch(
+        DrawerActions.toggleDrawer()
+    );
+}
+
+const resetAction = (routeName) => StackActions.reset({
+    index: 0,
+    actions: [NavigationActions.navigate({ routeName })],
+});
 // StackActions.reset({
 //     index: 0,
 //     actions: [NavigationActions.navigate({ routeName })],
@@ -28,4 +39,6 @@ function navigate(routeName, params) {
 export default {
     navigate,
     setTopLevelNavigator,
+    resetAction,
+    toggleDrawer,
 };

@@ -20,7 +20,7 @@ import Text from '../../config/AppText';
 import { FacebookIcon, GoogleIcon } from './AuthAssets';
 import ShowToast from '../../components/ShowToast';
 import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
-import { resetAction } from '../../navigation';
+import NavigationService from '../../navigation/NavigationService';
 // import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('screen');
@@ -36,7 +36,7 @@ class Register extends React.Component {
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
             this.setState({ isProcessing: false });
-            this.props.navigation.dispatch(resetAction('Home'));
+            this.props.navigation.dispatch(NavigationService.resetAction('Home'));
         }
         if (nextProps.user.error && nextProps.user.error != this.props.user.error) {
             this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);

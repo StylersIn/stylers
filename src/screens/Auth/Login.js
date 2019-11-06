@@ -16,7 +16,7 @@ import { fonts, colors, toastType } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { FacebookIcon, GoogleIcon } from './AuthAssets';
 import ShowToast from '../../components/ShowToast';
-import { resetAction } from '../../navigation';
+import NavigationService from '../../navigation/NavigationService';
 
 class Login extends React.Component {
     constructor(props) {
@@ -29,7 +29,7 @@ class Login extends React.Component {
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
             this.setState({ isProcessing: false });
-            this.props.navigation.dispatch(resetAction('Home'));
+            this.props.navigation.dispatch(NavigationService.resetAction('Home'));
         }
         if (nextProps.user.status == false && nextProps.user.status != this.props.user.status) {
             this.setState({ isProcessing: false });

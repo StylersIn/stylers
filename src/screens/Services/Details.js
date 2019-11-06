@@ -12,7 +12,10 @@ import {
     Card,
     CardItem,
     Body,
+    DatePicker,
     Icon,
+    Item,
+    Input,
 } from 'native-base';
 import Button from '../../components/Button';
 import { fonts, colors } from '../../constants/DefaultProps';
@@ -26,6 +29,7 @@ import Modal from '../../components/Modal';
 import { DateIcon, TimeIcon, LocationIcon } from './ServiceAssets';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getRating, calcTotalPrice } from '../../utils/stylersUtils';
+import moment from 'moment';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -34,22 +38,20 @@ class ServiceDetails extends React.Component {
             showList: false,
             selected: [],
             isVisible: false,
-            date: new Date('2020-06-12T14:42:42'),
+            date: new Date(Date.now()),
+            dateSelected: false,
+            timeSelected: false,
             mode: 'date',
             show: false,
-            adult: 0,
-            child: 0,
         }
-
-        // document.addEventListener("click", function (event) {
-        //     alert(event)
-        // })
     }
 
     show = mode => {
         this.setState({
             show: true,
             mode,
+            dateSelected: mode === 'date' ? true : this.state.dateSelected,
+            timeSelected: mode === 'time' ? true : this.state.timeSelected,
         });
     }
 
@@ -71,53 +73,22 @@ class ServiceDetails extends React.Component {
             show: Platform.OS === 'ios' ? true : false,
             date,
         });
+        this.props.updateDate(date);
     }
 
-    selectService = (id) => {
-        this.props.updateSelectedService(id);
-        // this.setState((prevState) => {
-        //     if (prevState.selected.findIndex(e => e.id === id) === -1) {
-        //         return {
-        //             selected: [{ id }, ...prevState.selected]
-        //         }
-        //     } else {
-        //         return {
-        //             selected: prevState.selected.filter(c => c.id !== id)
-        //         }
-        //     }
-        // }, console.log(this.state.selected))
+    selectService = (serviceId) => {
+        this.props.updateSelectedService(serviceId);
     }
 
-    changeOption = (id, type, option, min = 0, max = 5) => {
-        this.props.updateSelectedOption(id, type, option);
-        // const { navigation } = this.props;
-        // const styler = navigation.getParam('styler', '');
-        // const { selected, } = this.state;
-        // const totPrice = calcTotalPrice.apply(this, [styler, selected]);
-        // this.setState((prevState) => {
-        //     let prev = prevState.selected.find(e => e.id === id);
-        //     let prevCount = prev && prev[type] || 0;
-        //     let added = prevCount < max ? prevCount + 1 : max,
-        //         subtracted = prevCount > min ? prevCount - 1 : 0 || 0;
-        //     if (prevState.selected.findIndex(e => e.id === id) === -1) {
-        //         return {
-        //             selected: [{ id, [type]: option === 'add' ? added : subtracted, }, ...prevState.selected]
-        //         }
-        //     } else {
-        //         let temp = prevState.selected.filter(c => c.id !== id);
-        //         return {
-        //             selected: [Object.assign(prev, { id, [type]: option === 'add' ? added : subtracted, }), ...temp]
-        //         }
-        //     }
-        // }, this.props.updatePrice(totPrice))
+    changeOption = (serviceId, type, option, min = 0, max = 5) => {
+        this.props.updateSelectedOption(serviceId, type, option);
     }
 
     render() {
         const { show, date, mode } = this.state;
-        const { navigation } = this.props;
-        const styler = navigation.getParam('styler', '');
-        const { selected, } = this.state;
-        const totPrice = calcTotalPrice.apply(this, [styler, selected]);
+        const { navigation, styler, appointment__date, } = this.props;
+        const styler__data = navigation.getParam('styler', '');
+        const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
 
         return (
             <View style={{ flex: 1, }}>
@@ -138,15 +109,15 @@ class ServiceDetails extends React.Component {
                     />
                 </View>
                 <ScrollView style={styles.container}>
-                    <View>
-                        <Text style={{ fontFamily: fonts.bold, fontSize: 24, paddingBottom: 5, }}>{styler.name}</Text>
-                        <Text>{styler.address}</Text>
-                        <Text style={{ fontSize: 18 }}>Starts at <Text style={{ fontSize: 18, color: "#0E5B02", fontFamily: fonts.medium, }}>{`$${styler.startingPrice}`}</Text></Text>
+                    <View style={{ paddingBottom: 50 }}>
+                        <Text style={{ fontFamily: fonts.bold, fontSize: 24, paddingBottom: 5, }}>{styler__data.name}</Text>
+                        <Text>{styler__data.address}</Text>
+                        <Text style={{ fontSize: 18 }}>Starts at <Text style={{ fontSize: 18, color: "#0E5B02", fontFamily: fonts.medium, }}>{`$${styler__data.startingPrice}`}</Text></Text>
                         <View style={{ marginVertical: 7, flexDirection: "row", paddingBottom: 5, }}>
                             <Rating
                                 type='star'
                                 ratingCount={5}
-                                startingValue={getRating(styler.ratings)}
+                                startingValue={getRating(styler__data.ratings)}
                                 ratingColor={"#E6750C"}
                                 ratingTextColor={"#E6750C"}
                                 ratingBackgroundColor={"#E6750C"}
@@ -159,12 +130,12 @@ class ServiceDetails extends React.Component {
 
                         <View style={{ marginTop: 20 }}>
                             <Text style={{ fontFamily: fonts.bold, fontSize: 18 }}>Reviews</Text>
-                            <Card style={styles.cardStyle}>
+                            {!styler__data.review.length ? <Text style={{ fontSize: 12, color: '#bbb' }}>No Reviews yet!</Text> : <Card style={styles.cardStyle}>
                                 <CardItem>
                                     <Body>
                                         <View style={{ flexDirection: "row" }}>
-                                            <Text style={{ fontFamily: fonts.bold, fontSize: 15 }}>John Doe</Text>
-                                            <Text style={{ paddingLeft: 10, fontSize: 10, color: "#979797", marginTop: 4, }}>6d ago</Text>
+                                            <Text style={{ fontFamily: fonts.bold, fontSize: 15 }}>{styler__data.review[0].userId.name}</Text>
+                                            <Text style={{ paddingLeft: 10, fontSize: 10, color: "#979797", marginTop: 4, }}>{moment(styler__data.review[0].CreatedAt).fromNow()}</Text>
                                         </View>
                                         <View style={{ marginVertical: 7, flexDirection: "row", }}>
                                             <Rating
@@ -175,26 +146,24 @@ class ServiceDetails extends React.Component {
                                                 onFinishRating={this.ratingCompleted}
                                             />
                                         </View>
-                                        <Text style={{ fontFamily: fonts.medium, fontSize: 12 }}>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia</Text>
+                                        <Text style={{ fontFamily: fonts.medium, fontSize: 12 }}>{styler__data.review[0].message}</Text>
                                         <Text style={{ alignSelf: "flex-end", fontSize: 11, fontStyle: "italic", color: "#1E1C95", }}>All Reviews</Text>
                                     </Body>
                                 </CardItem>
-                            </Card>
+                            </Card>}
                         </View>
 
                         <StylerServiceList {...this.props}
-                            styler={styler}
-                            selected={this.props.styler.selectedService || []}
-                            // adult={this.state.adult}
-                            // child={this.state.child}
+                            styler={styler__data}
+                            selected={styler.selectedService || []}
                             onSelectService={this.selectService}
                             onChangeOption={this.changeOption}
                         />
                         <View style={{ alignSelf: "flex-end", marginTop: 10 }}>
-                            <Text style={{ fontFamily: fonts.bold, fontSize: 22, }}>TOT - {`NGN${totPrice}`}</Text>
+                            <Text style={{ fontFamily: fonts.bold, fontSize: 22, }}>TOT - {`NGN${totalAmt}`}</Text>
                         </View>
 
-                        <View style={{ marginVertical: 50 }}>
+                        <View style={{ marginVertical: 30, marginBottom: 20, }}>
                             <Button
                                 onPress={() => this.setState({ isVisible: !this.state.isVisible })}
                                 btnTxt={"Schedule Appointment"}
@@ -208,38 +177,76 @@ class ServiceDetails extends React.Component {
                     closeModal={this.closeModal}
                     isVisible={this.state.isVisible}
                 >
-                    <View>
-                        <Text style={{ fontFamily: fonts.bold, fontSize: 20, textAlign: "center", padding: 15, }}>NGN4000</Text>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                        {show && <View style={{ alignSelf: "center", }}>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={() => this.setState({ show: false })}
+                            >
+                                <Icon style={{ color: colors.danger }} name="ios-close-circle-outline" />
+                            </TouchableOpacity>
+                        </View>}
+                        {/* <DatePicker
+                            defaultDate={new Date(2018, 4, 4)}
+                            minimumDate={new Date(2018, 1, 1)}
+                            maximumDate={new Date(2018, 12, 31)}
+                            locale={"en"}
+                            timeZoneOffsetInMinutes={undefined}
+                            modalTransparent={false}
+                            animationType={"fade"}
+                            androidMode={"default"}
+                            placeHolderText="Select date"
+                            textStyle={{ color: "green" }}
+                            placeHolderTextStyle={{ color: "#d3d3d3" }}
+                            onDateChange={this.setDate}
+                            disabled={false}
+                        /> */}
+                        {show && <DateTimePicker value={date}
+                            mode={mode}
+                            is24Hour={true}
+                            display="default"
+                            onChange={this.setDate} />}
+                        <Text style={{ fontFamily: fonts.bold, fontSize: 20, textAlign: "center", padding: 15, }}>{`NGN${totalAmt}`}</Text>
                         <TouchableWithoutFeedback onPress={this.datepicker}>
                             <Card style={[styles.date__card, styles.cardStyle]}>
-                                <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>Pick a Date</Text>
+                                <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.state.dateSelected ? appointment__date.toDateString() : 'Pick a Date'}</Text>
                                 <View>
                                     <DateIcon />
                                 </View>
                             </Card>
                         </TouchableWithoutFeedback>
 
-                        <TouchableWithoutFeedback onPress={this.datepicker}>
+                        <TouchableWithoutFeedback onPress={this.timepicker}>
                             <Card style={[styles.date__card, styles.cardStyle]}>
-                                <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>Pick a Time</Text>
+                                <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.state.timeSelected ? appointment__date.toTimeString() : 'Pick a Time'}</Text>
                                 <View>
                                     <TimeIcon />
                                 </View>
                             </Card>
                         </TouchableWithoutFeedback>
 
-                        <TouchableWithoutFeedback onPress={this.datepicker}>
+                        <Card style={[styles.Input___shadow]}>
+                            <Item>
+                                <Input
+                                    onChangeText={e => this.props.updateLocation(e)}
+                                    style={{ fontFamily: fonts.bold, fontSize: 14, color: "#979797", }}
+                                    placeholderTextColor={"#979797"}
+                                    placeholder='Pick your Location' />
+                            </Item>
+                        </Card>
+                       
+                        {/* <TouchableWithoutFeedback onPress={this.datepicker}>
                             <Card style={[styles.date__card, styles.cardStyle]}>
                                 <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>Pick your Location</Text>
                                 <View>
                                     <LocationIcon />
                                 </View>
                             </Card>
-                        </TouchableWithoutFeedback>
+                        </TouchableWithoutFeedback> */}
 
                         <View style={{ paddingVertical: 15, marginTop: 20, }}>
                             <Button
-                                onPress={() => this.props.navigation.navigate('NoDebit')}
+                                onPress={() => this.props.navigation.navigate('Payment', { styler: styler__data, totalAmt })}
                                 btnTxt={"Pay and Confirm"}
                                 size={"lg"}
                                 btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
@@ -254,13 +261,8 @@ class ServiceDetails extends React.Component {
                                 btnTxtStyles={{ color: colors.black, fontFamily: fonts.bold }}
                             />
                         </View>
-                    </View>
+                    </ScrollView>
                 </Modal>
-                {show && <DateTimePicker value={date}
-                    mode={mode}
-                    is24Hour={true}
-                    display="default"
-                    onChange={this.setDate} />}
             </View>
         )
     }
@@ -287,15 +289,16 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     Input___shadow: {
+        marginTop: 10,
         borderWidth: 1,
-        borderRadius: 2,
+        borderRadius: 5,
         borderColor: '#ddd',
-        // borderBottomWidth: 0,
+        borderBottomWidth: 0,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.6,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
         shadowRadius: 2,
-        elevation: 2,
+        elevation: 5,
     },
     date__card: {
         padding: 15,
@@ -309,6 +312,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     services: state.services,
     styler: state.styler,
+    appointment__date: state.booking.date,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

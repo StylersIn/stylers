@@ -3,16 +3,20 @@ import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
 import Component from '../screens/Home';
+import { AppointmentIcon } from '../navigation/assets';
 
 // const Home = (props) => <Component {...props} />
 class Home extends React.Component {
     state = {
         isProcessing: true
     }
+    static navigationOptions = {
+        drawerIcon: ({ tintColor }) => (
+            <AppointmentIcon tintColor={"none"} />
+        )
+    }
     componentDidMount() {
-        setTimeout(() => {
-            this.props.listService();
-        }, 3000);
+        this.props.listService();
     }
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.service__list && nextProps.service__list !== this.props.service__list) {

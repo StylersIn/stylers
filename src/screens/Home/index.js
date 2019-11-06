@@ -23,13 +23,15 @@ class Home extends React.Component {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 {/* <ScrollView contentContainerStyle={{ flexGrow: 1, }}> */}
-                    <View style={styles.container}>
-                        <Header
-                            title={"Browse Services"}
-                        />
-                        <GenderList {...this.props} />
-                        <ServiceList {...this.props} />
-                    </View>
+                <View style={styles.container}>
+                    <Header
+                        search={true}
+                        hamburger={true}
+                        title={"Browse Services"}
+                    />
+                    <GenderList {...this.props} />
+                    <ServiceList {...this.props} />
+                </View>
                 {/* </ScrollView> */}
             </SafeAreaView>
         )
