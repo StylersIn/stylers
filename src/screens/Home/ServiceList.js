@@ -39,7 +39,8 @@ const ServiceList = (props) => {
                                 activeOpacity={0.7}>
                                 <Image
                                     style={styles.img}
-                                    source={eye__lashes} />
+                                    loadingIndicatorSource={true}
+                                    source={{ uri: item.imageUrl }} />
                                 <View style={styles.overlay} />
                                 <View style={{ position: "relative", bottom: "50%" }}>
                                     <Text style={styles.genderTxt}>{item.name}</Text>

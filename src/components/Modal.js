@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         flex: 1,
         zIndex: 200,
+        elevation: 500,
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'space-around',

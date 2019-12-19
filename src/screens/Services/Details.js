@@ -4,6 +4,9 @@ import {
     StyleSheet,
     Image,
     TouchableOpacity,
+    TouchableWithoutFeedback,
+    ScrollView,
+    Linking,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -18,9 +21,8 @@ import {
     Input,
 } from 'native-base';
 import Button from '../../components/Button';
-import { fonts, colors } from '../../constants/DefaultProps';
+import { fonts, colors, toastType } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
-import { TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import StylerServiceList from './StylerServiceList';
@@ -30,6 +32,8 @@ import { DateIcon, TimeIcon, LocationIcon } from './ServiceAssets';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getRating, calcTotalPrice } from '../../utils/stylersUtils';
 import moment from 'moment';
+import Reviews from './Reviews';
+import ShowToast from '../../components/ShowToast';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -84,6 +88,35 @@ class ServiceDetails extends React.Component {
         this.props.updateSelectedOption(serviceId, type, option);
     }
 
+    pay = () => {
+        const { navigation, styler, } = this.props;
+        const styler__data = navigation.getParam('styler', '');
+        const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
+        if (this.state.dateSelected && this.props.selectedAddress && this.props.selectedAddress.name) {
+            return this.props.navigation.navigate('Payment', { styler: styler__data, totalAmt })
+        }
+        this.showToast('Please select valid appointment credentials', toastType.danger);
+    }
+
+    scheduleAppointment = () => {
+        const { navigation, styler, } = this.props;
+        const styler__data = navigation.getParam('styler', '');
+        const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
+        if (totalAmt === 0) {
+            this.showToast('Please select a service', toastType.danger);
+        } else {
+            this.setState({ isVisible: !this.state.isVisible })
+        }
+    }
+
+    showToast = (text, type) => {
+        ShowToast(text, type);
+    }
+
+    openWhatsApp = () => {
+        Linking.openURL('whatsapp://send?text=hello&phone=08163237965')
+    }
+
     render() {
         const { show, date, mode } = this.state;
         const { navigation, styler, appointment__date, } = this.props;
@@ -117,7 +150,7 @@ class ServiceDetails extends React.Component {
                             <Rating
                                 type='star'
                                 ratingCount={5}
-                                startingValue={getRating(styler__data.ratings)}
+                                startingValue={styler__data.ratings.length > 0 ? getRating(styler__data.ratings) : 0}
                                 ratingColor={"#E6750C"}
                                 ratingTextColor={"#E6750C"}
                                 ratingBackgroundColor={"#E6750C"}
@@ -126,34 +159,15 @@ class ServiceDetails extends React.Component {
                                 onFinishRating={this.ratingCompleted}
                             />
                         </View>
-                        <Text style={{ fontFamily: fonts.medium, textDecorationLine: 'underline', }}>Send Message</Text>
+                        <TouchableOpacity onPress={this.openWhatsApp}>
+                            <Text style={{ fontFamily: fonts.medium, textDecorationLine: 'underline', }}>Send Message</Text>
+                        </TouchableOpacity>
 
-                        <View style={{ marginTop: 20 }}>
-                            <Text style={{ fontFamily: fonts.bold, fontSize: 18 }}>Reviews</Text>
-                            {!styler__data.review.length ? <Text style={{ fontSize: 12, color: '#bbb' }}>No Reviews yet!</Text> : <Card style={styles.cardStyle}>
-                                <CardItem>
-                                    <Body>
-                                        <View style={{ flexDirection: "row" }}>
-                                            <Text style={{ fontFamily: fonts.bold, fontSize: 15 }}>{styler__data.review[0].userId.name}</Text>
-                                            <Text style={{ paddingLeft: 10, fontSize: 10, color: "#979797", marginTop: 4, }}>{moment(styler__data.review[0].CreatedAt).fromNow()}</Text>
-                                        </View>
-                                        <View style={{ marginVertical: 7, flexDirection: "row", }}>
-                                            <Rating
-                                                type='star'
-                                                ratingCount={3}
-                                                imageSize={14}
-                                                showRating={false}
-                                                onFinishRating={this.ratingCompleted}
-                                            />
-                                        </View>
-                                        <Text style={{ fontFamily: fonts.medium, fontSize: 12 }}>{styler__data.review[0].message}</Text>
-                                        <Text style={{ alignSelf: "flex-end", fontSize: 11, fontStyle: "italic", color: "#1E1C95", }}>All Reviews</Text>
-                                    </Body>
-                                </CardItem>
-                            </Card>}
-                        </View>
+                        <Reviews
+                            styler__data={styler__data}
+                        />
 
-                        <StylerServiceList {...this.props}
+                        <StylerServiceList
                             styler={styler__data}
                             selected={styler.selectedService || []}
                             onSelectService={this.selectService}
@@ -165,7 +179,7 @@ class ServiceDetails extends React.Component {
 
                         <View style={{ marginVertical: 30, marginBottom: 20, }}>
                             <Button
-                                onPress={() => this.setState({ isVisible: !this.state.isVisible })}
+                                onPress={this.scheduleAppointment}
                                 btnTxt={"Schedule Appointment"}
                                 size={"lg"}
                                 btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
@@ -186,21 +200,6 @@ class ServiceDetails extends React.Component {
                                 <Icon style={{ color: colors.danger }} name="ios-close-circle-outline" />
                             </TouchableOpacity>
                         </View>}
-                        {/* <DatePicker
-                            defaultDate={new Date(2018, 4, 4)}
-                            minimumDate={new Date(2018, 1, 1)}
-                            maximumDate={new Date(2018, 12, 31)}
-                            locale={"en"}
-                            timeZoneOffsetInMinutes={undefined}
-                            modalTransparent={false}
-                            animationType={"fade"}
-                            androidMode={"default"}
-                            placeHolderText="Select date"
-                            textStyle={{ color: "green" }}
-                            placeHolderTextStyle={{ color: "#d3d3d3" }}
-                            onDateChange={this.setDate}
-                            disabled={false}
-                        /> */}
                         {show && <DateTimePicker value={date}
                             mode={mode}
                             is24Hour={true}
@@ -208,7 +207,7 @@ class ServiceDetails extends React.Component {
                             onChange={this.setDate} />}
                         <Text style={{ fontFamily: fonts.bold, fontSize: 20, textAlign: "center", padding: 15, }}>{`NGN${totalAmt}`}</Text>
                         <TouchableWithoutFeedback onPress={this.datepicker}>
-                            <Card style={[styles.date__card, styles.cardStyle]}>
+                            <Card style={[styles.date__card, styles.Input___shadow]}>
                                 <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.state.dateSelected ? appointment__date.toDateString() : 'Pick a Date'}</Text>
                                 <View>
                                     <DateIcon />
@@ -217,7 +216,7 @@ class ServiceDetails extends React.Component {
                         </TouchableWithoutFeedback>
 
                         <TouchableWithoutFeedback onPress={this.timepicker}>
-                            <Card style={[styles.date__card, styles.cardStyle]}>
+                            <Card style={[styles.date__card, styles.Input___shadow]}>
                                 <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.state.timeSelected ? appointment__date.toTimeString() : 'Pick a Time'}</Text>
                                 <View>
                                     <TimeIcon />
@@ -228,12 +227,16 @@ class ServiceDetails extends React.Component {
                         <Card style={[styles.Input___shadow]}>
                             <Item>
                                 <Input
-                                    onChangeText={e => this.props.updateLocation(e)}
-                                    style={{ fontFamily: fonts.bold, fontSize: 14, color: "#979797", }}
+                                    value={this.props.selectedAddress && this.props.selectedAddress.name}
+                                    onFocus={() => this.props.navigation.navigate('MapView')}
+                                    style={{ fontFamily: fonts.bold, fontSize: 14, color: "#979797", marginLeft: 7, }}
                                     placeholderTextColor={"#979797"}
                                     placeholder='Pick your Location' />
                             </Item>
                         </Card>
+                        <View style={{ alignSelf: 'flex-end' }}>
+                            <Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>Use current location</Text>
+                        </View>
                        
                         {/* <TouchableWithoutFeedback onPress={this.datepicker}>
                             <Card style={[styles.date__card, styles.cardStyle]}>
@@ -246,7 +249,7 @@ class ServiceDetails extends React.Component {
 
                         <View style={{ paddingVertical: 15, marginTop: 20, }}>
                             <Button
-                                onPress={() => this.props.navigation.navigate('Payment', { styler: styler__data, totalAmt })}
+                                onPress={this.pay}
                                 btnTxt={"Pay and Confirm"}
                                 size={"lg"}
                                 btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
@@ -313,6 +316,7 @@ const mapStateToProps = state => ({
     services: state.services,
     styler: state.styler,
     appointment__date: state.booking.date,
+    selectedAddress: state.map.selectedAddress,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

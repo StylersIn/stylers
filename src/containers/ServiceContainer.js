@@ -7,7 +7,8 @@ import Component from '../screens/Services';
 // const Services = (props) => <Component {...props} />
 class Services extends React.Component {
     state = {
-        isProcessing: true
+        isProcessing: true,
+        // serviceId: '',
     }
     componentDidMount() {
         const { navigation } = this.props;
@@ -18,15 +19,21 @@ class Services extends React.Component {
         if (nextProps.stylers && nextProps.stylers !== this.props.stylers) {
             this.setState({ isProcessing: false });
         }
+        if (!nextProps.stylers && nextProps.processing === true) {
+            this.setState({ isProcessing: true });
+        }
     }
     render() {
-        return <Component {...this.props} {...this.state} />
+        const { navigation } = this.props;
+        const service = navigation.getParam('service', '');
+        return <Component {...this.props} {...this.state} serviceId={service._id} />
     }
 }
 
 const mapStateToProps = state => ({
     service: state.service,
     stylers: state.styler.service__stylers,
+    processing: state.styler.isProcessing,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

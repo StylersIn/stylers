@@ -2,41 +2,87 @@ import React from 'react';
 import {
     View,
     StyleSheet,
-    Image,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
-import * as actionAcreators from '../../actions';
 import { connect } from 'react-redux';
+import * as actionCreators from '../../actions';
+import { Form, Item, Label, Input } from 'native-base';
+import Text from '../../config/AppText';
+import { fonts, colors, toastType } from '../../constants/DefaultProps';
+import Button from '../../components/Button';
+import { SafeAreaView } from 'react-navigation';
+import OTPTextView from 'react-native-otp-textinput';
+import NavigationService from '../../navigation/NavigationService';
+import ShowToast from '../../components/ShowToast';
 
-class Login extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isProcessing: false,
-            toast: false,
-            toastMsg: '',
-            toastType: '',
+class Verify extends React.Component {
+    state = {
+        token: '',
+        isProcessing: false,
+        mobile: undefined,
+    }
+
+    UNSAFE_componentWillReceiveProps(prevProps) {
+        if (prevProps.status && this.props.status !== prevProps.status) {
+            this.props.navigation.dispatch(NavigationService.resetAction('Home'))
+        }
+        if (prevProps.status === false && this.props.status !== prevProps.status) {
+            this.showToast(`Error: ${prevProps.message}`, toastType.danger);
+        }
+        if (prevProps.error && this.props.error !== prevProps.error) {
+            this.showToast(`Error: ${prevProps.error}`, toastType.danger);
         }
     }
 
-    componentDidMount() {
-        this.props.verifyAuth();
+    verify = () => {
+        this.setState({ isProcessing: true, })
+        this.props.verifyAccount({
+            email: this.props.navigation.getParam('email', 'test'),
+            token: this.state.token,
+        })
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
-            this.props.navigation.navigate('Dashboard');
-        }
-        if (nextProps.user.auth__failed && nextProps.user.auth__failed != this.props.user.auth__failed) {
-            this.props.navigation.navigate('Login');
-        }
+    showToast = (text, type) => {
+        ShowToast(text, type);
+        this.setState({ isProcessing: false });
     }
 
     render() {
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, }}>
+                <View style={styles.container}>
+                    <Text style={{ textAlign: 'center', fontFamily: fonts.bold, fontSize: 20, padding: 30, }}>Enter the 4-digit code sent to your email</Text>
 
-            </View>
+                    {/* <Form style={{ width: '100%', marginTop: 50, }}>
+                        <Item floatingLabel>
+                            <Label style={{ fontFamily: fonts.default }}>OTP</Label>
+                            <Input
+                                onChangeText={otp => this.setState({ otp })}
+                                keyboardType={'number-pad'}
+                                maxLength={12}
+                                style={{ fontFamily: fonts.default, fontSize: 16, }}
+                            />
+                        </Item>
+                    </Form> */}
+
+                    <OTPTextView
+                        containerStyle={styles.textInputContainer}
+                        handleTextChange={token => this.setState({ token })}
+                        inputCount={4}
+                        tintColor={colors.pink}
+                        keyboardType="numeric"
+                    />
+                </View>
+                <View style={{ padding: 30, marginVertical: 10, alignItems: 'center', }}>
+                    <Button
+                        onPress={this.verify}
+                        btnTxt={"Verify"}
+                        loading={this.state.isProcessing}
+                        style={{ backgroundColor: colors.black, width: '40%', }}
+                        btnTxtStyles={{ color: '#ffffff', fontFamily: fonts.bold, }}
+                    />
+                </View>
+            </SafeAreaView>
         )
     }
 }
@@ -44,15 +90,21 @@ class Login extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        justifyContent: "center",
+        justifyContent: 'center',
+        padding: 30,
+        alignItems: 'center',
     },
+    textInputContainer: {
+        alignContent: 'center',
+        marginVertical: 50,
+    }
 })
 
 const mapStateToProps = state => ({
-    user: state.user,
+    status: state.user.status,
+    message: state.user.message,
 })
 
-const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Verify);

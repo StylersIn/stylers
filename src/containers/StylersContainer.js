@@ -16,8 +16,10 @@ class Stylers extends React.Component {
 
 const mapStateToProps = state => ({
     home: state.home,
-    stylers: state.stylers,
+    // stylers: state.stylers,
     service__list: state.service.services,
+    stylerService: state.styler.stylerService,
+    updated: state.styler.updated,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

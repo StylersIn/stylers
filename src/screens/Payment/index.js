@@ -26,6 +26,7 @@ import RNPaystack from 'react-native-paystack';
 import config from '../../config';
 import ShowToast from '../../components/ShowToast';
 import NavigationService from '../../navigation/NavigationService';
+import { notify } from '../../services';
 
 RNPaystack.init({ publicKey: config.paystack });
 
@@ -40,6 +41,7 @@ class Payment extends React.Component {
 
     UNSAFE_componentWillReceiveProps(prevProps) {
         if (prevProps.booked && prevProps.booked !== this.props.booked) {
+            notify('Payment Successful', 'You have successfully made payment and your request is being processed.');
             this.setState({ isVisible: true });
         }
     }
@@ -66,8 +68,9 @@ class Payment extends React.Component {
                         stylerId: styler._id,
                         services: this.props.services,
                         scheduledDate: this.props.date,
-                        location: this.props.location,
                         totalAmount: totalAmount,
+                        streetName: this.props.streetName,
+                        pickUp: this.props.pickUp,
                     }
                     setTimeout(() => {
                         this.props.saveBooking(req);
@@ -77,16 +80,14 @@ class Payment extends React.Component {
             })
             .catch(error => {
                 this.setState({ isProcessing: false })
-                console.log(error); // error is a javascript Error object
-                console.log(error.message);
-                console.log(error.code);
+                this.showToast(`${error.code} ${'\n'} ${error.message}`, toastType.danger, 5000);
             })
 
     }
 
     showToast = (text, type, duration = 0) => {
         ShowToast(text, type, duration);
-        this.setState({ isProcessing: false });
+        // this.setState({ isProcessing: false });
     }
 
     closeModal = () => {
@@ -96,7 +97,7 @@ class Payment extends React.Component {
     render() {
         const { navigation } = this.props;
         let styler = navigation.getParam('styler', '');
-        let totalAmount = navigation.getParam('totalAmt', '');
+        // let totalAmount = navigation.getParam('totalAmt', '');
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView>
@@ -138,6 +139,9 @@ class Payment extends React.Component {
                                                 style={{ fontFamily: fonts.medium, fontSize: 13 }}
                                                 keyboardType={'numeric'}
                                                 maxLength={2}
+                                                returnKeyType={'next'}
+                                                onSubmitEditing={() => { this.yearRef.focus() }}
+                                                blurOnSubmit={false}
                                                 placeholder='Month' />
                                         </Item>
                                     </View>
@@ -145,6 +149,7 @@ class Payment extends React.Component {
                                     <View style={{ width: "48%", }}>
                                         <Item style={styles.input__main} regular>
                                             <Input
+                                                ref={(e) => this.yearRef = e}
                                                 onChangeText={e => this.expiryYear = e}
                                                 style={{ fontFamily: fonts.medium, fontSize: 13 }}
                                                 keyboardType={'numeric'}
@@ -155,7 +160,7 @@ class Payment extends React.Component {
                                 </View>
                             </View>
 
-                            <View style={{ marginTop: 10, }}>
+                            {/* <View style={{ marginTop: 10, }}>
                                 <Text style={{ fontFamily: fonts.medium }}>Card Holder Name</Text>
                                 <Item style={styles.input__main} regular>
                                     <Input
@@ -163,7 +168,7 @@ class Payment extends React.Component {
                                         style={{ fontFamily: fonts.medium, fontSize: 13 }}
                                         placeholder='Your Name and Surname' />
                                 </Item>
-                            </View>
+                            </View> */}
 
                             <View style={{ marginTop: 10 }}>
                                 <Text style={{ fontFamily: fonts.medium }}>CVV</Text>
@@ -192,23 +197,12 @@ class Payment extends React.Component {
                         </View> */}
 
                         <View style={{ paddingVertical: 20, marginTop: 20, zIndex: -1, }}>
-                            {/* <PaystackWebView
-                                buttonText='Pay Now'
-                                paystackKey={config.paystack}
-                                amount={120000}
-                                billingEmail='ayoshokz@gmail.com'
-                                billingMobile='08101274387'
-                                billingName='Oluwatobi Shokunbi'
-                                ActivityIndicatorColor='green'
-                                onSuccess={(tranRef) => { console.log(tranRef) }}
-                                onCancel={() => { console.log('something went wrong') }}
-                            /> */}
                             <Button
                                 // onPress={() => this.setState({ isVisible: true })}
                                 onPress={() => this.chargeCard()}
                                 btnTxt={"Confirm"}
                                 size={"lg"}
-                                loading={this.state.isProcessing}
+                                loading={this.state.isProcessing ? true : false}
                                 btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                             />
                         </View>

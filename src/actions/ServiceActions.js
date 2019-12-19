@@ -4,10 +4,11 @@ import {
     RSAA
 } from 'redux-api-middleware';
 import config from '../config';
+const BASE_URL = () => `${config.api.host}/api/services`;
 
 export const addService = credentials => ({
     [RSAA]: {
-        endpoint: `${config.api.host}/api/service`,
+        endpoint: `${BASE_URL()}`,
         method: 'POST',
         types: [
             constants.ADD_SERVICE,
@@ -38,7 +39,7 @@ export const addService = credentials => ({
 
 export const listService = (pageSize = 10, pageNumber = 1) => ({
     [RSAA]: {
-        endpoint: `${config.api.host}/api/services/${pageSize}/${pageNumber}`,
+        endpoint: `${BASE_URL()}/${pageSize}/${pageNumber}`,
         method: 'GET',
         types: [
             constants.LIST_SERVICE,

@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { fonts, colors } from '../../constants/DefaultProps';
+import { fonts, colors, imgUrl } from '../../constants/DefaultProps';
 import {
     Icon,
 } from 'native-base';
@@ -29,25 +29,32 @@ const GenderList = (props) => {
                         <View>
                             <Image
                                 style={styles.img}
-                                source={selected.img} />
+                                source={{ uri: selected.imageUrl || imgUrl }} />
                             <View style={styles.overlay}>
                                 <TouchableOpacity
-                                    onPress={() => props.removeSelected(i)}
-                                    activeOpacity={0.7}>
-                                    <View style={{
+                                    style={{
+                                        position: "absolute",
                                         height: 25,
                                         width: 25,
                                         borderRadius: 25 / 2,
                                         backgroundColor: "#ffffff",
                                         marginTop: 4,
-                                        position: "absolute",
+                                        elevation: 500,
                                         alignSelf: "center",
                                         alignItems: "center",
-                                    }}>
-                                        <Icon style={{ textAlign: "center", marginTop: -2, }} type="Ionicons" name="ios-close" />
-                                    </View>
+                                    }}
+                                    onPress={() => props.removeSelected(selected.serviceId)}
+                                    activeOpacity={0.7}>
+                                    <Icon style={{ textAlign: "center", marginTop: -2, }} type="Ionicons" name="ios-close" />
                                 </TouchableOpacity>
-                                <Text style={styles.genderTxt}>{selected.name}</Text>
+                                <View style={styles.overlayTxtBody}>
+                                    <Text style={styles.overlayTxtMain}>{selected.name}</Text>
+                                    <View style={{ marginTop: 20 }}>
+                                        <Text style={styles.overlayTxtSub}>{`adult/NGN${selected.adult}`}</Text>
+                                        <Text style={styles.overlayTxtSub}>{`child/NGN${selected.child}`}</Text>
+                                    </View>
+                                </View>
+
                             </View>
 
                         </View>
@@ -73,16 +80,24 @@ const styles = StyleSheet.create({
         height: 150,
         borderRadius: 5,
         resizeMode: "cover",
-        backgroundColor: "red"
+        // backgroundColor: "red"
     },
-    genderTxt: {
+    overlayTxtBody: {
         flex: 1,
-        flexWrap: "wrap",
         position: "relative",
         top: "50%",
-        fontFamily: fonts.bold,
+        alignItems: 'center',
+    },
+    overlayTxtMain: {
         fontSize: 14,
         color: colors.white,
+        fontFamily: fonts.bold,
+        textAlign: "center"
+    },
+    overlayTxtSub: {
+        fontSize: 10,
+        color: colors.white,
+        fontFamily: fonts.bold,
         textAlign: "center"
     },
     overlay: {

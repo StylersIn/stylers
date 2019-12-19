@@ -3,6 +3,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 let initialState = {
     authenticated: false,
+    message: undefined,
+    error: undefined,
+    status: undefined,
 }
 
 export default function userReducer(state = initialState, action) {
@@ -11,7 +14,7 @@ export default function userReducer(state = initialState, action) {
             return {
                 ...state,
                 authenticated: true,
-                current: action.payload
+                current: action.payload.response
             }
         case constants.INITIALIZE_FAILURE:
             return {
@@ -23,6 +26,7 @@ export default function userReducer(state = initialState, action) {
                 authenticated: false,
                 error: undefined,
                 status: undefined,
+                message: undefined,
             })
         case constants.AUTH_USER_SUCCESS:
             if (!action.payload.response.success) {
@@ -43,9 +47,26 @@ export default function userReducer(state = initialState, action) {
             }
         case constants.AUTH_USER_FAILURE:
             return Object.assign({}, state, {
-                error: `${action.payload.error}`,
+                error: `${action.payload && action.payload.message}`,
                 authenticated: false
             })
+        case constants.VERIFY_ACCOUNT:
+            return {
+                ...state,
+                ...initialState,
+            }
+        case constants.VERIFY_ACCOUNT_SUCCESS:
+            return {
+                ...state,
+                status: action.payload.response.status,
+                message: action.payload.response.message,
+            }
+        case constants.VERIFY_ACCOUNT_FAILURE:
+            return {
+                ...state,
+                status: false,
+                error: action.payload.response.message
+            }
         case constants.CURRENT_USER:
             return Object.assign({}, state, {})
         case constants.LIST_USERS:

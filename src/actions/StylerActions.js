@@ -14,20 +14,51 @@ export const addStyler = credentials => ({
             constants.ADD_STYLER,
             {
                 type: constants.ADD_STYLER_SUCCESS,
-                payload: (action, state, response) => response.json().then(credentials => ({
-                    credentials,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
                 }))
             },
             {
                 type: constants.ADD_STYLER_FAILURE,
                 meta: (action, state, res) => {
                     return {
-                        status: res.status
+                        error: res
                     };
                 }
             }
         ],
         body: JSON.stringify(credentials),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const checkStylerRegStatus = payload => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/register/status`,
+        method: 'GET',
+        types: [
+            constants.STYLER_REG_STATUS,
+            {
+                type: constants.STYLER_REG_STATUS_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.STYLER_REG_STATUS_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        error: res
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(payload),
         options: { timeout: 10000 },
         headers: {
             Accept: "application/json",
@@ -136,3 +167,87 @@ export const updateSelectedService = (serviceId) => {
         }
     }
 }
+
+export const updateStylerService = (services) => {
+    return (dispatch, store) => {
+        let service = store().styler.stylerService || [];
+        if (service.findIndex(e => e.serviceId === services.serviceId) === -1) {
+            dispatch({
+                type: constants.UPDATE_STYLER_SERVICE,
+                payload: service.concat(services)
+            })
+        }
+    }
+}
+
+export const removeStylerService = (serviceId) => {
+    return (dispatch, store) => {
+        let service = store().styler.stylerService || [];
+        let temp = service.filter(c => c.serviceId !== serviceId);
+        dispatch({
+            type: constants.REMOVE_STYLER_SERVICE,
+            payload: temp
+        })
+    }
+}
+
+export const updateStyler = payload => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/update/services`,
+        method: 'PUT',
+        types: [
+            constants.UPDATE_STYLER_PRICE,
+            {
+                type: constants.UPDATE_STYLER_PRICE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.UPDATE_STYLER_PRICE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        error: res
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(payload),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const sortStylersService = (queryString, serviceId) => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/stylers/sort/${queryString}/${serviceId}`,
+        method: 'GET',
+        types: [
+            constants.SORT_STYLER_SERVICE,
+            {
+                type: constants.SORT_STYLER_SERVICE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.SORT_STYLER_SERVICE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});

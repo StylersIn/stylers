@@ -26,6 +26,7 @@ const propTypes = {
     selected: PropTypes.number,
     hamburger: PropTypes.bool,
     search: PropTypes.bool,
+    action: PropTypes.object,
 }
 
 const { width, height } = Dimensions.get('screen');
@@ -33,33 +34,44 @@ const options = ['Rating', 'Location', 'Price'];
 class Header extends React.Component {
     render() {
         return (
-            <View style={{ marginTop: Platform.OS === 'ios' ? 20 : null }}>
+            <View style={{ marginTop: Platform.OS === 'ios' ? 20 : 20 }}>
                 {this.props.hamburger ? <TouchableOpacity
                     onPress={() => NavigationService.toggleDrawer()}
                     activeOpacity={0.7}
                 >
                     <HamburgerIcon />
                 </TouchableOpacity> : null}
-                <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 15, }}>
-                    <View>
-                        <Text style={{ fontFamily: fonts.bold, fontSize: 24, }}>{this.props.title}</Text>
+                <View style={{ marginTop: 15 }}>
+                    <View style={{ alignSelf: 'flex-end' }}>
+                        {this.props.close && <TouchableOpacity
+                            onPress={() => NavigationService.goBack()}
+                            activeOpacity={0.7}>
+                            <Icon
+                                style={{ fontSize: 60, color: "#000000", position: 'relative', bottom: 16, }}
+                                type="Ionicons"
+                                name="ios-close" />
+                        </TouchableOpacity>}
                     </View>
-                    <View style={{ flexDirection: 'row', }}>
-                        <View style={{ marginRight: 15, marginTop: -4, }}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", }}>
+                        <View>
+                            <Text style={{ fontFamily: fonts.bold, fontSize: 24, }}>{this.props.title}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', }}>
+                            <View style={{ marginRight: 15, marginTop: 0, }}>
                             <TouchableOpacity
                                 onPress={() => this.props.logout()}
                                 activeOpacity={0.5}>
                                 <Icon name='ios-log-out' />
                             </TouchableOpacity>
                         </View>
-                        {this.props.list ? <View>
-                            <TouchableOpacity
+                            {this.props.action}
+                            {this.props.list ? <TouchableOpacity
                                 onPress={() => this.props.onChange()}
                                 activeOpacity={0.5}>
                                 <ListIcon />
-                            </TouchableOpacity></View> : null}
-                    </View>
-                    {this.props.showList ? <View style={{ position: "absolute", right: -20, top: 25, zIndex: 1, }}>
+                            </TouchableOpacity> : null}
+                        </View>
+                        {/* {this.props.showList ? <View style={{ position: "absolute", right: -20, top: 25, zIndex: 1000, elevation: 1000, }}>
                         <Card style={styles.cardStyle}>
                             <RadioGroup
                                 size={15}
@@ -77,20 +89,21 @@ class Header extends React.Component {
                                     </RadioButton>)}
                             </RadioGroup>
                         </Card>
+                    </View> : null} */}
+                    </View>
+                    {this.props.search ? <View style={{ zIndex: -1 }}>
+                        <Item style={{ marginTop: 20, borderRadius: 5, backgroundColor: "#C4C4C4", }} regular>
+                            <Icon type="Ionicons" name="ios-search" />
+                            <Input
+                                style={{
+                                    fontFamily: fonts.medium,
+                                    fontSize: 13,
+                                    height: 35,
+                                }}
+                                placeholder='' />
+                        </Item>
                     </View> : null}
                 </View>
-                {this.props.search ? <View style={{ zIndex: -1 }}>
-                    <Item style={{ marginTop: 20, borderRadius: 5, backgroundColor: "#C4C4C4", }} regular>
-                        <Icon type="Ionicons" name="ios-search" />
-                        <Input
-                            style={{
-                                fontFamily: fonts.medium,
-                                fontSize: 13,
-                                height: 35,
-                            }}
-                            placeholder='' />
-                    </Item>
-                </View> : null}
             </View>
         )
     }

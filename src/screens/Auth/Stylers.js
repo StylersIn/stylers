@@ -24,6 +24,7 @@ import ShowToast from '../../components/ShowToast';
 import { SafeAreaView } from 'react-navigation';
 // import Toast from 'react-native-root-toast';
 import { LoginButton, AccessToken } from 'react-native-fbsdk';
+import NavigationService from '../../navigation/NavigationService';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -41,20 +42,11 @@ class Register extends React.Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.styler.styler && nextProps.styler.styler != this.props.styler.styler) {
-            this.props.navigation.navigate('StylersCompleteReg')
+            this.props.navigation.dispatch(NavigationService.resetAction('StylersCompleteReg'))
         }
         if (nextProps.styler.error && nextProps.styler.error != this.props.styler.error) {
             this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);
         }
-        // if (nextProps.resident.verified && nextProps.resident.verified != this.props.resident.verified) {
-        //     setTimeout(() => {
-        //         if (nextProps.resident.status === false) {
-        //             this.props.navigation.dispatch(resetAction('OnBoard'));
-        //         } else {
-        //             this.props.navigation.dispatch(resetAction('Dashboard'));
-        //         }
-        //     }, 1000);
-        // }
     }
     initUser(token) {
         fetch('https://graph.facebook.com/v2.5/me?fields=email,name,friends&access_token=' + token)
@@ -83,20 +75,22 @@ class Register extends React.Component {
             address = this.address,
             description = this.description,
             password = this.password,
-            confirmPassword = this.confirmPassword;
+            confirmPassword = this.confirmPassword,
+            startingPrice = this.startingPrice;
 
-        if (!name || !email || !phone || !address || !password) {
+        if (!name || !email || !phone || !address || !password || !startingPrice) {
             this.showToast('Invalid login credentials!', toastType.danger);
         } else if (password !== confirmPassword) {
             this.showToast('Password and Confirm Password does not match', toastType.danger);
         } else {
             return this.props.addStyler({
-                fullName: name,
+                name: name,
                 email: email,
                 phoneNumber: phone,
                 address: address,
                 description: description,
                 password: password,
+                startingPrice: startingPrice,
             })
         }
     }
@@ -152,6 +146,12 @@ class Register extends React.Component {
                     </Form>
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
+                            onChangeText={e => this.startingPrice = e}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
+                            placeholder='Starting Price' />
+                    </Item>
+                    <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
+                        <Input
                             onChangeText={e => this.password = e}
                             secureTextEntry={true}
                             style={{ fontFamily: fonts.medium, fontSize: 13 }}
@@ -168,7 +168,7 @@ class Register extends React.Component {
                     <View style={{ marginTop: 20 }}>
                         <Button
                             // onPress={this.addStyler}
-                            onPress={this.handleClick.bind(this)}
+                            onPress={this.addStyler}
                             btnTxt={"SIGN UP"}
                             size={"lg"}
                             loading={this.state.isProcessing ? true : false}
@@ -182,6 +182,7 @@ class Register extends React.Component {
                     </View>
 
                     <LoginButton
+                        style={{ height: 48, width: '100%', backgroundColor: colors.facebook }}
                         onLoginFinished={
                             (error, result) => {
                                 if (error) {
@@ -200,17 +201,19 @@ class Register extends React.Component {
                             }
                         }
                         onLogoutFinished={() => console.log("logout.")} />
-                    <View>
+                    {/* <View>
                         <Button
-                            onPress={this.handleClick.bind(this)}
+                            // onPress={this.handleClick.bind(this)}
+                            // onPress={() => alert('Sorry, we are currently fixing this module!')}
                             size={"lg"}
                             Icon={<FacebookIcon />}
                             btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
                         />
-                    </View>
+                    </View> */}
                     <View style={{ marginTop: 20 }}>
                         <Button
-                            onPress={this.handleClick.bind(this)}
+                            // onPress={this.handleClick.bind(this)}
+                            // onPress={() => alert('Sorry, we are currently fixing this module!')}
                             size={"lg"}
                             Icon={<GoogleIcon />}
                             btnTxtStyles={{ color: "white", fontFamily: fonts.default }}

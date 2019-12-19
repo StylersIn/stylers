@@ -3,12 +3,13 @@ import {
     View,
     StyleSheet,
     TouchableOpacity,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import {
     Card,
     CardItem,
 } from 'native-base';
-import { fonts, colors } from '../../constants/DefaultProps';
+import { fonts, colors, roles } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { BarberIcon } from '../Services/ServiceAssets';
 import { EmptyAppointment } from './AppointmentAssets';
@@ -19,18 +20,19 @@ export default function (props) {
     return (
         <View style={{ flex: 1, }}>
             <View style={{ flex: 1, marginTop: 20, }}>
-                {!props.isProcessing && props.bookings.length === 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                {!props.isProcessing && props.appointments.length === 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                     <EmptyAppointment />
                     <Text style={{ fontSize: 20, paddingVertical: 40, fontFamily: fonts.medium, }}>No scheduled appointments</Text>
                 </View>}
                 {!props.isProcessing ? <View>
-                    <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text>
-                    {props.bookings.map((appointment, i) => <TouchableOpacity
+                    {props.appointments.length && props.role === roles.user ? <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text> : null}
+                    {props.appointments.length && props.role === roles.styler ? <Text style={{ fontSize: 18, fontFamily: fonts.bold }}>Pending Appointments</Text> : null}
+                    {props.appointments.map((appointment, i) => <TouchableWithoutFeedback
                         key={i}
-                        onPress={() => props.showDetails()}
+                        onPress={() => props.showDetails(appointment)}
                         activeOpacity={0.7}
                     >
-                        <Card style={styles.cardStyle}>
+                        <Card style={styles.Input___shadow}>
                             <CardItem style={{ borderRadius: 4 }}>
                                 <View style={{ borderRightWidth: 0.5, borderColor: "#979797", alignItems: "center", paddingRight: 10, }}>
                                     <Text style={{ fontFamily: fonts.bold, fontSize: 18, paddingVertical: 2, }}>08</Text>
@@ -38,16 +40,17 @@ export default function (props) {
                                     <Text style={{ fontSize: 12, paddingVertical: 2, }}>3:00PM</Text>
                                 </View>
                                 <View style={{ paddingHorizontal: 10, }}>
-                                    {appointment.services.map((r, key) => (<Text key={key} style={{ fontFamily: fonts.bold }}>{r.serviceId && r.serviceId.name}</Text>))}
+                                    {/* {appointment.services.map((r, key) => (<Text key={key} style={{ fontFamily: fonts.bold }}>{r.serviceId && r.serviceId.name}</Text>))} */}
+                                    <Text style={{ fontFamily: fonts.bold }}>{appointment.services[0].serviceId.name}</Text>
                                     <Text style={{ fontSize: 10, fontFamily: fonts.medium, paddingVertical: 5, }}>{appointment.stylerId.name} </Text>
-                                    <Text style={{ fontSize: 10, }}>{appointment.location}</Text>
+                                    <Text style={{ fontSize: 10, }}>{appointment.streetName}</Text>
                                 </View>
                                 <View style={{ position: "absolute", top: 10, right: 10, }}>
                                     <BarberIcon />
                                 </View>
                             </CardItem>
                         </Card>
-                    </TouchableOpacity>)}
+                    </TouchableWithoutFeedback>)}
                 </View> : Loader()}
             </View>
         </View>
@@ -74,5 +77,20 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
         marginTop: 10,
+    },
+    Input___shadow: {
+        marginTop: 10,
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: '#000000',
+        borderBottomWidth: 0,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 2,
+        elevation: 5,
+        borderLeftWidth: 12,
+        borderLeftColor: "#000000",
+        borderTopColor: 'transparent',
     },
 });

@@ -25,6 +25,12 @@ function toggleDrawer(routeName, params) {
     );
 }
 
+function goBack() {
+    _navigator.dispatch(
+        NavigationActions.back()
+    );
+}
+
 const resetAction = (routeName) => StackActions.reset({
     index: 0,
     actions: [NavigationActions.navigate({ routeName })],
@@ -41,4 +47,5 @@ export default {
     setTopLevelNavigator,
     resetAction,
     toggleDrawer,
+    goBack,
 };

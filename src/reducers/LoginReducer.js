@@ -22,6 +22,25 @@ export default function loginReducer(state = {}, action) {
                 error: `Login failed due to ${action.payload.status}`,
                 isProcessing: false
             })
+
+        case constants.VERIFY_SOCIAL:
+            return Object.assign({}, state, {
+                status: undefined,
+                isProcessing: true,
+                error: undefined
+            })
+        case constants.VERIFY_SOCIAL_SUCCESS:
+            return {
+                ...state,
+                isProcessing: false,
+                status: action.payload.response.status,
+            };
+        case constants.VERIFY_SOCIAL_FAILURE:
+            return Object.assign({}, state, {
+                error: action.payload,
+                isProcessing: false,
+                status: undefined,
+            })
         case constants.LOGOUT:
             return Object.assign({}, state, {})
         default:

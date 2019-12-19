@@ -4,16 +4,21 @@ import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
 import Component from '../screens/Appointments';
 import { AppointmentIcon } from '../navigation/assets';
+import { roles } from '../constants/DefaultProps';
 
 class Appointments extends React.Component {
     state = {
         isProcessing: true
     }
     componentDidMount() {
-        this.props.listBookings();
+        if (this.props.role === roles.user) {
+            this.props.listAppointments();
+        } else if (this.props.role === roles.styler) {
+            this.props.listStylerAppointments();
+        } else { }
     }
     UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.bookings && nextProps.bookings !== this.props.bookings) {
+        if (nextProps.appointments && nextProps.appointments !== this.props.appointments) {
             this.setState({ isProcessing: false });
         }
     }
@@ -30,7 +35,9 @@ class Appointments extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    bookings: state.booking.bookings,
+    appointments: state.appointment.appointments,
+    role: state.user.current && state.user.current.role,
+    username: state.user.current && state.user.current.name.split(' '),
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

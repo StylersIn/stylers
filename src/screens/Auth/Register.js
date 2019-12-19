@@ -30,6 +30,8 @@ class Register extends React.Component {
         super(props);
         this.state = {
             isProcessing: false,
+            validationErr: false,
+            pwMatchErr: false,
         }
     }
 
@@ -52,9 +54,9 @@ class Register extends React.Component {
         let password = this.password;
         let confirmPassword = this.confirmPassword;
         if (!name || !email || !password || !phoneNumber || !gender) {
-            this.showToast('Invalid user credentials!', toastType.danger);
+            this.setState({ validationErr: true, isProcessing: false, })
         } else if (password !== confirmPassword) {
-            this.showToast('Password does not match with confirm password', toastType.danger);
+            this.setState({ pwMatchErr: true, isProcessing: false, })
         } else {
             return this.props.doRegister({
                 email,
@@ -82,27 +84,41 @@ class Register extends React.Component {
                     <View style={{ paddingVertical: 20, }}>
                         <Text style={{ fontFamily: fonts.bold, fontSize: 24, lineHeight: 30 }} >Create {"\n"}Your Account</Text>
                     </View>
-                    <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
+                    {this.state.validationErr && <Text style={{ color: colors.danger }}>One or more fields are missing</Text>}
+                    {this.state.pwMatchErr && <Text style={{ color: colors.danger }}>Password and confirm password does not match</Text>}
+                    <Item style={{ marginTop: 10, borderRadius: 5, }}
+                        error={(this.name === undefined || this.name === '') && this.state.validationErr}
+                        regular>
                         <Input
                             onChangeText={e => this.name = e}
-                            style={{ fontFamily: fonts.medium
-                                , fontSize: 13 }}
+                            style={{
+                                fontFamily: fonts.medium
+                                , fontSize: 13
+                            }}
                             placeholder='Your name' />
                     </Item>
-                    <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
+                    <Item style={{ marginTop: 10, borderRadius: 5, }}
+                        error={(this.email === undefined || this.email === '') && this.state.validationErr}
+                        regular>
                         <Input
                             onChangeText={e => this.email = e}
                             autoCapitalize={'none'}
-                            style={{ fontFamily: fonts.medium
-                                , fontSize: 13 }}
+                            style={{
+                                fontFamily: fonts.medium
+                                , fontSize: 13
+                            }}
                             placeholder='Email' />
                     </Item>
-                    <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
+                    <Item style={{ marginTop: 10, borderRadius: 5, }}
+                        error={(this.phone === undefined || this.phone === '') && this.state.validationErr}
+                        regular>
                         <Input
                             onChangeText={e => this.phone = e}
                             keyboardType={'numeric'}
-                            style={{ fontFamily: fonts.medium
-                                , fontSize: 13 }}
+                            style={{
+                                fontFamily: fonts.medium
+                                , fontSize: 13
+                            }}
                             placeholder='Phone' />
                     </Item>
                     <View style={{ marginVertical: 8 }}>
@@ -126,20 +142,28 @@ class Register extends React.Component {
                             </RadioButton>
                         </RadioGroup>
                     </View>
-                    <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
+                    <Item style={{ marginTop: 10, borderRadius: 5, }}
+                        error={(this.password === undefined || this.password === '') && this.state.validationErr}
+                        regular>
                         <Input
                             secureTextEntry={true}
                             onChangeText={e => this.password = e}
-                            style={{ fontFamily: fonts.medium
-                                , fontSize: 13 }}
+                            style={{
+                                fontFamily: fonts.medium
+                                , fontSize: 13
+                            }}
                             placeholder='Password' />
                     </Item>
-                    <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
+                    <Item style={{ marginTop: 10, borderRadius: 5, }}
+                        error={(this.password !== this.confirmPassword) && this.state.validationErr}
+                        regular>
                         <Input
                             secureTextEntry={true}
                             onChangeText={e => this.confirmPassword = e}
-                            style={{ fontFamily: fonts.medium
-                                , fontSize: 13 }}
+                            style={{
+                                fontFamily: fonts.medium
+                                , fontSize: 13
+                            }}
                             placeholder='Re-Password' />
                     </Item>
 
@@ -150,8 +174,9 @@ class Register extends React.Component {
                             size={"lg"}
                             loading={this.state.isProcessing ? true : false}
                             styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
-                            btnTxtStyles={{ color: colors.black, fontFamily: fonts.medium
-                             }}
+                            btnTxtStyles={{
+                                color: colors.black, fontFamily: fonts.medium
+                            }}
                         />
                     </View>
 
@@ -161,17 +186,21 @@ class Register extends React.Component {
 
                     <View>
                         <Button
-                            onPress={this.handleClick.bind(this)}
+                            // onPress={this.handleClick.bind(this)}
+                            onPress={() => alert('Sorry, we are currently fixing this module!')}
                             size={"lg"}
                             Icon={<FacebookIcon />}
+                            styles={{ backgroundColor: colors.facebook }}
                             btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
                         />
                     </View>
                     <View style={{ marginTop: 20 }}>
                         <Button
-                            onPress={this.handleClick.bind(this)}
+                            // onPress={this.handleClick.bind(this)}
+                            onPress={() => alert('Sorry, we are currently fixing this module!')}
                             size={"lg"}
                             Icon={<GoogleIcon />}
+                            styles={{ backgroundColor: colors.google }}
                             btnTxtStyles={{ color: "white", fontFamily: fonts.default }}
                         />
                     </View>

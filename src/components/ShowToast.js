@@ -14,9 +14,9 @@ const ShowToast = (text, type, duration = 2000) => {
 
     let toast = Toast.show(text, {
         duration: Toast.durations.LONG,
-        position: Toast.positions.CENTER,
+        position: Toast.positions.TOP,
         backgroundColor: bgColor,
-        containerStyle: { width: '80%' },
+        containerStyle: { width: '80%', marginTop: Platform.OS === 'ios' ? 50 : null },
         textStyle: { fontFamily: fonts.medium, },
         shadow: false,
         animation: true,

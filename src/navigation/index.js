@@ -3,12 +3,11 @@ import { View, StyleSheet, } from 'react-native';
 import { createAppContainer, NavigationActions, StackActions } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator, DrawerNavigatorItems } from "react-navigation-drawer";
-import { Container, Header, Body, Image, Thumbnail, Content, Icon } from "native-base";
+import { Container, Content, } from "native-base";
 import AuthScreen from '../screens/Auth';
 import LoginScreen from '../screens/Auth/Login';
 import RegisterScreen from '../screens/Auth/Register';
 import HomeScreen from '../containers/HomeContainer';
-import { HamburgerIcon } from './assets';
 import ServiceScreen from '../containers/ServiceContainer';
 import ServiceDetails from '../screens/Services/Details';
 import PaymentScreen from '../containers/PaymentContainer';
@@ -21,6 +20,13 @@ import { colors } from '../constants/DefaultProps';
 import Text from '../config/AppText';
 import InitializeApp from '../screens/InitializeApp';
 import GiftCardScreen from '../screens/GiftCard';
+import RequestScreen from '../containers/RequestContainer';
+import MyServices from '../screens/Stylers/MyServices';
+import FbRegisterScreen from '../screens/Auth/FbRegister';
+import VerifyScreen from '../screens/Auth/Verify';
+import MapViewScreen from '../containers/MapContainer';
+import StylerMapScreen from '../screens/MapView/StylerMap';
+import SettingsScreen from '../screens/Settings';
 
 const drawerContentComponents = (props) => (
     <Container style={{ backgroundColor: colors.black }}>
@@ -39,14 +45,17 @@ const drawerContentComponents = (props) => (
     </Container>
 );
 
-const MyDrawerNavigator = createDrawerNavigator({
+const StylerDrawerNavigator = createDrawerNavigator({
+    Dashboard: {
+        screen: RequestScreen,
+    },
     Appointments: {
         screen: AppointmentScreen,
     },
-    'Payment Methods': {
-        screen: NoDebitScreen
+    'My Services': {
+        screen: MyServices
     },
-    'Gift Cards': {
+    'Wallet': {
         screen: NoDebitScreen
     },
     Help: {
@@ -76,7 +85,7 @@ const ClientDrawerNavigator = createDrawerNavigator({
         screen: ContactUsScreen
     },
     Settings: {
-        screen: NoDebitScreen
+        screen: SettingsScreen
     }
 }, {
     contentComponent: drawerContentComponents,
@@ -88,10 +97,13 @@ const AppNavigator = createStackNavigator({
     Auth: AuthScreen,
     Login: LoginScreen,
     Register: RegisterScreen,
+    FbRegister: FbRegisterScreen,
     Stylers: StylersScreen,
-    StylersCompleteReg: StylersCompleteRegScreen,
-    Appointment: {
-        screen: MyDrawerNavigator
+    Verify: VerifyScreen,
+    StylerService: StylersCompleteRegScreen,
+    Appointments: AppointmentScreen,
+    Requests: {
+        screen: StylerDrawerNavigator
     },
     Home: {
         screen: ClientDrawerNavigator,
@@ -105,6 +117,8 @@ const AppNavigator = createStackNavigator({
     ServiceDetails: ServiceDetails,
     Payment: PaymentScreen,
     NoDebit: NoDebitScreen,
+    MapView: MapViewScreen,
+    StylerMap: StylerMapScreen,
 },
     {
         initialRouteName: "InitializeApp",

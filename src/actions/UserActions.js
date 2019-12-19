@@ -41,6 +41,38 @@ export const InitializeApp = (token) => ({
     }
 })
 
+export const verify = (credentials) => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/verify`,
+        method: 'POST',
+        types: [
+            constants.VERIFY_ACCOUNT,
+            {
+                type: constants.VERIFY_ACCOUNT_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response
+                }))
+            },
+            {
+                type: constants.VERIFY_ACCOUNT_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status,
+                        message: res.message
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(credentials),
+        options: { timeout: 60000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+})
+
 export const loggedInUser = _ => ({
     [RSAA]: {
         endpoint: `${API_URL}/api/loggedinuser`,
@@ -107,28 +139,6 @@ export const fetchUsers = _ => ({
         credentials: 'include'
     }
 });
-
-// export const logout = _ => ({
-//     [RSAA]: {
-//         endpoint: `${API_URL}/api/logout`,
-//         method: 'GET',
-//         types: [
-//             constants.REQUEST(constants.LOGOUT),
-//             {
-//                 type: constants.REQUEST_SUCCESS(constants.LOGOUT),
-//                 payload: (action, state, response) => response.json().then(result => {
-//                     alert("Logged Out")
-//                 })
-//             }
-//         ],
-//         options: { timeout: 60000 },
-//         headers: {
-//             Accept: "application/json",
-//             "Content-Type": "application/json"
-//         },
-//         credentials: "same-origin"
-//     }
-// })
 
 export const logout = _ => {
     return (dispatch) => {

@@ -6,14 +6,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { fonts, colors } from '../../constants/DefaultProps';
-import Service1 from '../../../assets/imgs/photo-1529982412356-901cc3a363cf.jpeg';
-import Service2 from '../../../assets/imgs/ricardo-mancia-214428-unsplash.jpg';
-import nail__fixing from '../../../assets/imgs/nail__fixing.jpeg';
-import hair__dressing from '../../../assets/imgs/hair__dressing.jpeg';
-import hair__cut from '../../../assets/imgs/hair__cut.jpeg';
-import make__up from '../../../assets/imgs/make__up.jpeg';
-import eye__lashes from '../../../assets/imgs/eye__lashes.jpeg';
+import { fonts, colors, imgUrl } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -22,37 +15,8 @@ const propTypes = {
 }
 
 const ServiceList = (props) => {
-    // const services = [
-    //     {
-    //         name: "HAIRCUTS",
-    //         img: hair__cut,
-    //     },
-    //     {
-    //         name: "HAIR DRESSING",
-    //         img: hair__dressing,
-    //     },
-    //     {
-    //         name: "EYE LASHES",
-    //         img: eye__lashes,
-    //     },
-    //     {
-    //         name: "MAKE-UP",
-    //         img: make__up,
-    //     }
-    //     , {
-    //         name: "MANICURE & PEDICURE",
-    //         img: hair__cut,
-    //     }
-    //     , {
-    //         name: "NAIL FIXING",
-    //         img: nail__fixing,
-    //     },
-    //     {
-    //         name: "CONTACT LENSES",
-    //         img: hair__cut,
-    //     }
-    // ]
     const {
+        selected,
         service__list,
     } = props;
 
@@ -69,14 +33,15 @@ const ServiceList = (props) => {
                     renderItem={({ item }) =>
                         <View style={{ flex: 1 / 2, paddingEnd: 10, justifyContent: "space-between" }}>
                             <TouchableOpacity
+                                disabled={selected.findIndex(e => e.serviceId === item._id) === -1 ? false : true}
                                 onPress={() => props.onSelect(item)}
                                 activeOpacity={0.7}>
                                 <Image
-                                    style={styles.img}
-                                    source={eye__lashes} />
-                                <View style={styles.overlay} />
+                                    style={[styles.img]}
+                                    source={{ uri: item.imageUrl || imgUrl }} />
+                                <View style={[styles.overlay, { backgroundColor: selected.findIndex(e => e.serviceId === item._id) === -1 ? 'rgba(0,0,0,0.5)' : 'rgba(200,160,200.5,0.5)' }]} />
                                 <View style={{ position: "relative", bottom: "50%" }}>
-                                    <Text style={styles.genderTxt}>{item.name}</Text>
+                                    <Text style={styles.overlayTxtMain}>{item.name}</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -89,8 +54,9 @@ const ServiceList = (props) => {
 
 const styles = StyleSheet.create({
     child__container: {
-        // flex: 1,
+        flex: 1,
         marginTop: 20,
+        marginBottom: 50,
     },
     grid__main: {
         marginTop: 10,
@@ -106,7 +72,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         resizeMode: "cover",
     },
-    genderTxt: {
+    overlayTxtMain: {
         fontFamily: fonts.bold,
         fontSize: 14,
         color: colors.white,

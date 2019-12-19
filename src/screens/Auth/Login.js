@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import {
     Item,
     Input,
+    Spinner,
 } from 'native-base';
 import Button from '../../components/Button';
 import { fonts, colors, toastType } from '../../constants/DefaultProps';
@@ -17,27 +18,60 @@ import Text from '../../config/AppText';
 import { FacebookIcon, GoogleIcon } from './AuthAssets';
 import ShowToast from '../../components/ShowToast';
 import NavigationService from '../../navigation/NavigationService';
+import { LoginButton, AccessToken, LoginManager, } from 'react-native-fbsdk';
+// import { GoogleSignin, GoogleSigninButton } from '@react-native-community/google-signin';
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isProcessing: false,
+            validationErr: false,
+            verify: false,
+            social_user: {},
         }
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
             this.setState({ isProcessing: false });
-            this.props.navigation.dispatch(NavigationService.resetAction('Home'));
+            if (nextProps.user.current.role === 'styler') {
+                this.props.checkStylerRegStatus();
+            } else {
+                this.props.navigation.dispatch(NavigationService.resetAction('Home'))
+            }
         }
         if (nextProps.user.status == false && nextProps.user.status != this.props.user.status) {
-            this.setState({ isProcessing: false });
-            this.showToast(`Error: ${nextProps.user.message}`, toastType.danger);
+            // this.showToast(`Error: ${nextProps.user.message}`, toastType.danger);
+            this.props.navigation.navigate('Verify', { email: this.email })
+            this.setState({ isProcessing: false, });
         }
-        if (nextProps.user.error && nextProps.user.error != this.props.user.error) {
-            this.setState({ isProcessing: false });
+        if (nextProps.styler.status != this.props.styler.status) {
+            if (typeof nextProps.styler.status !== 'undefined') {
+                if (nextProps.styler.status === true) {
+                    this.props.navigation.dispatch(NavigationService.resetAction('Requests'))
+                } else {
+                    this.props.navigation.dispatch(NavigationService.resetAction('StylerService'))
+                }
+            }
+        }
+
+        // if (nextProps.user.error && nextProps.user.error !== this.props.user.error) {
+        if (nextProps.user.error) {
             this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);
+        }
+        if (nextProps.social_login_status != this.props.social_login_status) {
+            // alert(nextProps.social_login_status);
+            if (nextProps.social_login_status === true) {
+                this.props.navigation.navigate('FbRegister', { user: this.state.social_user });
+            }
+            if (nextProps.social_login_status === 0) {
+                this.props.navigation.dispatch(NavigationService.resetAction('Home'))
+            }
+            if (nextProps.social_login_status === 1) {
+                this.setState({ verify: false, })
+                this.showToast(`Error: Email address tied to this account already exists`, toastType.danger);
+            }
         }
     }
     doLogin = () => {
@@ -45,7 +79,7 @@ class Login extends React.Component {
         let email = this.email;
         let password = this.password;
         if (!email || !password) {
-            this.showToast('Invalid login credentials!', toastType.danger);
+            this.setState({ validationErr: true, isProcessing: false, })
         } else {
             return this.props.doLogin({
                 email: email,
@@ -63,63 +97,144 @@ class Login extends React.Component {
         this.props.navigation.navigate('Home')
     }
 
+    initUser(token) {
+        fetch('https://graph.facebook.com/v2.10/me?fields=id,name,first_name,last_name,email,gender,link,locale,timezone,updated_time,verified&access_token=' + token)
+            .then((response) => response.json())
+            .then((json) => {
+                // Some user object has been set up somewhere, build that user here
+                // user.name = json.name
+                // user.id = json.id
+                // user.user_friends = json.friends
+                // user.email = json.email
+                // user.username = json.name
+                // user.loading = false
+                // user.loggedIn = true
+                // user.avatar = setAvatar(json.id)
+                this.setState({ social_user: json });
+                setTimeout(() => {
+                    console.log(json.email)
+                    this.props.verifySocialMediaLogin({ email: json.email });
+                }, 0);
+            })
+            .catch(() => {
+                reject('ERROR GETTING DATA FROM FACEBOOK')
+            })
+    }
+
+    fbLogin = () => {
+        this.setState({ verify: true })
+        LoginManager.logInWithPermissions(['public_profile', 'email', 'user_friends']).then(
+            (result) => {
+                if (result.isCancelled) {
+                    this.setState({ verify: false })
+                    console.log('Login cancelled')
+                } else {
+                    AccessToken.getCurrentAccessToken().then(
+                        (data) => {
+                            // console.log(data.accessToken.toString())
+                            this.initUser(data.accessToken.toString())
+                        }
+                    )
+                }
+            },
+            (error) => {
+                console.log('Login fail with error: ' + error)
+            }
+        )
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                <View style={{ paddingVertical: 20, }}>
-                    <Text style={{ fontFamily: fonts.bold, fontSize: 24, lineHeight: 30 }} >Log Into {"\n"}Your Account</Text>
-                </View>
-                <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
-                    <Input
-                        onChangeText={e => this.email = e}
-                        autoCapitalize={'none'}
-                        style={{ fontFamily: fonts.medium, fontSize: 13 }}
-                        placeholder='Email' />
-                </Item>
-                <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
-                    <Input
-                        onChangeText={e => this.password = e}
-                        secureTextEntry={true}
-                        style={{ fontFamily: fonts.medium, fontSize: 13 }}
-                        placeholder='Password' />
-                </Item>
-                <View style={{ marginTop: 20 }}>
-                    <Button
-                        onPress={this.doLogin}
-                        btnTxt={"LOG IN"}
-                        size={"lg"}
-                        loading={this.state.isProcessing ? true : false}
-                        styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
-                        btnTxtStyles={{ color: colors.black, fontFamily: fonts.medium }}
-                    />
-                </View>
+                {this.state.verify ? <Spinner size="large" /> : <>
+                    <View style={{ paddingVertical: 20, }}>
+                        <Text style={{ fontFamily: fonts.bold, fontSize: 24, lineHeight: 30 }} >Log Into {"\n"}Your Account</Text>
+                    </View>
+                    {this.state.validationErr && <Text style={{ color: colors.danger }}>One or more fields are missing</Text>}
+                    <Item style={{ marginTop: 10, borderRadius: 5, }}
+                        error={(this.email === undefined || this.email === '') && this.state.validationErr}
+                        regular>
+                        <Input
+                            onChangeText={e => this.email = e}
+                            autoCapitalize={'none'}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
+                            placeholder='Email' />
+                    </Item>
+                    <Item style={{ marginTop: 10, borderRadius: 5, }}
+                        error={(this.password === undefined || this.password === '') && this.state.validationErr}
+                        regular>
+                        <Input
+                            onChangeText={e => this.password = e}
+                            secureTextEntry={true}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
+                            placeholder='Password' />
+                    </Item>
+                    <View style={{ marginTop: 20 }}>
+                        <Button
+                            onPress={this.doLogin}
+                            btnTxt={"LOG IN"}
+                            size={"lg"}
+                            loading={this.state.isProcessing ? true : false}
+                            styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
+                            btnTxtStyles={{ color: colors.black, fontFamily: fonts.medium }}
+                        />
+                    </View>
 
-                <View style={{ alignItems: "center", paddingVertical: 10 }}>
-                    <Text style={{ fontFamily: fonts.bold }}>OR</Text>
-                </View>
+                    <View style={{ alignItems: "center", paddingVertical: 10 }}>
+                        <Text style={{ fontFamily: fonts.bold }}>OR</Text>
+                    </View>
 
-                <View>
-                    <Button
-                        onPress={this.handleClick.bind(this)}
-                        size={"lg"}
-                        Icon={<FacebookIcon />}
-                        btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
-                    />
-                </View>
-                <View style={{ marginTop: 20 }}>
-                    <Button
-                        onPress={this.handleClick.bind(this)}
-                        size={"lg"}
-                        Icon={<GoogleIcon />}
-                        btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
-                    />
-                </View>
+                    <View>
+                        <Button
+                            onPress={this.fbLogin.bind(this)}
+                            size={"lg"}
+                            Icon={<FacebookIcon />}
+                            styles={{ backgroundColor: colors.facebook }}
+                            btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
+                        />
+                    </View>
+                    {/* <LoginButton
+                    style={{ height: 48, width: '100%', backgroundColor: colors.facebook }}
+                    onLoginFinished={
+                        (error, result) => {
+                            if (error) {
+                                console.log("login has error: " + result.error);
+                            } else if (result.isCancelled) {
+                                console.log("login is cancelled.");
+                            } else {
+                                console.log(result)
+                                AccessToken.getCurrentAccessToken().then(
+                                    (data) => {
+                                        
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    onLogoutFinished={() => console.log("logout.")} /> */}
+                    <View style={{ marginTop: 20 }}>
+                        <Button
+                            // onPress={this.fbLogin.bind(this)}
+                            onPress={() => alert('Sorry, we are currently fixing this module!')}
+                            size={"lg"}
+                            Icon={<GoogleIcon />}
+                            styles={{ backgroundColor: colors.google }}
+                            btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
+                        />
+                    </View>
+                    {/* <GoogleSigninButton
+                        style={{ width: 192, height: 48 }}
+                        size={GoogleSigninButton.Size.Wide}
+                        color={GoogleSigninButton.Color.Dark}
+                        onPress={this._signIn}
+                        disabled={this.state.isSigninInProgress} /> */}
 
-                <View style={{ marginVertical: 20, }}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
-                        <Text>Dont't have an account? Sign up</Text>
-                    </TouchableOpacity>
-                </View>
+                    <View style={{ marginVertical: 20, }}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
+                            <Text>Dont't have an account? Sign up</Text>
+                        </TouchableOpacity>
+                    </View>
+                </>}
             </View>
         )
     }
@@ -135,6 +250,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     user: state.user,
+    styler: state.styler,
+    social_login_status: state.login.status,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

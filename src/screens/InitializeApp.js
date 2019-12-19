@@ -9,6 +9,7 @@ import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as constants from '../constants/ActionTypes';
+import NavigationService from '../navigation/NavigationService';
 
 class InitializeApp extends React.Component {
     constructor(props) {
@@ -31,10 +32,23 @@ class InitializeApp extends React.Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
-            this.props.navigation.navigate('Home');
+            if (nextProps.user.current.role === 'styler') {
+                this.props.checkStylerRegStatus();
+            } else {
+                this.props.navigation.dispatch(NavigationService.resetAction('Home'))
+            }
         }
         if (nextProps.user.auth__failed && nextProps.user.auth__failed != this.props.user.auth__failed) {
             this.props.navigation.navigate('Auth');
+        }
+        if (nextProps.styler.status != this.props.styler.status) {
+            if (typeof nextProps.styler.status !== 'undefined') {
+                if (nextProps.styler.status === true) {
+                    this.props.navigation.dispatch(NavigationService.resetAction('Requests'))
+                } else {
+                    this.props.navigation.dispatch(NavigationService.resetAction('StylerService'))
+                }
+            }
         }
         // if (nextProps.resident.verified && nextProps.resident.verified != this.props.resident.verified) {
         //     setTimeout(() => {
@@ -66,6 +80,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     user: state.user,
+    styler: state.styler,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

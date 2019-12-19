@@ -6,7 +6,8 @@ import register from './RegisterReducer';
 import user from './UserReducer';
 import service from './ServiceReducer';
 import styler from './StylerReducer';
-import booking from './BookingReducer';
+import appointment from './AppointmentReducer';
+import map from './MapReducer';
 
 const rootReducers = combineReducers({
     login,
@@ -14,7 +15,8 @@ const rootReducers = combineReducers({
     user,
     service,
     styler,
-    booking,
+    appointment,
+    map,
 })
 
 export default rootReducers;

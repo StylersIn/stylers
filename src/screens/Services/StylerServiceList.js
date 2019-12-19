@@ -26,7 +26,7 @@ const StylerServiceList = ({
                 <List>
                     {styler.services.map((service, i) => {
                         const { _id, name, } = service.serviceId;
-                        const single = selected.find(e => e.id === _id);
+                        const single = selected.find(e => e.serviceId === _id);
                         const adult = single && single['adult'] || 0;
                         const child = single && single['child'] || 0;
                         return (
@@ -37,7 +37,7 @@ const StylerServiceList = ({
                                         onPress={() => onSelectService(_id)}
                                         color={"#606060"}
                                         style={{ width: 18, height: 18, alignSelf: "center", }}
-                                        checked={selected.findIndex(e => e.id === _id) === -1 ? false : true}
+                                        checked={selected.findIndex(e => e.serviceId === _id) === -1 ? false : true}
                                     />
                                 </View>
                                 <Text style={{ fontSize: 14, fontFamily: fonts.bold, }}>{name}</Text>

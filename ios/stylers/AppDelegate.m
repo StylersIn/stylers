@@ -11,11 +11,17 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <GoogleMaps/GoogleMaps.h>
+//#import <RNGoogleSignin/RNGoogleSignin.h>
 
+@import GooglePlaces;
+@import GoogleMaps;
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [GMSPlacesClient provideAPIKey:@"AIzaSyA-HjztLKyWGOUaIG9Bx_n6Ie_A5p1qMkQ"];
+  [GMSServices provideAPIKey:@"AIzaSyA-HjztLKyWGOUaIG9Bx_n6Ie_A5p1qMkQ"];
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"stylers"
@@ -38,9 +44,13 @@
   if ([[FBSDKApplicationDelegate sharedInstance] application:app openURL:url options:options]) {
     return YES;
   }
-  
+
   return NO;
 }
+
+//- (BOOL)application:(UIApplication *)application openURL:(nonnull NSURL *)url options:(nonnull NSDictionary<NSString *,id> *)options {
+//  return [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options] || [RNGoogleSignin application:application openURL:url options:options];
+//}
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
