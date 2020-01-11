@@ -4,6 +4,7 @@ import { createAppContainer, NavigationActions, StackActions } from "react-navig
 import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator, DrawerNavigatorItems } from "react-navigation-drawer";
 import { Container, Content, } from "native-base";
+import SplashScreen from '../screens/Splash';
 import AuthScreen from '../screens/Auth';
 import LoginScreen from '../screens/Auth/Login';
 import RegisterScreen from '../screens/Auth/Register';
@@ -27,6 +28,8 @@ import VerifyScreen from '../screens/Auth/Verify';
 import MapViewScreen from '../containers/MapContainer';
 import StylerMapScreen from '../screens/MapView/StylerMap';
 import SettingsScreen from '../screens/Settings';
+import EditProfileScreen from '../screens/EditProfile';
+import ChangePasswordScreen from '../screens/ChangePassword';
 
 const drawerContentComponents = (props) => (
     <Container style={{ backgroundColor: colors.black }}>
@@ -58,9 +61,9 @@ const StylerDrawerNavigator = createDrawerNavigator({
     'Wallet': {
         screen: NoDebitScreen
     },
-    Help: {
-        screen: ContactUsScreen
-    },
+    // Help: {
+    //     screen: ContactUsScreen
+    // },
     Settings: {
         screen: NoDebitScreen
     }
@@ -93,6 +96,7 @@ const ClientDrawerNavigator = createDrawerNavigator({
 });
 
 const AppNavigator = createStackNavigator({
+    Splash: SplashScreen,
     InitializeApp: InitializeApp,
     Auth: AuthScreen,
     Login: LoginScreen,
@@ -119,9 +123,11 @@ const AppNavigator = createStackNavigator({
     NoDebit: NoDebitScreen,
     MapView: MapViewScreen,
     StylerMap: StylerMapScreen,
+    EditProfile: EditProfileScreen,
+    ChangePassword: ChangePasswordScreen,
 },
     {
-        initialRouteName: "InitializeApp",
+        initialRouteName: "Splash",
         headerMode: "none"
     }
 );

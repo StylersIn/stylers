@@ -15,6 +15,7 @@ import { BarberIcon } from '../Services/ServiceAssets';
 import { EmptyAppointment } from './AppointmentAssets';
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
+import { getDate, getDay, formatTime } from '../../utils/stylersUtils';
 
 export default function (props) {
     return (
@@ -32,12 +33,12 @@ export default function (props) {
                         onPress={() => props.showDetails(appointment)}
                         activeOpacity={0.7}
                     >
-                        <Card style={styles.Input___shadow}>
+                        <Card style={[styles.Input___shadow, appointment.completed ? { borderColor: colors.success } : appointment.accepted ? { borderColor: colors.pink } : { borderColor: '#000000' }]}>
                             <CardItem style={{ borderRadius: 4 }}>
                                 <View style={{ borderRightWidth: 0.5, borderColor: "#979797", alignItems: "center", paddingRight: 10, }}>
-                                    <Text style={{ fontFamily: fonts.bold, fontSize: 18, paddingVertical: 2, }}>08</Text>
-                                    <Text style={{ fontSize: 12, paddingVertical: 2, }}>Thu</Text>
-                                    <Text style={{ fontSize: 12, paddingVertical: 2, }}>3:00PM</Text>
+                                    <Text style={{ fontFamily: fonts.bold, fontSize: 18, paddingVertical: 2, }}>{getDate(appointment.scheduledDate)}</Text>
+                                    <Text style={{ fontSize: 12, paddingVertical: 2, }}>{getDay(appointment.scheduledDate)}</Text>
+                                    <Text style={{ fontSize: 12, paddingVertical: 2, }}>{formatTime(appointment.scheduledDate)}</Text>
                                 </View>
                                 <View style={{ paddingHorizontal: 10, }}>
                                     {/* {appointment.services.map((r, key) => (<Text key={key} style={{ fontFamily: fonts.bold }}>{r.serviceId && r.serviceId.name}</Text>))} */}

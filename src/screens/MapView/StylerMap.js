@@ -1,14 +1,25 @@
-import React from 'react'; import { bindActionCreators } from 'redux';
+import React from 'react'; 
+import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Dimensions } from 'react-native';
-import MapView, { ProviderPropType } from 'react-native-maps';
-import { BottomSheet } from '../../components/BottomSheet';
+import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, } from 'react-native';
+import MapView, { ProviderPropType, Marker, AnimatedRegion } from 'react-native-maps';
 import Text from '../../config/AppText';
-import { Thumbnail, Card, CardItem, Icon } from 'native-base';
+import { Thumbnail, Card, CardItem, Icon, Spinner } from 'native-base';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
-import { fonts, colors } from '../../constants/DefaultProps';
-import { CallIcon, ChatIcon, CloseIcon, ArrowDown } from './MapAssets';
+import { fonts, colors, MAP_API_KEY } from '../../constants/DefaultProps';
+import { CallIcon, ChatIcon, CloseIcon, ArrowDown, SwiperIcon, PickUpIcon, } from './MapAssets';
+import MapViewDirections from 'react-native-maps-directions';
+import styler_location from '../../../assets/imgs/styler-location.jpg';
+import Geocoder from 'react-native-geocoding';
+import { notify } from '../../services';
+import BottomSheet from './BottomSheet';
+import NavigationService from '../../navigation/NavigationService';
+Geocoder.init(MAP_API_KEY);
+
+const origin = { latitude: 37.3318456, longitude: -122.0296002 };
+const destination = { latitude: 37.771707, longitude: -122.4053769 };
+const GOOGLE_MAPS_APIKEY = MAP_API_KEY;
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,21 +28,37 @@ const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const DEFAULT_PADDING = { top: 100, right: 100, bottom: 100, left: 100 };
+const HEADER_HEIGHT = 30;
 
 class StylerMap extends React.Component {
     state = {
         region: {
-            latitude: 0,
-            longitude: 0,
+            latitude: this.props.location.coords.latitude,
+            longitude: this.props.location.coords.longitude,
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
-        }
+        },
+        appointment: undefined,
+        markers: [],
+        coordinate: new AnimatedRegion({
+            latitude: LATITUDE,
+            longitude: LONGITUDE,
+            latitudeDelta: 0,
+            longitudeDelta: 0
+        }),
+        completeService: false,
     }
     componentDidMount() {
-        this.props.getCurrentLocation();
+        // this.props.getCurrentLocation();
+        this.setState({ appointment: this.props.navigation.getParam('appointment', '') })
     }
     UNSAFE_componentWillReceiveProps(prevProps) {
         if (prevProps.location && prevProps.location != this.props.location) {
+            this.getAddress({
+                latitude: prevProps.location.coords.latitude,
+                longitude: prevProps.location.coords.longitude,
+            })
             this.setState({
                 region: {
                     latitude: prevProps.location.coords.latitude,
@@ -39,80 +66,152 @@ class StylerMap extends React.Component {
                     latitudeDelta: LATITUDE_DELTA,
                     longitudeDelta: LONGITUDE_DELTA
                 }
+            }, () => {
+                // setTimeout(() => {
+                //     this.fitAllMarkers()
+                // }, 1000);
             })
+        }
+
+        if (prevProps.completed && prevProps.completed !== this.props.completed) {
+            alert('Successfully completed')
+            if (this.state.appointment.userId.publicId === this.props.current.publicId) {
+                notify('Service Completed', 'Hi there! You just completed this service.');
+            }
+            this.props.navigation.dispatch(NavigationService.resetAction('Requests'))
+            // this.props.listStylerRequests();
         }
     }
 
+    // componentWillUnmount() {
+    //     navigator.geolocation.clearWatch(this.watchID);
+    // }
+
+    // watchLocation = () => {
+    //     const { coordinate } = this.state;
+
+    //     this.watchID = navigator.geolocation.watchPosition(
+    //         position => {
+    //             const { latitude, longitude } = position.coords;
+
+    //             const newCoordinate = {
+    //                 latitude,
+    //                 longitude
+    //             };
+
+    //             if (Platform.OS === "android") {
+    //                 if (this.marker) {
+    //                     this.marker._component.animateMarkerToCoordinate(
+    //                         newCoordinate,
+    //                         500 // 500 is the duration to animate the marker
+    //                     );
+    //                 }
+    //             } else {
+    //                 coordinate.timing(newCoordinate).start();
+    //             }
+
+    //             this.setState({
+    //                 region: {
+    //                     latitude,
+    //                     longitude
+    //                 }
+    //             });
+    //         },
+    //         error => console.log(error),
+    //         {
+    //             enableHighAccuracy: true,
+    //             timeout: 20000,
+    //             maximumAge: 1000,
+    //             distanceFilter: 10
+    //         }
+    //     );
+    // };
+
+    showToastMessage = message => this.setState({ message });
+
+    getAddress = (address) => {
+        Geocoder.from(address)
+            .then(json => {
+                var addressComponent = json.results[0].address_components[0];
+                this.setState({ currentAddress: addressComponent.short_name })
+            })
+            .catch(error => console.warn(error));
+    }
+
+    fitAllMarkers() {
+        const { region, appointment } = this.state;
+        const MARKERS = [region, appointment.pickUp]
+        this.map.fitToCoordinates(MARKERS, {
+            edgePadding: DEFAULT_PADDING,
+            animated: true,
+        });
+    }
+
+    endService = () => {
+        this.setState({ completeService: true, })
+        this.props.completeService({ appointmentId: this.state.appointment._id });
+    }
+
     render() {
-        const appointment = this.props.navigation.getParam('appointment', '');
+        const { region, appointment } = this.state;
         return (
             <View style={styles.container}>
+                {this.state.completeService && <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, elevation: 5, zIndex: 1000, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)', }}>
+                    <Spinner style={{ alignItems: "center" }} isVisible={true} size={100} color={colors.pink} />
+                    {/* {error && <CheckCircle />} */}
+                    {this.props.error && <Text style={{ color: colors.white, marginTop: 30, fontFamily: fonts.medium, fontSize: 16, }}>{this.props.error}</Text>}
+                </View>}
                 <MapView
+                    ref={e => this.map = e}
                     provider={this.props.provider}
                     style={styles.map}
-                    region={this.props.region}
+                    region={this.state.region}
+                    showsUserLocation={true}
+                    showsMyLocationButton={true}
+                    followUserLocation={true}
+                    showsCompass={true}
+                    zoomEnabled={true}
+                    loadingEnabled={true}
+                >
+                    {appointment && <MapViewDirections
+                        origin={this.state.region}
+                        destination={appointment.pickUp.latitude + "," + appointment.pickUp.longitude}
+                        apikey={GOOGLE_MAPS_APIKEY}
+                        strokeWidth={3}
+                        strokeColor={colors.pink}
+                    />}
+                    <Marker
+                        title={'PickUp'}
+                        image={styler_location}
+                        key={'333'}
+                        coordinate={region}
+                    />
+
+                    {/* <Marker
+                        title={'PickUp'}
+                        // image={pickUpIcon}
+                        key={appointment.userId}
+                        coordinate={appointment.pickUp}
+                    >
+                        <View style={styles.marker}>
+                            <Text style={styles.text}>5mins</Text>
+                        </View>
+                        <View style={{ position: 'absolute', left: 24, bottom: 2 }}>
+                            <PickUpIcon />
+                        </View>
+                    </Marker> */}
+                    {/* <Marker.Animated
+                        ref={marker => {
+                            this.marker = marker;
+                        }}
+                        coordinate={this.state.coordinate}
+                    /> */}
+                </MapView>
+                <BottomSheet
+                    {...this.props}
+                    {...this.state}
+                    endService={this.endService}
                 />
-                <BottomSheet>
-                    <View style={{ paddingHorizontal: 30, }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', }}>
-                                <View>
-                                    <Thumbnail
-                                        style={{ width: 35, height: 35 }}
-                                        source={service__1} />
-                                </View>
-                                <View style={{ position: 'relative', left: 10 }}>
-                                    <Text style={{ fontFamily: fonts.bold }}>{appointment.userId && appointment.userId.name}</Text>
-                                    <View style={{ padding: 2, paddingHorizontal: 4, borderRadius: 3, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
-                                        <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.bold, position: 'relative', bottom: 1, }}>Point of service</Text>
-                                    </View>
-                                </View>
-                            </View>
-                            <View style={{ justifyContent: 'flex-end' }}>
-                                <Text style={{ fontFamily: fonts.bold }}>{`NGN${appointment.totalAmount}`}</Text>
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                            <Card style={styles.map_btn}>
-                                <CardItem style={styles.map_btn_icon}>
-                                    <View style={{ marginTop: 10, marginRight: 1, }}>
-                                        <CallIcon />
-                                    </View>
-                                </CardItem>
-                            </Card>
-
-                            <Card style={styles.map_btn}>
-                                <CardItem style={styles.map_btn_icon}>
-                                    <View style={{ marginTop: 6, }}>
-                                        <ChatIcon />
-                                    </View>
-                                </CardItem>
-                            </Card>
-
-                            <Card style={styles.map_btn}>
-                                <CardItem style={styles.map_btn_icon}>
-                                    <CloseIcon />
-                                </CardItem>
-                            </Card>
-                        </View>
-                        <View style={{ marginTop: 30, }}>
-                            <View style={{ borderColor: 'rgba(151, 173, 182, 0.2)', borderWidth: 0.5, borderRadius: 5, padding: 20, flexDirection: 'row', }}>
-                                <Text>11:24</Text>
-                                <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginLeft: 10, }}>
-                                    <View style={{ width: 8, height: 8, borderRadius: 8 / 2, backgroundColor: colors.pink }}></View>
-                                    <View style={{ width: 1, height: 40, marginTop: 5, backgroundColor: '#3E4958', }}></View>
-                                    <View style={{ marginTop: 5, }}>
-                                        <ArrowDown />
-                                    </View>
-                                </View>
-                                <View>
-                                    <Text>1, Thrale Street, London, SE19HW, UK</Text>
-                                    <Text style={{ marginTop: 20, }}>Ealing Broadway Shopping Centre, London, W55JY, UK</Text>
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </BottomSheet>
             </View>
         );
     }
@@ -149,11 +248,39 @@ const styles = StyleSheet.create({
         height: 65,
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    marker: {
+        backgroundColor: colors.pink,
+        padding: 5,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        position: 'relative',
+        bottom: 60,
+    },
+    text: {
+        fontFamily: fonts.bold,
+        color: '#ffffff',
+    },
+    header: {
+        height: HEADER_HEIGHT,
+        backgroundColor: '#ffffff',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    drawerIcon: {
+        width: 35,
+        height: 5,
+        borderRadius: 5,
+        backgroundColor: '#D5DDE0',
+    },
 });
 
 const mapStateToProps = state => ({
     location: state.map.location,
+    completed: state.appointment.completed,
+    currentAddress: state.map.currentAddress,
+    error: state.appointment.error,
+    current: state.user.current,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

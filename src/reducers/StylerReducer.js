@@ -128,6 +128,23 @@ export default function stylerReducer(state = initialState, action) {
                 isProcessing: false,
                 error: action.payload.error,
             }
+        case constants.STYLER_STATS:
+            return {
+                ...state,
+                stats: undefined,
+                error: undefined,
+            }
+        case constants.STYLER_STATS_SUCCESS:
+            return {
+                ...state,
+                stats: action.payload.response && action.payload.response.data,
+            }
+        case constants.STYLER_STATS_FAILURE:
+            return {
+                ...state,
+                stats: undefined,
+                error: action.payload.error,
+            }
         default:
             return state;
     }

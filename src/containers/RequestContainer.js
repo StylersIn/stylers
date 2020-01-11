@@ -12,6 +12,7 @@ class Requests extends React.Component {
     }
     componentDidMount() {
         this.props.listStylerRequests();
+        this.props.getStats();
         // if (this.props.role === roles.user) {
         //     this.props.listAppointments();
         // } else if (this.props.role === roles.styler) {
@@ -40,6 +41,7 @@ const mapStateToProps = state => ({
     role: state.user.current && state.user.current.role,
     username: state.user.current && state.user.current.name.split(' '),
     accepted: state.appointment.accepted,
+    stats: state.styler.stats,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

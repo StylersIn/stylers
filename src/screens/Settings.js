@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import Header from '../components/Header';
 import Text from '../config/AppText';
 import { fonts } from '../constants/DefaultProps';
@@ -39,7 +39,12 @@ class Settings extends React.Component {
                         <View style={{ marginTop: 20, }}>
                             <View>
                                 <View style={{ paddingVertical: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
-                                    <Text>Edit Profile</Text>
+                                    <TouchableOpacity
+                                        activeOpacity={0.7}
+                                        onPress={() => this.props.navigation.navigate('EditProfile')}
+                                    >
+                                        <Text>Edit Profile</Text>
+                                    </TouchableOpacity>
                                     <Icon style={{ fontSize: 20, }} name='ios-arrow-forward' />
                                 </View>
                                 <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View>
@@ -53,7 +58,12 @@ class Settings extends React.Component {
                             </View>
                             <View>
                                 <View style={{ paddingVertical: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
-                                    <Text>Change password</Text>
+                                    <TouchableOpacity
+                                        activeOpacity={0.7}
+                                        onPress={() => this.props.navigation.navigate('ChangePassword')}
+                                    >
+                                        <Text>Change password</Text>
+                                    </TouchableOpacity>
                                     <Icon style={{ fontSize: 20, }} name='ios-arrow-forward' />
                                 </View>
                                 <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View>
@@ -61,7 +71,7 @@ class Settings extends React.Component {
                         </View>
 
 
-                        <Text style={{ fontFamily: fonts.bold, marginTop: 30, fontSize: 16, }}>Payment and pricing</Text>
+                        {/* <Text style={{ fontFamily: fonts.bold, marginTop: 30, fontSize: 16, }}>Payment and pricing</Text>
                         <View style={{ marginTop: 20, }}>
                             <View>
                                 <View style={{ paddingVertical: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
@@ -70,7 +80,7 @@ class Settings extends React.Component {
                                 </View>
                                 <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View>
                             </View>
-                        </View>
+                        </View> */}
                     </ScrollView>
                 </SafeAreaView>
             </>

@@ -42,7 +42,8 @@ const mapStateToProps = state => ({
     predictions: state.map.predictions,
     selectedAddress: state.map.selectedAddress,
     error: state.map.error,
-    selectedAddress: state.map.selectedAddress,
+    currentAddress: state.map.currentAddress,
+    current: state.user.current,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

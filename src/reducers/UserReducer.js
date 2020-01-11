@@ -47,7 +47,7 @@ export default function userReducer(state = initialState, action) {
             }
         case constants.AUTH_USER_FAILURE:
             return Object.assign({}, state, {
-                error: `${action.payload && action.payload.message}`,
+                error: `${action.payload.response && action.payload.response.message}`,
                 authenticated: false
             })
         case constants.VERIFY_ACCOUNT:
@@ -56,10 +56,16 @@ export default function userReducer(state = initialState, action) {
                 ...initialState,
             }
         case constants.VERIFY_ACCOUNT_SUCCESS:
-            return {
-                ...state,
-                status: action.payload.response.status,
-                message: action.payload.response.message,
+            if (action.payload.response.data && action.payload.response.data.token) {
+                AsyncStorage.setItem(constants.TOKEN, action.payload.response.data.token);
+                return {
+                    ...state,
+                    authenticated: true,
+                    error: undefined,
+                    status: action.payload.response.status,
+                    message: action.payload.response.message,
+                    current: action.payload.response.data.user,
+                }
             }
         case constants.VERIFY_ACCOUNT_FAILURE:
             return {

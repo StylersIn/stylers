@@ -224,7 +224,7 @@ class ServiceDetails extends React.Component {
                             </Card>
                         </TouchableWithoutFeedback>
 
-                        <Card style={[styles.Input___shadow]}>
+                        {/* <Card style={[styles.Input___shadow]}>
                             <Item>
                                 <Input
                                     value={this.props.selectedAddress && this.props.selectedAddress.name}
@@ -233,7 +233,12 @@ class ServiceDetails extends React.Component {
                                     placeholderTextColor={"#979797"}
                                     placeholder='Pick your Location' />
                             </Item>
-                        </Card>
+                        </Card> */}
+                        <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('MapView')}>
+                            <Card style={[styles.date__card, styles.Input___shadow]}>
+                                <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.props.selectedAddress && this.props.selectedAddress.name ? this.props.selectedAddress.name : 'Pick your Location'}</Text>
+                            </Card>
+                        </TouchableWithoutFeedback>
                         <View style={{ alignSelf: 'flex-end' }}>
                             <Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>Use current location</Text>
                         </View>
@@ -315,7 +320,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     services: state.services,
     styler: state.styler,
-    appointment__date: state.booking.date,
+    appointment__date: state.appointment.date,
     selectedAddress: state.map.selectedAddress,
 })
 

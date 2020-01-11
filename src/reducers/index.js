@@ -8,6 +8,8 @@ import service from './ServiceReducer';
 import styler from './StylerReducer';
 import appointment from './AppointmentReducer';
 import map from './MapReducer';
+import contact from './ContactReducer';
+import socket from './SocketReducer';
 
 const rootReducers = combineReducers({
     login,
@@ -17,6 +19,8 @@ const rootReducers = combineReducers({
     styler,
     appointment,
     map,
+    contact,
+    socket,
 })
 
 export default rootReducers;

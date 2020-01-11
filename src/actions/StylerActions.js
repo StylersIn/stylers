@@ -251,3 +251,33 @@ export const sortStylersService = (queryString, serviceId) => ({
         credentials: "same-origin"
     }
 });
+
+export const getStats = _ => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/stats`,
+        method: 'GET',
+        types: [
+            constants.STYLER_STATS,
+            {
+                type: constants.STYLER_STATS_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.STYLER_STATS_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});

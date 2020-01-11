@@ -30,4 +30,6 @@ export const toastType = {
 
 export const imgUrl = 'https://mortensondental.com/wp-content/uploads/2014/10/default-placeholder.png';
 
+export const MAP_API_KEY = "AIzaSyBHdDa33QVmJlDXAV4CC9MBts4f-W3T-EQ";
+
 export const roles = { user: 'user', styler: 'styler', }

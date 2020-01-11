@@ -23,7 +23,14 @@ class ContactUs extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            isProcessing: false,
+        }
+    }
 
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        if (nextProps.created && nextProps.created !== this.props.created) {
+            this.setState({ isProcessing: false, })
+            alert('Thankn you for reaching out to us, we will get back to you in due time.');
         }
     }
 
@@ -31,6 +38,16 @@ class ContactUs extends React.Component {
         drawerIcon: ({ tintColor }) => (
             <HelpIcon tintColor={"none"} />
         )
+    }
+
+    contact = () => {
+        this.setState({ isProcessing: true, })
+        this.props.contact({
+            name: this.name,
+            email: this.email,
+            topic: this.topic,
+            message: this.message,
+        })
     }
 
     render() {
@@ -58,27 +75,41 @@ class ContactUs extends React.Component {
                         <Form>
                             <Item floatingLabel>
                                 <Label style={styles.label}>Name</Label>
-                                <Input />
+                                <Input
+                                    style={{ fontFamily: fonts.medium, fontSize: 14, }}
+                                    onChangeText={e => this.name = e}
+                                />
                             </Item>
                             <Item floatingLabel last>
                                 <Label style={styles.label}>Email</Label>
-                                <Input />
+                                <Input
+                                    autoCapitalize={'none'}
+                                    style={{ fontFamily: fonts.medium, fontSize: 14, }}
+                                    onChangeText={e => this.email = e}
+                                />
                             </Item>
                             <Item floatingLabel last>
                                 <Label style={styles.label}>Topic</Label>
-                                <Input />
+                                <Input
+                                    style={{ fontFamily: fonts.medium, fontSize: 14, }}
+                                    onChangeText={e => this.topic = e}
+                                />
                             </Item>
-                            <Item style={{ height: 150 }} floatingLabel last>
+                            <Item floatingLabel last>
                                 <Label style={styles.label}>Message</Label>
-                                <Input />
+                                <Input
+                                    style={{ fontFamily: fonts.medium, fontSize: 14, }}
+                                    onChangeText={e => this.message = e}
+                                />
                             </Item>
                         </Form>
                     </View>
                     <View style={{ marginVertical: 50 }}>
                         <Button
-                            onPress={() => this.props.navigation.navigate('ServiceDetails')}
+                            onPress={this.contact}
                             btnTxt={"Send"}
                             size={"lg"}
+                            loading={this.state.isProcessing}
                             btnTxtStyles={{ color: colors.white, fontFamily: fonts.bold, }}
                         />
                     </View>
@@ -105,7 +136,7 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => ({
-    services: state.services,
+    created: state.contact.created,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

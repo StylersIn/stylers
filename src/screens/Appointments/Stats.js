@@ -7,12 +7,15 @@ import {
 import {
     Card,
     CardItem,
+    Spinner,
 } from 'native-base';
 import { fonts, colors } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { RatingIcon, BankIcon, ClientIcon } from './AppointmentAssets';
 
-export default function () {
+export default function (props) {
+    console.log(props)
+    const appnts = props.appointments && props.appointments.filter(e => e.completed === true) || {};
     return (
         <View style={{ flex: 1, }}>
             <ScrollView
@@ -41,7 +44,11 @@ export default function () {
                             </View>
                             <View style={{ alignItems: 'flex-end' }}>
                                 <Text style={styles.txt__one}>Bank (NGN)</Text>
-                                <Text style={styles.txt__two}>10,000</Text>
+                                <View>
+                                    {!props.stats ? <View>
+                                        <Text style={{ color: colors.white, marginTop: 5, fontSize: 10, }}>Loading...</Text>
+                                    </View> : <Text style={styles.txt__two}>{props.stats && props.stats.totalAmount}</Text>}
+                                </View>
                             </View>
                         </View>
                     </CardItem>
@@ -55,7 +62,11 @@ export default function () {
                             </View>
                             <View style={{ alignItems: 'flex-end' }}>
                                 <Text style={styles.txt__one}>Clients served</Text>
-                                <Text style={styles.txt__two}>24</Text>
+                                <View>
+                                    {!props.stats ? <View>
+                                        <Text style={{ color: colors.white, marginTop: 5, fontSize: 10, }}>Loading...</Text>
+                                    </View> : <Text style={styles.txt__two}>{props.stats && props.stats.clients}</Text>}
+                                </View>
                             </View>
                         </View>
                     </CardItem>

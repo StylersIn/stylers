@@ -297,7 +297,7 @@ PODS:
     - React
   - RNDateTimePicker (2.1.0):
     - React
-  - RNGestureHandler (1.4.1):
+  - RNGestureHandler (1.5.3):
     - React
   - RNImageCropPicker (0.26.1):
     - QBImagePickerController
@@ -504,7 +504,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 5ae4d57458804e99f73d427214442a6b10a53856
   RNCPushNotificationIOS: 5403d137a49c55f0dc2273be8473873e934359cd
   RNDateTimePicker: 68e542a59ff1b73563744145bfc45c2b88a3deea
-  RNGestureHandler: 4cb47a93019c1a201df2644413a0a1569a51c8aa
+  RNGestureHandler: 02905abe54e1f6e59c081a10b4bd689721e17aa6
   RNImageCropPicker: e1d8c3381e5b05a1bdcd13ea57a4f1c020a09cef
   RNReanimated: 6abbbae2e5e72609d85aabd92a982a94566885f1
   RNSVG: be27aa7c58819f97399388ae53d7fa0572f32c7f

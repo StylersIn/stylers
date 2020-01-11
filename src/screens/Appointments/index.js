@@ -5,6 +5,7 @@ import {
     Platform,
     Image,
     SafeAreaView,
+    Linking,
 } from 'react-native';
 import {
     Icon,
@@ -23,6 +24,9 @@ import { WhatsAppIcon } from './AppointmentAssets';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
 import Header from '../../components/Header';
 import Stats from './Stats';
+import Geocoder from 'react-native-geocoding';
+import { notify } from '../../services';
+import { formatDate, formatTime, } from '../../utils/stylersUtils';
 
 const options = { year: 'numeric', month: 'long', day: 'numeric' };
 // weekday: 'long', 
@@ -35,6 +39,7 @@ class Appointment extends React.Component {
         this.state = {
             isVisible: false,
             appointment: {},
+            isProcessing: false,
         }
     }
 
@@ -44,18 +49,20 @@ class Appointment extends React.Component {
         )
     }
 
+    UNSAFE_componentWillReceiveProps(prevProps) {
+        if (prevProps.location && prevProps.location != this.props.location) {
+            if (this.props.role === roles.styler) {
+                if (this.state.appointment.userId.publicId === this.props.current.publicId) {
+                    notify('Service Started', 'Hi there! Styler just started this service.');
+                }
+                this.props.navigation.navigate('StylerMap', { appointment: this.state.appointment })
+                this.setState({ isProcessing: false, isVisible: false, })
+            }
+        }
+    }
+
     showDetails = (appointment) => this.setState({ isVisible: true, appointment, });
     closeModal = () => this.setState({ isVisible: false });
-
-    formatDate = (d) => {
-        var date = new Date(d);
-        return date.toLocaleDateString("en-US", options);
-    }
-
-    formatTime = (d) => {
-        var date = new Date(d);
-        return date.toLocaleTimeString("en-US", options__time);
-    }
 
     calcServicePrice = () => {
         var _service = this.props.appointments.filter(e => e.stylerId.services === appointment.serviceId._id);
@@ -70,6 +77,11 @@ class Appointment extends React.Component {
         } else {
             return false;
         }
+    }
+
+    beginService = () => {
+        this.props.getCurrentLocation();
+        this.setState({ isProcessing: true, })
     }
 
     render() {
@@ -89,11 +101,11 @@ class Appointment extends React.Component {
 
                         <Header
                             hamburger={this.props.role === roles.styler ? true : false}
-                            title={`Hi ${this.props.username},`}
+                            title={`Hi ${this.props.username[0]},`}
                         />
 
                         {this.props.role === roles.styler && <View style={{ marginTop: 20 }}>
-                            <Stats />
+                            <Stats {...this.props} />
                         </View>}
 
                         <View style={{ marginTop: 20 }}>
@@ -144,11 +156,11 @@ class Appointment extends React.Component {
                         </View>
                         <View style={{ marginTop: 5, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Date</Text>
-                            <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{this.formatDate(appointment.scheduledDate)}</Text>
+                            <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{formatDate(appointment.scheduledDate)}</Text>
                         </View>
                         <View style={{ marginTop: 5, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Time</Text>
-                            <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{this.formatTime(appointment.scheduledDate)}</Text>
+                            <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{formatTime(appointment.scheduledDate)}</Text>
                         </View>
                         <View style={{ marginTop: 15, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Service Cost</Text>
@@ -160,7 +172,7 @@ class Appointment extends React.Component {
                             ))}
                         </View>
                         <View style={{ marginTop: 40 }}>
-                            {this.props.role === roles.user && <View style={{ marginTop: 10, width: '100%' }}>
+                            {this.props.role === roles.user && !appointment.accepted && <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
                                     onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
                                     btnTxt={"Cancel Appointment"}
@@ -169,15 +181,16 @@ class Appointment extends React.Component {
                                     btnTxtStyles={{ color: colors.black, fontFamily: fonts.bold }}
                                 />
                             </View>}
-                            {this.IsDateInPast(appointment.scheduledDate) ? <View style={{ marginTop: 10, width: '100%' }}>
+                            {this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.styler ? <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
-                                    onPress={() => this.props.navigation.navigate('StylerMap', { appointment: appointment })}
+                                    onPress={this.beginService}
                                     btnTxt={"Begin Service"}
                                     size={"lg"}
-                                    styles={{ height: 40, backgroundColor: colors.danger, }}
+                                    loading={this.state.isProcessing}
+                                    styles={{ height: 40, backgroundColor: colors.black, }}
                                     btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                 />
-                            </View> : <View style={{ marginTop: 10, width: '100%' }}>
+                            </View> : !appointment.accepted ? <View style={{ marginTop: 10, width: '100%' }}>
                                     <Button
                                         onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
                                         btnTxt={"Reschedule"}
@@ -185,10 +198,10 @@ class Appointment extends React.Component {
                                         styles={{ height: 40, }}
                                         btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                     />
-                                </View>}
+                                </View> : null}
                             <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
-                                    onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
+                                    onPress={() => Linking.openURL(`whatsapp://send?text=hello&phone=${appointment.stylerId.phoneNumber}`)}
                                     btnTxt={"Message"}
                                     size={"lg"}
                                     Icon={<WhatsAppIcon />}

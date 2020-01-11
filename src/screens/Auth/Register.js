@@ -32,6 +32,7 @@ class Register extends React.Component {
             isProcessing: false,
             validationErr: false,
             pwMatchErr: false,
+            mainErr: undefined,
         }
     }
 
@@ -41,7 +42,7 @@ class Register extends React.Component {
             this.props.navigation.dispatch(NavigationService.resetAction('Home'));
         }
         if (nextProps.user.error && nextProps.user.error != this.props.user.error) {
-            this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);
+            this.showErr(nextProps.user.error);
         }
     }
 
@@ -68,8 +69,9 @@ class Register extends React.Component {
         }
     }
 
-    showToast = (text, type) => {
-        ShowToast(text, type);
+    showErr = (err) => {
+        // ShowToast(text, type);
+        this.setState({ mainErr: err });
         this.setState({ isProcessing: false });
     }
 
@@ -84,6 +86,7 @@ class Register extends React.Component {
                     <View style={{ paddingVertical: 20, }}>
                         <Text style={{ fontFamily: fonts.bold, fontSize: 24, lineHeight: 30 }} >Create {"\n"}Your Account</Text>
                     </View>
+                    {this.state.mainErr && <Text style={{ color: colors.danger, fontFamily: fonts.bold }}>{this.state.mainErr}</Text>}
                     {this.state.validationErr && <Text style={{ color: colors.danger }}>One or more fields are missing</Text>}
                     {this.state.pwMatchErr && <Text style={{ color: colors.danger }}>Password and confirm password does not match</Text>}
                     <Item style={{ marginTop: 10, borderRadius: 5, }}

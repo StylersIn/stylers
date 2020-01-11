@@ -8,6 +8,7 @@ import {
 import {
     Icon,
     Thumbnail,
+    Spinner,
 } from 'native-base';
 import { fonts, colors, roles } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
@@ -31,6 +32,7 @@ class Requests extends React.Component {
             isVisible: false,
             appointment: {},
             isProcessing: false,
+            accept: false,
             key: '',
         }
     }
@@ -42,12 +44,13 @@ class Requests extends React.Component {
     }
 
     UNSAFE_componentWillReceiveProps(prevProps) {
-        if (prevProps.accepted && prevProps.accepted !== this.props.appointments.accepted) {
+        if (prevProps.accepted && prevProps.accepted !== this.props.accepted) {
             alert('Successfully accepted')
             notify('Appointment Status', 'Hi there! Styler has accepted your appointment.');
             this.props.listStylerRequests();
+            this.setState({ accept: false, })
             // if (this.props.role === roles.user) {
-                
+
             // } else if (this.props.role === roles.styler) {
             //     this.props.listStylerAppointments();
             // } else { }
@@ -73,7 +76,7 @@ class Requests extends React.Component {
     }
 
     acceptAppointement = (Id) => {
-        this.setState({ isProcessing: true, key: 'accept' })
+        this.setState({ accept: true, key: 'accept' })
         this.props.acceptAppointment(Id);
     }
 
@@ -86,37 +89,46 @@ class Requests extends React.Component {
         const { appointment, isVisible, } = this.state;
         return (
             <>
+                {this.state.accept && <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)', }}>
+                    <Spinner style={{ alignItems: "center" }} isVisible={true} size={'large'} color={colors.pink} />
+                </View>}
                 <SafeAreaView style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={styles.container}>
-                        <Header
-                            hamburger={this.props.role === roles.styler ? true : false}
-                            title={`Hi ${this.props.username},`}
-                        />
-
-                        {this.props.role === roles.styler && <View style={{ marginTop: 20 }}>
-                            <Stats />
-                        </View>}
-
-                        <View style={{ marginTop: 20 }}>
-                            {this.props.role === roles.user && <View style={{ flexDirection: 'row', }}>
-                                <Text style={{ fontSize: 16, fontFamily: fonts.bold, color: '#4F4F4F', }}>January</Text>
-                                <Icon style={{ fontSize: 20, paddingLeft: 10, marginTop: 2, color: '#4F4F4F', }} name="ios-arrow-down" />
-                            </View>}
-                            {/* {this.props.role === roles.styler && <Text style={{ fontSize: 18, fontFamily: fonts.bold, }}>Pending Appointments</Text>} */}
+                        <View style={{ padding: 20, }}>
+                            <Header
+                                hamburger={this.props.role === roles.styler ? true : false}
+                                title={`Hi ${this.props.username[0]},`}
+                            />
                         </View>
 
-                        <RequestList
-                            role={this.props.role}
-                            showDetails={this.showDetails}
-                            closeModal={this.closeModal}
-                            isProcessing={this.props.isProcessing}
-                            isVisible={this.state.isVisible}
-                            requests={this.props.requests}
-                            accept={this.acceptAppointement}
-                            decline={this.declineAppointment}
-                            key={this.state.key}
-                            loading={this.state.isProcessing}
-                        />
+                        {this.props.role === roles.styler && <View style={{ paddingLeft: 20, }}>
+                            <Stats
+                                stats={this.props.stats}
+                            />
+                        </View>}
+
+                        <View style={{ flex: 1, padding: 20, }}>
+                            <View style={{ marginTop: 20 }}>
+                                {this.props.role === roles.user && <View style={{ flexDirection: 'row', }}>
+                                    <Text style={{ fontSize: 16, fontFamily: fonts.bold, color: '#4F4F4F', }}>January</Text>
+                                    <Icon style={{ fontSize: 20, paddingLeft: 10, marginTop: 2, color: '#4F4F4F', }} name="ios-arrow-down" />
+                                </View>}
+                                {/* {this.props.role === roles.styler && <Text style={{ fontSize: 18, fontFamily: fonts.bold, }}>Pending Appointments</Text>} */}
+                            </View>
+
+                            <RequestList
+                                role={this.props.role}
+                                showDetails={this.showDetails}
+                                closeModal={this.closeModal}
+                                isProcessing={this.props.isProcessing}
+                                isVisible={this.state.isVisible}
+                                requests={this.props.requests}
+                                accept={this.acceptAppointement}
+                                decline={this.declineAppointment}
+                                requestKey={this.state.key}
+                                loading={this.state.isProcessing}
+                            />
+                        </View>
 
                     </ScrollView>
                 </SafeAreaView>
@@ -204,7 +216,7 @@ class Requests extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        padding: 20,
+        // padding: 20,
     },
     cardStyle: {
         borderWidth: 1,

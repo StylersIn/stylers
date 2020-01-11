@@ -12,7 +12,7 @@ import { USE_NATIVE_DRIVER } from '../config/config';
 
 const HEADER_HEIGHT = 30;
 const windowHeight = Dimensions.get('window').height;
-const SNAP_POINTS_FROM_TOP = [400, windowHeight * 0.4, windowHeight * 0.74];
+const SNAP_POINTS_FROM_TOP = [380, windowHeight * 0.4, windowHeight * 0.74];
 
 export class BottomSheet extends Component {
     masterdrawer = React.createRef();

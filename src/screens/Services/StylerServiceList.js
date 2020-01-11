@@ -34,7 +34,7 @@ const StylerServiceList = ({
                                 {/* {alert(selected.includes(_id))} */}
                                 <View style={{ marginRight: 10, }}>
                                     <CheckBox
-                                        onPress={() => onSelectService(_id)}
+                                        // onPress={() => onSelectService(_id)}
                                         color={"#606060"}
                                         style={{ width: 18, height: 18, alignSelf: "center", }}
                                         checked={selected.findIndex(e => e.serviceId === _id) === -1 ? false : true}

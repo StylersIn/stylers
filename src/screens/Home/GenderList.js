@@ -21,7 +21,7 @@ const GenderList = () => {
         <View style={styles.childContainer}>
             <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Gender</Text>
             <View style={{ flexDirection: "row", marginTop: 10, }}>
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity activeOpacity={0.9}>
                     <Image
                         style={styles.img}
                         source={Gender1} />
@@ -30,7 +30,7 @@ const GenderList = () => {
                         <Text style={styles.genderTxt}>HIM</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.7} style={{ paddingLeft: 10 }}>
+                <TouchableOpacity activeOpacity={0.9} style={{ paddingLeft: 10 }}>
                     <Image
                         style={styles.img}
                         source={Gender2} />

@@ -4,7 +4,7 @@ import {
     RSAA
 } from 'redux-api-middleware';
 import config from '../config';
-const BASE_URL = () => `${config.api.host}/api/booking`;
+const BASE_URL = () => `${config.api.host}/api/appointment`;
 
 export const listAppointments = (pageSize = 10, pageNumber = 1) => ({
     [RSAA]: {
@@ -163,6 +163,37 @@ export const acceptAppointment = appointmentId => ({
             }
         ],
         body: JSON.stringify({ appointmentId }),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const completeService = data => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/appointment/complete`,
+        method: 'PUT',
+        types: [
+            constants.COMPLETE_APPOINTMENT,
+            {
+                type: constants.COMPLETE_APPOINTMENT_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.COMPLETE_APPOINTMENT_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(data),
         options: { timeout: 10000 },
         headers: {
             Accept: "application/json",

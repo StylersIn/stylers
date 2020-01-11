@@ -3,6 +3,7 @@ import {
     View,
     StyleSheet,
     TouchableOpacity,
+    ScrollView,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -27,6 +28,7 @@ class Login extends React.Component {
         this.state = {
             isProcessing: false,
             validationErr: false,
+            mainErr: undefined,
             verify: false,
             social_user: {},
         }
@@ -58,7 +60,7 @@ class Login extends React.Component {
 
         // if (nextProps.user.error && nextProps.user.error !== this.props.user.error) {
         if (nextProps.user.error) {
-            this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);
+            this.showErr(nextProps.user.error);
         }
         if (nextProps.social_login_status != this.props.social_login_status) {
             // alert(nextProps.social_login_status);
@@ -70,12 +72,13 @@ class Login extends React.Component {
             }
             if (nextProps.social_login_status === 1) {
                 this.setState({ verify: false, })
-                this.showToast(`Error: Email address tied to this account already exists`, toastType.danger);
+                this.showErr(`Email address tied to this account already exists`);
+                // this.showToast(`Error: Email address tied to this account already exists`, toastType.danger);
             }
         }
     }
     doLogin = () => {
-        this.setState({ isProcessing: true });
+        this.setState({ isProcessing: true, mainErr: undefined, });
         let email = this.email;
         let password = this.password;
         if (!email || !password) {
@@ -88,8 +91,9 @@ class Login extends React.Component {
         }
     }
 
-    showToast = (text, type) => {
-        ShowToast(text, type);
+    showErr = (err) => {
+        // ShowToast(text, type);
+        this.setState({ mainErr: err });
         this.setState({ isProcessing: false });
     }
 
@@ -145,11 +149,12 @@ class Login extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
                 {this.state.verify ? <Spinner size="large" /> : <>
                     <View style={{ paddingVertical: 20, }}>
                         <Text style={{ fontFamily: fonts.bold, fontSize: 24, lineHeight: 30 }} >Log Into {"\n"}Your Account</Text>
                     </View>
+                    {this.state.mainErr && <Text style={{ color: colors.danger, fontFamily: fonts.bold }}>{this.state.mainErr}</Text>}
                     {this.state.validationErr && <Text style={{ color: colors.danger }}>One or more fields are missing</Text>}
                     <Item style={{ marginTop: 10, borderRadius: 5, }}
                         error={(this.email === undefined || this.email === '') && this.state.validationErr}
@@ -235,14 +240,14 @@ class Login extends React.Component {
                         </TouchableOpacity>
                     </View>
                 </>}
-            </View>
+            </ScrollView>
         )
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         padding: 20,
         justifyContent: "center",
     }

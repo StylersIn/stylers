@@ -73,7 +73,7 @@ class Payment extends React.Component {
                         pickUp: this.props.pickUp,
                     }
                     setTimeout(() => {
-                        this.props.saveBooking(req);
+                        this.props.saveAppointment(req);
                     }, 2000);
                 }
                 console.log(response); // card charged successfully, get reference here

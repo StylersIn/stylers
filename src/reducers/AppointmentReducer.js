@@ -10,7 +10,7 @@ export default function appointmentReducer(state = initialState, action) {
             return {
                 ...state,
                 error: undefined,
-                booked: undefined,
+                accepted: undefined,
             }
         case constants.LIST_APPOINTMENT:
             return {
@@ -91,6 +91,23 @@ export default function appointmentReducer(state = initialState, action) {
             return {
                 ...state,
                 accepted: undefined,
+            }
+        case constants.COMPLETE_APPOINTMENT:
+            return {
+                ...state,
+                completed: undefined,
+                error: undefined,
+            }
+        case constants.COMPLETE_APPOINTMENT_SUCCESS:
+            return {
+                ...state,
+                completed: action.payload.response.success,
+            }
+        case constants.COMPLETE_APPOINTMENT_FAILURE:
+            return {
+                ...state,
+                completed: undefined,
+                error: action.payload
             }
         default:
             return state;

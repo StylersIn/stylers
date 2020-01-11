@@ -36,10 +36,10 @@ const ServiceList = (props) => {
                         <View style={{ flex: 1 / 2, paddingEnd: 10, justifyContent: "space-between" }}>
                             <TouchableOpacity
                                 onPress={() => props.navigation.navigate('Service', { service: item })}
-                                activeOpacity={0.7}>
+                                activeOpacity={0.9}>
                                 <Image
                                     style={styles.img}
-                                    loadingIndicatorSource={true}
+                                    // loadingIndicatorSource={true}
                                     source={{ uri: item.imageUrl }} />
                                 <View style={styles.overlay} />
                                 <View style={{ position: "relative", bottom: "50%" }}>
@@ -85,7 +85,22 @@ const styles = StyleSheet.create({
         // marginLeft: 10,
         backgroundColor: 'rgba(0,0,0,0.5)',
         borderRadius: 5,
-    }
+    },
+    Input___shadow: {
+        marginTop: 10,
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: '#000000',
+        borderBottomWidth: 0,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 2,
+        elevation: 5,
+        borderLeftWidth: 12,
+        borderLeftColor: "#000000",
+        borderTopColor: 'transparent',
+    },
 })
 
 export default ServiceList;

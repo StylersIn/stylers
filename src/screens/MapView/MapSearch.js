@@ -93,13 +93,13 @@ const MapSearch = ({
                         </View>
                     </View>
 
-                    <View style={{ flex: 1 }}>
+                    <View style={predictions && predictions.length && styles.predictions}>
                         {error && !searching && <View style={{ width: "90%", marginTop: 30, alignItems: "center", padding: 20, flexDirection: "row" }}>
                             <Icon type='Ionicons' name='ios-information-circle-outline' />
                             <Text style={{ paddingLeft: 20 }}>{error}</Text>
                         </View>}
 
-                        <View style={styles.searchResultsWrapper}>
+                        {predictions && <View style={styles.searchResultsWrapper}>
                             <List
                                 dataArray={predictions}
                                 keyExtractor={(item, index) => index.toString()}
@@ -121,7 +121,7 @@ const MapSearch = ({
                                     </TouchableOpacity>
                                 }
                             />
-                        </View>
+                        </View>}
 
                         {selectedAddress && <View style={{ padding: 10, flex: 1, justifyContent: 'flex-end' }}>
                             <Button
@@ -195,6 +195,9 @@ const styles = StyleSheet.create({
         color: '#9BABB4',
         fontSize: 11,
     },
+    predictions:{
+        height:300
+    }
 })
 
 MapSearch.propTypes = propTypes;
