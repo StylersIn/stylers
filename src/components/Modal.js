@@ -13,13 +13,13 @@ class Modal extends React.Component {
         isVisible: false,
     }
 
-    componentWillMount() {
-        this.props.closeModal();
-    }
+    // componentWillMount() {
+    //     this.props.closeModal();
+    // }
 
-    componentWillUnmount() {
-        this.props.closeModal();
-    }
+    // componentWillUnmount() {
+    //     this.props.closeModal();
+    // }
 
     render() {
         // const { isVisible, } = this.state;

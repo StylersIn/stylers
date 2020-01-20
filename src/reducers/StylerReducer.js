@@ -2,7 +2,21 @@ import * as constants from '../constants/ActionTypes';
 import AsyncStorage from '@react-native-community/async-storage';
 
 let initialState = {
+    servicePrice: [],
+}
 
+function filterServicePrice(state, action) {
+    if (state.servicePrice) {
+        let f = state.servicePrice.findIndex(e => e.id == action.payload.id);
+        let obj = [];
+        if (f == -1) {
+            return state.servicePrice.concat(action.payload);
+        }
+        obj = Object.assign(state.servicePrice[f], action.payload);
+        state.servicePrice.splice(f, 1);
+        return state.servicePrice.concat(obj);
+    }
+    return [action.payload];
 }
 
 export default function stylerReducer(state = initialState, action) {
@@ -51,6 +65,24 @@ export default function stylerReducer(state = initialState, action) {
                 status: false,
                 error: action.meta.error,
             }
+        case constants.UPDATE_AVATAR:
+            return {
+                ...state,
+                avatar: undefined,
+                error: undefined,
+            }
+        case constants.UPDATE_AVATAR_SUCCESS:
+            return {
+                ...state,
+                avatar: true,
+                error: undefined,
+            }
+        case constants.UPDATE_AVATAR_FAILURE:
+            return {
+                ...state,
+                avatar: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            }
         case constants.LIST_STYLER:
             return {
                 ...state,
@@ -62,6 +94,25 @@ export default function stylerReducer(state = initialState, action) {
                 ...state,
                 isProcessing: true,
                 service__stylers: action.payload && action.payload.response.data,
+            }
+        case constants.GET_STYLER_SERVICES:
+            return {
+                ...state,
+                isProcessing: true,
+                error: undefined,
+                stylerServices: undefined,
+            }
+        case constants.GET_STYLER_SERVICES_SUCCESS:
+            return {
+                ...state,
+                isProcessing: false,
+                stylerServices: action.payload && action.payload.response.data,
+            }
+        case constants.GET_STYLER_SERVICES_FAILURE:
+            return {
+                ...state,
+                isProcessing: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             }
         case constants.EDIT_STYLER:
             return {
@@ -144,6 +195,11 @@ export default function stylerReducer(state = initialState, action) {
                 ...state,
                 stats: undefined,
                 error: action.payload.error,
+            }
+        case constants.SERVICE_PRICE:
+            return {
+                ...state,
+                servicePrice: filterServicePrice(state, action),
             }
         default:
             return state;

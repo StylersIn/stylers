@@ -12,6 +12,7 @@ import service__1 from '../../../assets/imgs/service__1.jpeg';
 import { colors, fonts, } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { CloseIcon, CallIcon, ChatIcon, ArrowDown, SwiperIcon } from './MapAssets';
+import { WhatsAppIcon } from '../Appointments/AppointmentAssets';
 
 const HEADER_HEIGHT = 30;
 const swiperIcon = () => {
@@ -71,7 +72,7 @@ export default function (props) {
 
                         <Card style={styles.map_btn}>
                             <CardItem style={styles.map_btn_icon}>
-                                <CloseIcon />
+                                <WhatsAppIcon color={colors.whatsapp} size={22} />
                             </CardItem>
                         </Card>
                     </View>
@@ -91,7 +92,7 @@ export default function (props) {
                             </View>
                         </View>
                     </View>
-                    <View style={{ marginVertical: 20, }}>
+                    {props.role !== 'USER' && <View style={{ marginVertical: 20, }}>
                         <SwipeButton
                             // thumbIconImageSource={service__1}
                             // onSwipeStart={() => this.showToastMessage('Swipe started!')}
@@ -109,7 +110,7 @@ export default function (props) {
                             title={'Slide to complete service'}
                         // thumbIconBackgroundColor={colors.pink}
                         />
-                    </View>
+                    </View>}
                 </View> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                         <Spinner color={colors.pink} />
                     </View>}
@@ -178,7 +179,7 @@ export default function (props) {
                                     </CardItem>
                                 </Card>
                             </View>
-                            <View style={{ marginTop: 30, }}>
+                            <View style={{ marginVertical: 30, }}>
                                 <View style={{ borderColor: 'rgba(151, 173, 182, 0.2)', borderWidth: 0.5, borderRadius: 5, padding: 20, flexDirection: 'row', }}>
                                     <Text>11:24</Text>
                                     <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 5, marginLeft: 10, }}>
@@ -194,7 +195,7 @@ export default function (props) {
                                     </View>
                                 </View>
                             </View>
-                            <View style={{ marginVertical: 20, }}>
+                            {props.role !== 'USER' && <View style={{ marginBottom: 20, }}>
                                 <SwipeButton
                                     // thumbIconImageSource={service__1}
                                     // onSwipeStart={() => this.showToastMessage('Swipe started!')}
@@ -212,7 +213,7 @@ export default function (props) {
                                     title={'Slide to complete service'}
                                 // thumbIconBackgroundColor={colors.pink}
                                 />
-                            </View>
+                            </View>}
                         </View> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                                 <Spinner color={colors.pink} />
                             </View>}

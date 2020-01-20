@@ -27,9 +27,12 @@ import FbRegisterScreen from '../screens/Auth/FbRegister';
 import VerifyScreen from '../screens/Auth/Verify';
 import MapViewScreen from '../containers/MapContainer';
 import StylerMapScreen from '../screens/MapView/StylerMap';
+import TrackStylerScreen from '../screens/MapView/TrackStyler';
 import SettingsScreen from '../screens/Settings';
 import EditProfileScreen from '../screens/EditProfile';
 import ChangePasswordScreen from '../screens/ChangePassword';
+import AddAvatarScreen from '../screens/Auth/AddAvatar';
+import ServicePriceScreen from '../screens/Stylers/ServicePrice';
 
 const drawerContentComponents = (props) => (
     <Container style={{ backgroundColor: colors.black }}>
@@ -101,10 +104,12 @@ const AppNavigator = createStackNavigator({
     Auth: AuthScreen,
     Login: LoginScreen,
     Register: RegisterScreen,
+    AddAvatar: AddAvatarScreen,
     FbRegister: FbRegisterScreen,
     Stylers: StylersScreen,
     Verify: VerifyScreen,
     StylerService: StylersCompleteRegScreen,
+    ServicePrice: ServicePriceScreen,
     Appointments: AppointmentScreen,
     Requests: {
         screen: StylerDrawerNavigator
@@ -123,11 +128,12 @@ const AppNavigator = createStackNavigator({
     NoDebit: NoDebitScreen,
     MapView: MapViewScreen,
     StylerMap: StylerMapScreen,
+    TrackStyler: TrackStylerScreen,
     EditProfile: EditProfileScreen,
     ChangePassword: ChangePasswordScreen,
 },
     {
-        initialRouteName: "Splash",
+        initialRouteName: "StylerService",
         headerMode: "none"
     }
 );

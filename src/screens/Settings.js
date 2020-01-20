@@ -13,6 +13,7 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import Header from '../components/Header';
 import Text from '../config/AppText';
 import { fonts } from '../constants/DefaultProps';
+import { SettingsIcon, AppointmentIcon } from '../navigation/assets';
 
 class Settings extends React.Component {
     constructor(props) {
@@ -23,6 +24,12 @@ class Settings extends React.Component {
             toastMsg: '',
             toastType: '',
         }
+    }
+
+    static navigationOptions = {
+        drawerIcon: ({ tintColor }) => (
+            <AppointmentIcon tintColor={"none"} />
+        )
     }
 
     render() {

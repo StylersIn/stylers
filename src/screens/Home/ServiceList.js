@@ -57,7 +57,7 @@ const ServiceList = (props) => {
 const styles = StyleSheet.create({
     child__container: {
         flex: 1,
-        marginTop: 20,
+        marginTop: 30,
     },
     grid__main: {
         marginTop: 10,

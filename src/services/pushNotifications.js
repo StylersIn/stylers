@@ -12,6 +12,7 @@ const configure = () => {
         onNotification: function (notification) {
             // process the notification
             // required on iOS only
+            console.log(notification);
             notification.finish(PushNotificationIOS.FetchResult.NoData);
         },
 
@@ -31,8 +32,9 @@ function truncate(text, length = 35) {
     return text.length > length ? `${text.substring(0, length)}...` : text;
 }
 
-const localNotification = (title, message, length = 35, ) => {
+const localNotification = (title, message, length = 35, id = 0) => {
     PushNotification.localNotification({
+        id: id,
         autoCancel: false,
         largeIcon: "ic_launcher",
         smallIcon: "ic_notification",

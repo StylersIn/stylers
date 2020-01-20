@@ -66,3 +66,33 @@ export const listService = (pageSize = 10, pageNumber = 1) => ({
         credentials: "same-origin"
     }
 });
+
+export const getSubServices = (serviceId) => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/${serviceId}/sub`,
+        method: 'GET',
+        types: [
+            constants.LIST_SUB_SERVICE,
+            {
+                type: constants.LIST_SUB_SERVICE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => (console.log(response), {
+                    response,
+                }))
+            },
+            {
+                type: constants.LIST_SUB_SERVICE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});

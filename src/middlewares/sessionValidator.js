@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import * as constants from '../constants/ActionTypes';
 
 export default store => next => action => {
-    if (!store.getState().user.authenticated) {
+    if (!store.getState().user.authenticated && !store.getState().styler.authenticated) {
         return next(action);
     }
 

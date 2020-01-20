@@ -13,6 +13,7 @@ import Modal from '../../components/Modal';
 import { Item, Input } from 'native-base';
 import ShowToast from '../../components/ShowToast';
 import NavigationService from '../../navigation/NavigationService';
+import Text from '../../config/AppText';
 
 class Stylers extends React.Component {
     constructor(props) {
@@ -41,7 +42,8 @@ class Stylers extends React.Component {
     }
 
     handleSelect = (selected) => {
-        this.setState({ isVisible: true, current: selected, });
+        this.props.navigation.navigate('ServicePrice', { service: selected, })
+        // this.setState({ isVisible: true, current: selected, });
     }
 
     removeSelected = (serviceId) => {
@@ -72,18 +74,23 @@ class Stylers extends React.Component {
                 <SafeAreaView style={{ flex: 1, }}>
                     <View style={styles.container}>
                         <Header
-                            title={"My Services"}
+                            title={"My Services & Price"}
                         />
-                        <SelectedService
+                        {/* <SelectedService
                             selected={this.props.stylerService || []}
                             removeSelected={this.removeSelected}
-                        />
+                        /> */}
+                        <View style={{ width: "80%" }}>
+                            <Text style={styles.basic__1}>Pick a service from the list below. Example Haircuts, Hair dressing</Text>
+                        </View>
+                    </View>
+                    <View style={{ flex: 1 }}>
                         <ServiceList
                             selected={this.props.stylerService || []}
                             service__list={this.props.service__list}
                             onSelect={this.handleSelect}
                         />
-                        <View style={{ marginVertical: 0 }}>
+                        <View style={{ marginVertical: 0, padding: 20 }}>
                             <Button
                                 onPress={this.updateStyler}
                                 btnTxt={"Complete Sign Up"}
@@ -134,9 +141,13 @@ class Stylers extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        // flex: 1,
         padding: 20,
-    }
+    },
+    basic__1: {
+        color: "#979797",
+        marginTop: 10,
+    },
 })
 
 export default Stylers;

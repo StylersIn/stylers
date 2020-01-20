@@ -32,6 +32,14 @@ const propTypes = {
 const { width, height } = Dimensions.get('screen');
 const options = ['Rating', 'Location', 'Price'];
 class Header extends React.Component {
+    signOut = async () => {
+        try {
+            await this.props.logout();
+            NavigationService.navigate('Auth');
+        } catch (error) {
+            console.log(error);
+        }
+    }
     render() {
         return (
             <View style={{ marginTop: Platform.OS === 'ios' ? 20 : 20 }}>
@@ -57,13 +65,13 @@ class Header extends React.Component {
                             <Text style={{ fontFamily: fonts.bold, fontSize: 24, }}>{this.props.title}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', }}>
-                            <View style={{ marginRight: 15, marginTop: 0, }}>
-                            <TouchableOpacity
-                                onPress={() => this.props.logout()}
-                                activeOpacity={0.5}>
-                                <Icon name='ios-log-out' />
-                            </TouchableOpacity>
-                        </View>
+                            {this.props.hasLogout === false ? null : <View style={{ marginRight: 15, marginTop: 0, }}>
+                                <TouchableOpacity
+                                    onPress={this.signOut}
+                                    activeOpacity={0.5}>
+                                    <Icon name='ios-log-out' />
+                                </TouchableOpacity>
+                            </View>}
                             {this.props.action}
                             {this.props.list ? <TouchableOpacity
                                 onPress={() => this.props.onChange()}

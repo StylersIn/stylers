@@ -43,7 +43,7 @@ export default function (props) {
                                 <View style={{ paddingHorizontal: 10, }}>
                                     {/* {appointment.services.map((r, key) => (<Text key={key} style={{ fontFamily: fonts.bold }}>{r.serviceId && r.serviceId.name}</Text>))} */}
                                     <Text style={{ fontFamily: fonts.bold }}>{appointment.services[0].serviceId.name}</Text>
-                                    <Text style={{ fontSize: 10, fontFamily: fonts.medium, paddingVertical: 5, }}>{appointment.stylerId.name} </Text>
+                                    <Text style={{ fontSize: 10, fontFamily: fonts.medium, paddingVertical: 5, }}>{props.role == roles.user ? appointment.stylerId.name : appointment.userId.name} </Text>
                                     <Text style={{ fontSize: 10, }}>{appointment.streetName}</Text>
                                 </View>
                                 <View style={{ position: "absolute", top: 10, right: 10, }}>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         borderWidth: 1,
         borderRadius: 5,
-        borderColor: '#000000',
+        // borderColor: '#000000',
         borderBottomWidth: 0,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 5,
         borderLeftWidth: 12,
-        borderLeftColor: "#000000",
+        // borderLeftColor: "#000000",
         borderTopColor: 'transparent',
     },
 });

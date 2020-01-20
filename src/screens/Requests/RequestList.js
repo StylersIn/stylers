@@ -15,19 +15,9 @@ import { BarberIcon } from '../Services/ServiceAssets';
 import { EmptyAppointment } from '../Appointments/AppointmentAssets';
 import Loader from '../../components/Loader';
 import Button from '../../components/Button';
+import { getDay, getDate, formatTime } from '../../utils/stylersUtils';
 
 export default function (props) {
-    function getDate(date) {
-        return new Date(date).getDate();
-    }
-    function getDay(date) {
-        var newDate = new Date(date).getDay();
-        return newDate === 0 ? 'Sun' : newDate === 1 ? 'Mon' : newDate === 2 ? 'Tues' : newDate === 3 ? 'Wed' : newDate === 4
-            ? 'Thu' : newDate === 5 ? 'Fri' : newDate === 6 ? 'Fri' : null;
-    }
-    function getTime(date) {
-        return new Date(date).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-    }
     return (
         <View style={{ flex: 1, }}>
             <View style={{ flex: 1, marginTop: 20, }}>
@@ -48,12 +38,12 @@ export default function (props) {
                                 <View style={{ borderRightWidth: 0.5, borderColor: "#979797", alignItems: "center", paddingRight: 10, }}>
                                     <Text style={{ fontFamily: fonts.bold, fontSize: 18, paddingVertical: 2, }}>{getDate(request.CreatedAt)}</Text>
                                     <Text style={{ fontSize: 12, paddingVertical: 2, }}>{getDay(request.CreatedAt)}</Text>
-                                    <Text style={{ fontSize: 12, paddingVertical: 2, }}>{getTime(request.CreatedAt)}</Text>
+                                    <Text style={{ fontSize: 12, paddingVertical: 2, }}>{formatTime(request.CreatedAt)}</Text>
                                 </View>
                                 <View style={{ paddingHorizontal: 10, }}>
                                     {/* {request.services.map((r, key) => (<Text key={key} style={{ fontFamily: fonts.bold }}>{r.serviceId && r.serviceId.name}</Text>))} */}
                                     <Text style={{ fontFamily: fonts.bold }}>{request.services[0].serviceId.name}</Text>
-                                    <Text style={{ fontSize: 10, fontFamily: fonts.medium, marginTop: 5, }}>{request.stylerId.name} </Text>
+                                    <Text style={{ fontSize: 10, fontFamily: fonts.medium, marginTop: 5, }}>{request.userId.name} </Text>
                                     <Text style={{ fontSize: 10, }}>{request.streetName}</Text>
                                 </View>
                                 {/* <View style={{ position: "absolute", top: 10, right: 10, }}>

@@ -16,6 +16,7 @@ import { AppointmentIcon } from '../../navigation/assets';
 import { SafeAreaView } from 'react-navigation';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
+import { Spinner } from 'native-base';
 
 const propTypes = {
     onSelect: PropTypes.func,
@@ -28,8 +29,14 @@ class MyServices extends React.Component {
         )
     }
 
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        if (nextProps.stylerServices && nextProps.stylerServices != this.props.stylerServices) {
+
+        }
+    }
+
     componentDidMount() {
-        this.props.listService();
+        this.props.listStylerServices();
     }
 
     render() {
@@ -43,41 +50,45 @@ class MyServices extends React.Component {
                             title={"My Services"}
                             action={<Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>EDIT</Text>}
                         />
-                        <View style={styles.child__container}>
-                            {/* <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text> */}
-                            <View style={styles.grid__main}>
-                                <FlatList
-                                    data={this.props.service__list && this.props.service__list.credentials.message}
-                                    numColumns={2}
-                                    columnWrapperStyle={{ flex: 1, justifyContent: 'space-around', }}
-                                    keyExtractor={_keyExtractor}
-                                    renderItem={({ item }) =>
-                                        <View style={{ flex: 1 / 2, margin: 5, marginBottom: -8 }}>
-                                            <TouchableOpacity
-                                                onLongPress={() => alert('haa!')}
-                                                // onPress={() => this.props.onSelect(item)}
-                                                activeOpacity={0.7}>
-                                                <Image
-                                                    style={[styles.img]}
-                                                    source={{ uri: item.imageUrl || imgUrl }} />
-                                                <View style={[styles.overlay]} />
-                                                <View style={{ position: "relative", bottom: "50%" }}>
-                                                    <Text style={styles.overlayTxtMain}>{item.name}</Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                        </View>
-                                    }
+                        {this.props.stylerServices ? <>
+                            <View style={styles.child__container}>
+                                {/* <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text> */}
+                                <View style={styles.grid__main}>
+                                    <FlatList
+                                        data={this.props.stylerServices}
+                                        numColumns={2}
+                                        columnWrapperStyle={{ flex: 1, justifyContent: 'space-around', }}
+                                        keyExtractor={_keyExtractor}
+                                        renderItem={({ item }) =>
+                                            <View style={{ flex: 1 / 2, margin: 5, marginBottom: -8 }}>
+                                                <TouchableOpacity
+                                                    onLongPress={() => alert('haa!')}
+                                                    // onPress={() => this.props.onSelect(item)}
+                                                    activeOpacity={0.7}>
+                                                    <Image
+                                                        style={[styles.img]}
+                                                        source={{ uri: item.serviceId.imageUrl || imgUrl }} />
+                                                    <View style={[styles.overlay]} />
+                                                    <View style={{ position: "relative", bottom: "50%" }}>
+                                                        <Text style={styles.overlayTxtMain}>{item.serviceId.name}</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            </View>
+                                        }
+                                    />
+                                </View>
+                            </View>
+                            <View style={{ marginTop: 40 }}>
+                                <Button
+                                    onPress={() => this.props.navigation.navigate('StylerService')}
+                                    btnTxt={"Add New Service"}
+                                    size={"lg"}
+                                    btnTxtStyles={{ color: colors.white, fontFamily: fonts.bold }}
                                 />
                             </View>
-                        </View>
-                        <View style={{ marginTop: 40 }}>
-                            <Button
-                                onPress={() => this.props.navigation.navigate('StylerService')}
-                                btnTxt={"Add New Service"}
-                                size={"lg"}
-                                btnTxtStyles={{ color: colors.white, fontFamily: fonts.bold }}
-                            />
-                        </View>
+                        </> : <View style={{ flex: 1, }}>
+                                <Spinner size={80} color={colors.pink} />
+                            </View>}
                     </View>
                 </SafeAreaView>
             </View>
@@ -125,6 +136,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     service__list: state.service.services,
+    stylerServices: state.styler.stylerServices,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

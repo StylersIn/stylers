@@ -41,8 +41,11 @@ class Register extends React.Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.styler.styler && nextProps.styler.styler != this.props.styler.styler) {
-            this.props.navigation.dispatch(NavigationService.resetAction('StylersCompleteReg'))
+        if (nextProps.user.current && nextProps.user.current != this.props.user.current) {
+            this.props.navigation.dispatch(NavigationService.resetAction('AddAvatar'))
+        }
+        if (nextProps.user.status && nextProps.user.status != this.props.user.status) {
+            this.showToast(nextProps.user.message, toastType.danger);
         }
         if (nextProps.styler.error && nextProps.styler.error != this.props.styler.error) {
             this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);
@@ -101,7 +104,7 @@ class Register extends React.Component {
     }
 
     handleClick = () => {
-        this.props.navigation.navigate('StylersCompleteReg')
+        this.props.navigation.navigate('StylerService')
     }
 
     render() {
@@ -243,6 +246,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     styler: state.styler,
+    user: state.user,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

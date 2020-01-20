@@ -56,7 +56,7 @@ class Payment extends React.Component {
             expiryMonth: this.expiryMonth,
             expiryYear: this.expiryYear,
             cvc: this.cvc,
-            email: 'obinna.okoroeugene@gmail.com',
+            email: this.props.email,
             amountInKobo: totalAmount * 100,
         })
             .then(response => {

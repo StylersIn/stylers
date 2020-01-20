@@ -29,7 +29,7 @@ class Home extends React.Component {
                         hamburger={true}
                         title={"Browse Services"}
                     />
-                    <GenderList {...this.props} />
+                    {/* <GenderList {...this.props} /> */}
                     <ServiceList {...this.props} />
                 </View>
                 {/* </ScrollView> */}

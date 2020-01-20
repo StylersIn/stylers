@@ -6,6 +6,7 @@ import {
     Image,
     SafeAreaView,
     Linking,
+    RefreshControl,
 } from 'react-native';
 import {
     Icon,
@@ -40,6 +41,8 @@ class Appointment extends React.Component {
             isVisible: false,
             appointment: {},
             isProcessing: false,
+            refreshing: false,
+            setRefreshing: false,
         }
     }
 
@@ -51,18 +54,17 @@ class Appointment extends React.Component {
 
     UNSAFE_componentWillReceiveProps(prevProps) {
         if (prevProps.location && prevProps.location != this.props.location) {
-            if (this.props.role === roles.styler) {
-                if (this.state.appointment.userId.publicId === this.props.current.publicId) {
-                    notify('Service Started', 'Hi there! Styler just started this service.');
-                }
-                this.props.navigation.navigate('StylerMap', { appointment: this.state.appointment })
-                this.setState({ isProcessing: false, isVisible: false, })
+            this.navigateToMap();
+        }
+        if (prevProps.appointments && prevProps.appointments !== this.props.appointments) {
+            if (this.state.refreshing) {
+                this.setState({ refreshing: false });
             }
         }
     }
 
     showDetails = (appointment) => this.setState({ isVisible: true, appointment, });
-    closeModal = () => this.setState({ isVisible: false });
+    closeModal = () => this.setState({ isVisible: false, isProcessing: false, });
 
     calcServicePrice = () => {
         var _service = this.props.appointments.filter(e => e.stylerId.services === appointment.serviceId._id);
@@ -79,9 +81,42 @@ class Appointment extends React.Component {
         }
     }
 
+    navigateToMap = () => {
+        if (this.props.role === roles.styler) {
+            if (this.state.appointment.userId.publicId === this.props.current.publicId) {
+                notify('Service Started', 'Hi there! Styler just started this service.');
+            }
+            this.props.navigation.navigate('StylerMap', { appointment: this.state.appointment })
+        }
+        if (this.props.role === roles.user) {
+            this.props.navigation.navigate('TrackStyler', { appointment: this.state.appointment })
+        }
+        this.setState({ isProcessing: false, isVisible: false, })
+    }
+
     beginService = () => {
+        if (this.props.location) {
+            return this.navigateToMap();
+        }
+        else {
+            this.props.getCurrentLocation();
+        }
+        this.setState({ isProcessing: true, })
+    }
+
+    trackStyler = () => {
         this.props.getCurrentLocation();
         this.setState({ isProcessing: true, })
+    }
+
+    _onRefresh = () => {
+        this.setState({ refreshing: true });
+        if (this.props.role === roles.user) {
+            this.props.listAppointments();
+        } else if (this.props.role === roles.styler) {
+            this.props.listStylerAppointments();
+        } else { }
+        
     }
 
     render() {
@@ -89,7 +124,15 @@ class Appointment extends React.Component {
         return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
-                    <ScrollView contentContainerStyle={styles.container}>
+                    <ScrollView
+                        contentContainerStyle={styles.container}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this._onRefresh}
+                            />
+                        }
+                    >
                         {/* <TouchableOpacity
                             onPress={() => this.props.navigation.goBack()}
                             activeOpacity={0.7}>
@@ -130,11 +173,11 @@ class Appointment extends React.Component {
                 <Modal
                     header={<View style={{ height: '100%', padding: 20, paddingHorizontal: 40, flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', }}>
-                            <View>
+                            {this.props.role == roles.user && <View>
                                 <Thumbnail
                                     style={{ width: 35, height: 35 }}
                                     source={service__1} />
-                            </View>
+                            </View>}
                             <View style={{ position: 'relative', left: 10 }}>
                                 <Text style={{ fontFamily: fonts.bold }}>{appointment.userId && appointment.userId.name}</Text>
                                 <View style={{ padding: 2, borderRadius: 6, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
@@ -181,7 +224,7 @@ class Appointment extends React.Component {
                                     btnTxtStyles={{ color: colors.black, fontFamily: fonts.bold }}
                                 />
                             </View>}
-                            {this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.styler ? <View style={{ marginTop: 10, width: '100%' }}>
+                            {this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.styler && (!appointment.completed || !appointment.accepted) ? <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
                                     onPress={this.beginService}
                                     btnTxt={"Begin Service"}
@@ -190,15 +233,24 @@ class Appointment extends React.Component {
                                     styles={{ height: 40, backgroundColor: colors.black, }}
                                     btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                 />
-                            </View> : !appointment.accepted ? <View style={{ marginTop: 10, width: '100%' }}>
-                                    <Button
-                                        onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
-                                        btnTxt={"Reschedule"}
-                                        size={"lg"}
-                                        styles={{ height: 40, }}
-                                        btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
-                                    />
-                                </View> : null}
+                            </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user && (!appointment.completed || !appointment.accepted) ? <View style={{ marginTop: 10, width: '100%' }}>
+                                <Button
+                                    onPress={this.trackStyler}
+                                    btnTxt={"Track Styler"}
+                                    size={"lg"}
+                                    loading={this.state.isProcessing}
+                                    styles={{ height: 40, backgroundColor: colors.black, }}
+                                    btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
+                                />
+                            </View> : !this.IsDateInPast(appointment.scheduledDate) ? <View style={{ marginTop: 10, width: '100%' }}>
+                                <Button
+                                    onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
+                                    btnTxt={"Reschedule"}
+                                    size={"lg"}
+                                    styles={{ height: 40, }}
+                                    btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
+                                />
+                            </View> : null}
                             <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
                                     onPress={() => Linking.openURL(`whatsapp://send?text=hello&phone=${appointment.stylerId.phoneNumber}`)}

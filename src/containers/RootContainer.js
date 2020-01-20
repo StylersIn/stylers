@@ -17,7 +17,7 @@ class Root extends React.Component {
             // NavigationActions.navigate({
             //     routeName: 'Login'
             // });
-            NavigationService.resetAction('Auth');
+            // NavigationService.resetAction('Auth');
             // NavigationService.navigate('Login');
         }
     }

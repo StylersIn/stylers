@@ -13,7 +13,7 @@ export const addStyler = credentials => ({
         types: [
             constants.ADD_STYLER,
             {
-                type: constants.ADD_STYLER_SUCCESS,
+                type: constants.AUTH_USER_SUCCESS,
                 payload: (action, state, response) => response.json().then(response => ({
                     response,
                 }))
@@ -281,3 +281,73 @@ export const getStats = _ => ({
         credentials: "same-origin"
     }
 });
+
+export const updateAvatar = file => (console.log(file), {
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/update/avatar`,
+        method: 'PUT',
+        types: [
+            constants.UPDATE_AVATAR,
+            {
+                type: constants.UPDATE_AVATAR_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.UPDATE_AVATAR_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(file),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const listStylerServices = _ => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/services`,
+        method: 'GET',
+        types: [
+            constants.GET_STYLER_SERVICES,
+            {
+                type: constants.GET_STYLER_SERVICES_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.GET_STYLER_SERVICES_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const servicePrice = (servicePrice) => {
+    return dispatch => {
+        dispatch({
+            type: constants.SERVICE_PRICE,
+            payload: servicePrice,
+        })
+    }
+}

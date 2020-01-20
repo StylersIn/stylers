@@ -13,6 +13,7 @@ export const colors = {
     pink: "#DE408B",
     facebook: '#4064AD',
     google: '#DD4B39',
+    whatsapp: '#25D366',
 }
 
 export const fonts = {

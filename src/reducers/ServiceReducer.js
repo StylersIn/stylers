@@ -43,6 +43,22 @@ export default function serviceReducer(state = initialState, action) {
                 isProcessing: false,
                 error: `${action.meta.error}`
             })
+        case constants.LIST_SUB_SERVICE:
+            return {
+                ...state,
+                subService: undefined,
+            }
+        case constants.LIST_SUB_SERVICE_SUCCESS:
+            return {
+                ...state,
+                subService: action.payload,
+            }
+        case constants.LIST_SUB_SERVICE_FAILURE:
+            return {
+                ...state,
+                subService: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            }
         default:
             return state;
     }

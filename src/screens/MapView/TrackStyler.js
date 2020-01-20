@@ -12,14 +12,14 @@ import { CallIcon, ChatIcon, CloseIcon, ArrowDown, SwiperIcon, PickUpIcon, } fro
 import MapViewDirections from 'react-native-maps-directions';
 import styler_location from '../../../assets/imgs/styler-location.jpg';
 import styler_img from '../../../assets/imgs/styler_img.png';
-import { Rating, AirbnbRating } from 'react-native-ratings';
 import Geocoder from 'react-native-geocoding';
 import { notify } from '../../services';
 import BottomSheet from './BottomSheet';
 import NavigationService from '../../navigation/NavigationService';
-import Geolocation from '@react-native-community/geolocation';
+import { pickUp } from '../Assets';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
+import { Rating, AirbnbRating } from 'react-native-ratings';
 Geocoder.init(MAP_API_KEY);
 
 const origin = { latitude: 37.3318456, longitude: -122.0296002 };
@@ -40,6 +40,30 @@ const HEADER_HEIGHT = 30;
 class StylerMap extends React.Component {
     constructor(props) {
         super(props);
+        this.region = {
+            latitude: this.props.location.coords.latitude,
+            longitude: this.props.location.coords.longitude,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
+        },
+        this.props.socket.on('driverLocation', (location) => {
+            console.log(location);
+            // this.fitAllMarkers({
+            //     latitude: parseFloat(location.latitude),
+            //     longitude: parseFloat(location.longitude)
+            // })
+            this.props.updateDriverLocation(location);
+            // this.setState({ driverLocation: location, }, () => {
+            //     // if (!this.state.fitOnce) {
+            //     //     this.fitAllMarkersMain();
+            //     //     this.setState({ fitOnce: true, })
+            //     // }
+            // })
+        })
+        this.props.socket.on('reviews.send', () => {
+            console.log('show review');
+            this.setState({ showReview: true, })
+        })
     }
     state = {
         region: {
@@ -56,107 +80,76 @@ class StylerMap extends React.Component {
             latitudeDelta: 0,
             longitudeDelta: 0
         }),
+        driverLocation: undefined,
+        fitOnce: false,
         completeService: false,
         showReview: false,
     }
     componentDidMount() {
         // this.props.getCurrentLocation();
         this.setState({ appointment: this.props.navigation.getParam('appointment', '') }, () => {
-            this.watchLocation();
-            this.fitAllMarkers();
+            setTimeout(() => {
+                this.fitAllMarkers();
+            }, 1000);
         })
-        this.updateStylerCurrentLocation();
     }
     UNSAFE_componentWillReceiveProps(prevProps) {
-        if (prevProps.location && prevProps.location != this.props.location) {
-            this.getAddress({
-                latitude: prevProps.location.coords.latitude,
-                longitude: prevProps.location.coords.longitude,
-            })
-            this.setState({
-                region: {
-                    latitude: prevProps.location.coords.latitude,
-                    longitude: prevProps.location.coords.longitude,
-                    latitudeDelta: LATITUDE_DELTA,
-                    longitudeDelta: LONGITUDE_DELTA
-                }
-            }, () => {
-                // setTimeout(() => {
-                //     this.fitAllMarkers()
-                // }, 1000);
-            })
-        }
-
         if (prevProps.completed && prevProps.completed !== this.props.completed) {
             alert('Successfully completed')
             if (this.state.appointment.userId.publicId === this.props.current.publicId) {
                 notify('Service Completed', 'Hi there! You just completed this service.');
             }
             this.props.navigation.dispatch(NavigationService.resetAction('Requests'))
-            this.props.socket.emit('serviceCompleted', this.state.appointment.userId.publicId);
             // this.props.listStylerRequests();
+        }
+        if (prevProps.driverLocation && prevProps.driverLocation != this.props.driverLocation) {
+            this.fitAllMarkersMain(prevProps.driverLocation);
         }
     }
 
-    updateStylerCurrentLocation = () => {
-        // var ID = setInterval(() => {
-        //     this.props.updateStylerCurrentLocation();
-        // }, 3000);
-    }
+    // componentWillUnmount() {
+    //     navigator.geolocation.clearWatch(this.watchID);
+    // }
 
-    componentWillUnmount() {
-        Geolocation.clearWatch(this.watchID);
-    }
+    // watchLocation = () => {
+    //     const { coordinate } = this.state;
 
-    watchLocation = () => {
-        const { coordinate, appointment, } = this.state;
+    //     this.watchID = navigator.geolocation.watchPosition(
+    //         position => {
+    //             const { latitude, longitude } = position.coords;
 
-        this.watchID = Geolocation.watchPosition(
-            position => {
-                const { latitude, longitude } = position.coords;
+    //             const newCoordinate = {
+    //                 latitude,
+    //                 longitude
+    //             };
 
-                // const newCoordinate = {
-                //     latitude,
-                //     longitude
-                // };
+    //             if (Platform.OS === "android") {
+    //                 if (this.marker) {
+    //                     this.marker._component.animateMarkerToCoordinate(
+    //                         newCoordinate,
+    //                         500 // 500 is the duration to animate the marker
+    //                     );
+    //                 }
+    //             } else {
+    //                 coordinate.timing(newCoordinate).start();
+    //             }
 
-                // if (Platform.OS === "android") {
-                //     if (this.marker) {
-                //         this.marker._component.animateMarkerToCoordinate(
-                //             newCoordinate,
-                //             500 // 500 is the duration to animate the marker
-                //         );
-                //     }
-                // } else {
-                //     coordinate.timing(newCoordinate).start();
-                // }
-
-                // this.setState({
-                //     region: {
-                //         latitude,
-                //         longitude
-                //     }
-                // });
-
-                var region = {
-                    latitude,
-                    longitude
-                }
-                var credentials = {
-                    Id: appointment._id,
-                    userKey: appointment.userId.publicId,
-                }
-                this.props.socket.emit('stylerLocation', region, credentials);
-            },
-            error => console.log(error),
-            {
-                enableHighAccuracy: true,
-                timeout: 20000,
-                maximumAge: 1000,
-                distanceFilter: 10
-            }
-        );
-    };
+    //             this.setState({
+    //                 region: {
+    //                     latitude,
+    //                     longitude
+    //                 }
+    //             });
+    //         },
+    //         error => console.log(error),
+    //         {
+    //             enableHighAccuracy: true,
+    //             timeout: 20000,
+    //             maximumAge: 1000,
+    //             distanceFilter: 10
+    //         }
+    //     );
+    // };
 
     showToastMessage = message => this.setState({ message });
 
@@ -170,11 +163,32 @@ class StylerMap extends React.Component {
     }
 
     fitAllMarkers = () => {
-        const { region, appointment } = this.state;
-        const MARKERS = [region, {
+        const { appointment } = this.state;
+        const MARKERS = [this.region, {
             longitude: parseFloat(appointment.pickUp.longitude),
             latitude: parseFloat(appointment.pickUp.latitude),
-        }]
+        }];
+        this.map.fitToCoordinates(MARKERS, {
+            edgePadding: Platform.OS == 'android' ? DEFAULT_PADDING_ANDROID : DEFAULT_PADDING,
+            animated: true,
+        });
+    }
+
+    fitAllMarkersMain = (location) => {
+        console.log('fit all')
+        console.log(location);
+        const { appointment } = this.state;
+        const MARKERS = [
+            // this.region,
+            {
+                longitude: parseFloat(appointment.pickUp.longitude),
+                latitude: parseFloat(appointment.pickUp.latitude),
+            },
+            {
+                longitude: parseFloat(location.longitude),
+                latitude: parseFloat(location.latitude),
+            }
+        ];
         this.map.fitToCoordinates(MARKERS, {
             edgePadding: Platform.OS == 'android' ? DEFAULT_PADDING_ANDROID : DEFAULT_PADDING,
             animated: true,
@@ -186,12 +200,8 @@ class StylerMap extends React.Component {
         this.props.completeService({ appointmentId: this.state.appointment._id });
     }
 
-    rate = () => {
-
-    }
-
     render() {
-        const { region, appointment } = this.state;
+        const { appointment } = this.state;
         return (
             <View style={styles.container}>
                 {this.state.completeService && <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, elevation: 5, zIndex: 1000, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)', }}>
@@ -201,30 +211,24 @@ class StylerMap extends React.Component {
                 </View>}
                 <MapView
                     ref={e => this.map = e}
-                    provider={this.props.provider}
+                    provider={'google'}
                     style={styles.map}
-                    region={this.state.region}
+                    region={this.region}
                     showsUserLocation={true}
                     showsMyLocationButton={true}
                     followUserLocation={true}
                     showsCompass={true}
                     zoomEnabled={true}
                     loadingEnabled={true}
+                    // onRegionChangeComplete={this.props.driverLocation ? this.fitAllMarkersMain() : this.fitAllMarkers(this.props.driverLocation)}
                 >
-                    {appointment && <MapViewDirections
+                    {/* {appointment && <MapViewDirections
                         origin={this.state.region}
                         destination={appointment.pickUp.latitude + "," + appointment.pickUp.longitude}
                         apikey={GOOGLE_MAPS_APIKEY}
-                        strokeWidth={Platform.OS == 'ios' ? 2.5 : 4}
+                        strokeWidth={2}
                         strokeColor={colors.pink}
-                    />}
-                    {region && appointment && <Marker
-                        title={appointment.stylerId.name}
-                        image={styler_img}
-                        key={appointment.stylerId.publicId}
-                        coordinate={region}
-                    />}
-
+                    />} */}
                     {appointment && <Marker
                         title={'Destination'}
                         // image={styler_location}
@@ -236,6 +240,14 @@ class StylerMap extends React.Component {
                     >
                         <PickUpIcon />
                     </Marker>}
+
+                    {this.props.driverLocation && appointment && <Marker
+                        title={'Styler Coming'}
+                        image={styler_img}
+                        key={appointment.stylerId.publicId}
+                        coordinate={this.props.driverLocation}
+                    />}
+
 
                     {/* <Marker
                         title={'PickUp'}
@@ -261,7 +273,56 @@ class StylerMap extends React.Component {
                     {...this.props}
                     {...this.state}
                     endService={this.endService}
+                    role={'USER'}
                 />
+
+                {this.state.showReview && <View style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, elevation: 5, zIndex: -1000, }, this.state.showReview ? { zIndex: 1000 } : null]}>
+                    <Modal
+                        // closeModal={this.closeModal}
+                        hideCloseBtn={true}
+                        isVisible={this.state.showReview}
+                    >
+                        <View style={styles.header}>
+                            <View style={styles.drawerIcon}></View>
+                        </View>
+                        {appointment ? <View>
+                            <View style={{ alignItems: 'center', }}>
+                                <Thumbnail source={styler_img} />
+                                <Text style={{ fontFamily: fonts.bold, marginTop: 5, }}>{appointment.stylerId.name}</Text>
+                                <View style={{ marginVertical: 7, flexDirection: "row", }}>
+                                    <Rating
+                                        type='star'
+                                        ratingCount={5}
+                                        startingValue={0}
+                                        ratingColor={colors.pink}
+                                        ratingTextColor={colors.pink}
+                                        ratingBackgroundColor={colors.pink}
+                                        imageSize={18}
+                                        showRating={false}
+                                        onFinishRating={this.ratingCompleted}
+                                    />
+                                </View>
+                                <Text style={{ marginVertical: 10, }}>Excellent</Text>
+                            </View>
+                            <Textarea
+                                rowSpan={4}
+                                placeholderTextColor={'#ccc'}
+                                style={styles.reviewInput}
+                                // bordered
+                                placeholder={'Message'}
+                            />
+                            <View style={{ marginTop: 20, width: '100%' }}>
+                                <Button
+                                    onPress={this.rate}
+                                    btnTxt={"Rate"}
+                                    size={"lg"}
+                                    styles={{ height: 40, }}
+                                    btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
+                                />
+                            </View>
+                        </View> : <Spinner color={colors.pink} />}
+                    </Modal>
+                </View>}
             </View>
         );
     }
@@ -314,6 +375,7 @@ const styles = StyleSheet.create({
     header: {
         height: HEADER_HEIGHT,
         backgroundColor: '#ffffff',
+        justifyContent: 'center',
         alignItems: 'center',
     },
     drawerIcon: {
@@ -340,6 +402,7 @@ const mapStateToProps = state => ({
     error: state.appointment.error,
     current: state.user.current,
     socket: state.socket,
+    driverLocation: state.map.driverLocation,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

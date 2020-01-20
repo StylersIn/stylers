@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { fonts, colors, imgUrl } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { FlatList } from 'react-native-gesture-handler';
+import { Icon, Spinner } from 'native-base';
 
 const propTypes = {
     onSelect: PropTypes.func,
@@ -23,9 +24,9 @@ const ServiceList = (props) => {
     const _keyExtractor = (item, index) => item.name;
     return (
         <View style={styles.child__container}>
-            <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text>
+            {/* <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text> */}
             <View style={styles.grid__main}>
-                <FlatList
+                {/* <FlatList
                     // contentContainerStyle={{ backgroundColor:"red" }}
                     data={service__list && service__list.credentials.message}
                     numColumns={2}
@@ -46,7 +47,17 @@ const ServiceList = (props) => {
                             </TouchableOpacity>
                         </View>
                     }
-                />
+                /> */}
+                {service__list ? service__list.credentials.message.map((item, i) => <TouchableOpacity
+                    onPress={() => props.onSelect(item)}
+                    activeOpacity={0.8}
+                    key={i}
+                    style={styles.serviceList}>
+                    <Text style={{ color: colors.white, fontFamily: fonts.medium, }}>{item.name}</Text>
+                    <Icon style={{ color: colors.pink, }} name='ios-arrow-forward' />
+                </TouchableOpacity>) : <View style={{ flex: 1, justifyContent: 'center', }}>
+                        <Spinner color={colors.pink} />
+                    </View>}
             </View>
         </View>
     )
@@ -55,11 +66,21 @@ const ServiceList = (props) => {
 const styles = StyleSheet.create({
     child__container: {
         flex: 1,
-        marginTop: 20,
+        marginTop: 10,
         marginBottom: 50,
     },
     grid__main: {
-        marginTop: 10,
+        flex: 1,
+        marginTop: 0,
+    },
+    serviceList: {
+        flexDirection: 'row',
+        padding: 5,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: colors.black,
+        marginBottom: 1,
     },
     grid__child: {
         // flexDirection: "row",

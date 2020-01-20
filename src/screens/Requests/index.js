@@ -89,8 +89,8 @@ class Requests extends React.Component {
         const { appointment, isVisible, } = this.state;
         return (
             <>
-                {this.state.accept && <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)', }}>
-                    <Spinner style={{ alignItems: "center" }} isVisible={true} size={'large'} color={colors.pink} />
+                {this.state.accept && <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, elevation: 5, zIndex: 1000, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)', }}>
+                    <Spinner style={{ alignItems: "center" }} isVisible={true} size={80} color={colors.pink} />
                 </View>}
                 <SafeAreaView style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={styles.container}>
