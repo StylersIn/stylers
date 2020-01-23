@@ -93,9 +93,24 @@ export default function userReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 error: `Login failed due to ${action.payload.error}`
             })
+        case constants.USER_DATA:
+            return Object.assign({}, state, {
+                userData: undefined,
+            })
+        case constants.USER_DATA_SUCCESS:
+            return {
+                ...state,
+                userData: action.payload.response && action.payload.response.data
+            }
+        case constants.USER_DATA_FAILURE:
+            return Object.assign({}, state, {
+                userData: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            })
         case constants.LOGOUT:
             if (action.payload === 'loggedOut') {
                 return {
+                    state: {},
                     loggedOut: true,
                 }
             }

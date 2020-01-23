@@ -51,9 +51,14 @@ class AddAvatar extends React.Component {
                 // avatarPrev: image.path,
                 avatar: {
                     uri: image.path,
-                    type: image.mime,
-                    name: pathParts[pathParts.length - 1]
+                    base64: image.data,
+                    mime: image.mime
                 }
+                // avatar: {
+                //     uri: image.path,
+                //     type: image.mime,
+                //     name: pathParts[pathParts.length - 1]
+                // }
             });
         });
     }

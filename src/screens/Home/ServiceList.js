@@ -29,7 +29,7 @@ const ServiceList = (props) => {
             <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text>
             {!isProcessing ? <View style={styles.grid__main}>
                 <FlatList
-                    data={service__list && service__list.credentials && service__list.credentials.message}
+                    data={service__list}
                     numColumns={2}
                     keyExtractor={_keyExtractor}
                     renderItem={({ item }) =>

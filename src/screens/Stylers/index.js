@@ -23,22 +23,27 @@ class Stylers extends React.Component {
             current: {},
             isVisible: false,
             isProcessing: false,
+            fetching: true,
         }
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
+        if (nextProps.service__list && nextProps.service__list != this.props.service__list) {
+            this.setState({ fetching: false });
+        }
         if (nextProps.updated && nextProps.updated != this.props.updated) {
-            this.setState({ isProcessing: false });
+            this.setState({ fetching: false });
             this.props.navigation.dispatch(NavigationService.resetAction('Appointments'));
         }
-        // if (this.props.error && this.props.error != this.props.styler.error) {
-        //     this.showToast(`Error: ${nextProps.styler.error}`, toastType.danger);
-        // }
+        if (nextProps.error && nextProps.error != this.props.error) {
+            this.setState({ fetching: false });
+            // this.showToast(`${nextProps.error}`, toastType.danger);
+        }
     }
 
     showToast = (text, type) => {
         ShowToast(text, type);
-        this.setState({ isProcessing: false });
+        this.setState({ fetching: false });
     }
 
     handleSelect = (selected) => {
@@ -63,7 +68,12 @@ class Stylers extends React.Component {
 
     updateStyler = () => {
         this.setState({ isProcessing: true });
-        this.props.updateStyler({ services: this.props.stylerService || [] });
+        this.props.updateStyler({ services: this.props.price || [] });
+    }
+
+    reload = () => {
+        this.setState({ fetching: true, });
+        this.props.listService();
     }
 
     closeModal = () => this.setState({ isVisible: false, });
@@ -89,17 +99,13 @@ class Stylers extends React.Component {
                             selected={this.props.stylerService || []}
                             service__list={this.props.service__list}
                             onSelect={this.handleSelect}
+                            fetching={this.state.fetching}
+                            error={this.props.error}
+                            reload={this.reload}
+                            updateStyler={this.updateStyler}
+                            processing={this.state.isProcessing}
+                            price={this.props.price}
                         />
-                        <View style={{ marginVertical: 0, padding: 20 }}>
-                            <Button
-                                onPress={this.updateStyler}
-                                btnTxt={"Complete Sign Up"}
-                                size={"lg"}
-                                loading={this.state.isProcessing ? true : false}
-                                styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
-                                btnTxtStyles={{ color: colors.black, fontFamily: fonts.bold }}
-                            />
-                        </View>
                     </View>
                 </SafeAreaView>
                 <Modal

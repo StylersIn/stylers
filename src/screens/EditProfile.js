@@ -5,7 +5,7 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
-import { Container, Content, Button, ListItem, Icon, Left, Body, Right, Switch, Thumbnail, Card } from 'native-base';
+import { Container, Content, Button, ListItem, Icon, Left, Body, Right, Switch, Thumbnail, Card, Input, Item } from 'native-base';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
@@ -26,7 +26,19 @@ class EditProfile extends React.Component {
         }
     }
 
+    componentDidMount() {
+        alert('ddd')
+        this.props.fetchUser(this.props.user.current.publicId);
+    }
+
+    UNSAFE_componentWillReceiveProps(prevProps){
+        if (prevProps.user.userData && prevProps.user.userData != this.props.user.userData) {
+            console.log(prevProps.user.userData);
+        }
+    }
+
     render() {
+        const { current } = this.props.user;
         return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
@@ -44,30 +56,41 @@ class EditProfile extends React.Component {
                         <Card style={styles.card_shadow}>
                             <View style={{ marginVertical: 10, marginHorizontal: 20, }}>
                                 <View>
-                                    <View style={{ paddingVertical: 15, }}>
-                                        <TouchableOpacity
-                                            activeOpacity={0.7}
-                                            onPress={() => this.props.navigation.navigate('EditProfile')}
-                                        >
-                                            <Text>Edit Profile</Text>
-                                        </TouchableOpacity>
+                                    <View style={{ paddingVertical: 5, }}>
+                                        <Item style={{ marginTop: 10, borderRadius: 5, }} inlineLabel>
+                                            <Input
+                                                onChangeText={e => this.name = e}
+                                                autoCapitalize={'none'}
+                                                defaultValue={current.name}
+                                                style={{ fontFamily: fonts.medium, fontSize: 12, height: 40, color: '#3E4958', }}
+                                                placeholder='Name' />
+                                        </Item>
                                     </View>
-                                    <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View>
+                                    {/* <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View> */}
                                 </View>
                                 <View>
-                                    <View style={{ paddingVertical: 15, }}>
-                                        <Text>Manage services</Text>
+                                    <View style={{ paddingVertical: 5, }}>
+                                        <Item style={{ marginTop: 10, borderRadius: 5, }} inlineLabel>
+                                            <Input
+                                                onChangeText={e => this.email = e}
+                                                autoCapitalize={'none'}
+                                                defaultValue={current.email}
+                                                style={{ fontFamily: fonts.medium, fontSize: 12, height: 40, color: '#3E4958', }}
+                                                placeholder='Email' />
+                                        </Item>
                                     </View>
-                                    <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View>
+                                    {/* <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View> */}
                                 </View>
                                 <View>
-                                    <View style={{ paddingVertical: 20, }}>
-                                        <TouchableOpacity
-                                            activeOpacity={0.7}
-                                            onPress={() => this.props.navigation.navigate('ChangePassword')}
-                                        >
-                                            <Text>Change password</Text>
-                                        </TouchableOpacity>
+                                    <View style={{ paddingVertical: 5, marginBottom: 10, }}>
+                                        <Item style={{ marginTop: 10, borderRadius: 5, }} inlineLabel>
+                                            <Input
+                                                onChangeText={e => this.email = e}
+                                                autoCapitalize={'none'}
+                                                defaultValue={current.phoneNumber}
+                                                style={{ fontFamily: fonts.medium, fontSize: 12, height: 40, color: '#3E4958' }}
+                                                placeholder='Phone' />
+                                        </Item>
                                     </View>
                                 </View>
                             </View>

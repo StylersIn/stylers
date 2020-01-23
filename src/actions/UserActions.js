@@ -140,6 +140,39 @@ export const fetchUsers = _ => ({
     }
 });
 
+export const fetchUser = publicId => (alert(publicId), {
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/api/auth/user/${publicId}`,
+        method: 'GET',
+        types: [
+            constants.USER_DATA,
+            {
+                type: constants.USER_DATA_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => {
+                    return {
+                        response
+                    }
+                })
+            },
+            {
+                type: constants.USER_DATA_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status,
+                        message: res.message
+                    };
+                }
+            }
+        ],
+        options: { timeout: 60000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: 'include'
+    }
+});
+
 export const logout = _ => {
     return (dispatch) => {
         dispatch({ type: constants.LOGOUT })

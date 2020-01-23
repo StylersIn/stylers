@@ -47,3 +47,4 @@ export const updateAvatar = stylerActions.updateAvatar;
 export const listStylerServices = stylerActions.listStylerServices;
 export const getSubServices = serviceActions.getSubServices;
 export const servicePrice = stylerActions.servicePrice;
+export const fetchUser = userActions.fetchUser;

@@ -18,6 +18,7 @@ import Header from '../../components/Header';
 import Button from '../../components/Button';
 import { Spinner, Item, Input } from 'native-base';
 import { Naira } from '../Assets';
+import { EmptyAppointment } from '../Appointments/AppointmentAssets';
 
 const propTypes = {
     // onSelect: PropTypes.func,
@@ -46,9 +47,8 @@ class MyServices extends React.Component {
         });
     }
 
-    getDefaultVal = (servicePrice, id) => {
-        console.log(servicePrice)
-        return servicePrice.length > 0 ? servicePrice.filter(e => e.id === id)[0] : '';
+    getDefaultVal = (servicePrice, id, meta) => {
+        return servicePrice.length > 0 && servicePrice.filter(e => e.subServiceId === id)[0] ? servicePrice.filter(e => e.subServiceId === id)[0][meta] : '';
     }
 
     render() {
@@ -66,7 +66,7 @@ class MyServices extends React.Component {
                         <View style={{ width: "80%", }}>
                             <Text style={styles.basic__1}>Help us with a price in NGN for each service</Text>
                         </View>
-                        {service && service.subServices && <>
+                        {service && service.subServices.length > 0 ? <>
                             {/* <FlatList
                                 // contentContainerStyle={{ backgroundColor:"red" }}
                                 data={service__list && service__list.credentials.message}
@@ -101,8 +101,8 @@ class MyServices extends React.Component {
                                             <Input
                                                 style={{ fontFamily: fonts.medium, fontSize: 12, }}
                                                 placeholder='0.00'
-                                                defaultValue={this.getDefaultVal(servicePrice, subService._id).adult}
-                                                onEndEditing={(e) => this.props.servicePrice({ id: subService._id, adult: e.nativeEvent.text })}
+                                                defaultValue={this.getDefaultVal(servicePrice, subService._id, 'adult')}
+                                                onEndEditing={(e) => e.nativeEvent.text ? this.props.servicePrice({ serviceId: service._id, subServiceId: subService._id, adult: e.nativeEvent.text }) : {}}
                                             />
                                         </Item>
                                     </View>
@@ -115,8 +115,8 @@ class MyServices extends React.Component {
                                             <Input
                                                 style={{ fontFamily: fonts.medium, fontSize: 12, }}
                                                 placeholder='0.00'
-                                                defaultValue={this.getDefaultVal(servicePrice, subService._id).child}
-                                                onEndEditing={(e) => this.props.servicePrice({ id: subService._id, child: e.nativeEvent.text })}
+                                                defaultValue={this.getDefaultVal(servicePrice, subService._id, 'child')}
+                                                onEndEditing={(e) => e.nativeEvent.text ? this.props.servicePrice({ serviceId: service._id, subServiceId: subService._id, child: e.nativeEvent.text }) : {}}
                                             />
                                         </Item>
                                     </View>
@@ -130,7 +130,10 @@ class MyServices extends React.Component {
                                     btnTxtStyles={{ color: colors.white, fontFamily: fonts.bold }}
                                 />
                             </View>
-                        </>}
+                        </> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                                <EmptyAppointment />
+                                <Text style={{ fontSize: 20, paddingVertical: 40, fontFamily: fonts.medium, }}>No sub services</Text>
+                            </View>}
                     </View>
                 </SafeAreaView>
             </View>

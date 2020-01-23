@@ -2,7 +2,7 @@ import * as constants from '../constants/ActionTypes';
 import AsyncStorage from '@react-native-community/async-storage';
 
 let initialState = {
-    servicePrice: [],
+    servicePrice: undefined,
 }
 
 function filterServicePrice(state, action) {

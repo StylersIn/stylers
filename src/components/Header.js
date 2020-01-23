@@ -42,7 +42,7 @@ class Header extends React.Component {
     }
     render() {
         return (
-            <View style={{ marginTop: Platform.OS === 'ios' ? 20 : 20 }}>
+            <View style={{ marginTop: Platform.OS === 'ios' ? 0 : 0 }}>
                 {this.props.hamburger ? <TouchableOpacity
                     onPress={() => NavigationService.toggleDrawer()}
                     activeOpacity={0.7}
@@ -64,7 +64,7 @@ class Header extends React.Component {
                         <View>
                             <Text style={{ fontFamily: fonts.bold, fontSize: 24, }}>{this.props.title}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                             {this.props.hasLogout === false ? null : <View style={{ marginRight: 15, marginTop: 0, }}>
                                 <TouchableOpacity
                                     onPress={this.signOut}

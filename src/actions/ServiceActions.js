@@ -44,16 +44,16 @@ export const listService = (pageSize = 10, pageNumber = 1) => ({
         types: [
             constants.LIST_SERVICE,
             {
-                type: constants.LIST_SERVICE,
+                type: constants.LIST_SERVICE_SUCCESS,
                 payload: (action, state, response) => response.json().then(credentials => (console.log(credentials), {
                     credentials,
                 }))
             },
             {
-                type: constants.LIST_SERVICE,
+                type: constants.LIST_SERVICE_FAILURE,
                 meta: (action, state, res) => {
                     return {
-                        status: res.status
+                        status: res && res.status
                     };
                 }
             }

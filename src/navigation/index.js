@@ -61,14 +61,14 @@ const StylerDrawerNavigator = createDrawerNavigator({
     'My Services': {
         screen: MyServices
     },
-    'Wallet': {
-        screen: NoDebitScreen
-    },
+    // 'Wallet': {
+    //     screen: NoDebitScreen
+    // },
     // Help: {
     //     screen: ContactUsScreen
     // },
     Settings: {
-        screen: NoDebitScreen
+        screen: SettingsScreen
     }
 }, {
     contentComponent: drawerContentComponents,
@@ -81,12 +81,12 @@ const ClientDrawerNavigator = createDrawerNavigator({
     Appointments: {
         screen: AppointmentScreen,
     },
-    'Payment Methods': {
-        screen: NoDebitScreen
-    },
-    'Gift Cards': {
-        screen: GiftCardScreen
-    },
+    // 'Payment Methods': {
+    //     screen: NoDebitScreen
+    // },
+    // 'Gift Cards': {
+    //     screen: GiftCardScreen
+    // },
     Help: {
         screen: ContactUsScreen
     },
@@ -133,7 +133,7 @@ const AppNavigator = createStackNavigator({
     ChangePassword: ChangePasswordScreen,
 },
     {
-        initialRouteName: "StylerService",
+        initialRouteName: "Splash",
         headerMode: "none"
     }
 );

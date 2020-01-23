@@ -5,6 +5,7 @@ export const colors = {
     white: "#ffffff",
     yellow: "#D1A683",
     btnColor: "#B4B4B4",
+    btnDisabled: "#828282",
     black: "#000000",
     danger: "#b20000",
     success: "#4CB04F",

@@ -25,7 +25,20 @@ export default function serviceReducer(state = initialState, action) {
         case constants.LIST_SERVICE:
             return {
                 ...state,
-                services: action.payload,
+                services: undefined,
+                error: undefined,
+            }
+        case constants.LIST_SERVICE_SUCCESS:
+            return {
+                ...state,
+                error: undefined,
+                services: action.payload.credentials && action.payload.credentials.message,
+            }
+        case constants.LIST_SERVICE_FAILURE:
+            return {
+                ...state,
+                services: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             }
         case constants.EDIT_SERVICE:
             return {

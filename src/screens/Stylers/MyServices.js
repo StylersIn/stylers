@@ -39,20 +39,34 @@ class MyServices extends React.Component {
         this.props.listStylerServices();
     }
 
+    filterCheck = (item, price = []) => {
+        return price.some(e => item.subServices.findIndex(r => r._id == e.id) >= 0);
+    }
+
     render() {
         const _keyExtractor = (item, index) => item.name;
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView style={{ flex: 1, }}>
                     <View style={styles.container}>
-                        <Header
-                            hamburger={true}
-                            title={"My Services"}
-                            action={<Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>EDIT</Text>}
-                        />
-                        {this.props.stylerServices ? <>
+                        <View style={{ padding: 20, }}>
+                            <Header
+                                hamburger={true}
+                                title={"My Services"}
+                                action={<Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>EDIT</Text>}
+                            />
+                        </View>
+                        {this.props.stylerServices && this.props.stylerServices.map((item, i) => <TouchableOpacity
+                            // onPress={() => props.onSelect(item)}
+                            activeOpacity={0.8}
+                            key={i}
+                            style={styles.serviceList}>
+                            <Text style={{ color: colors.white, fontFamily: fonts.medium, }}>{item.serviceId.name}</Text>
+                            {/* {filterCheck(item, this.props.stylerServices.subServices) && filterCheck(item, props.price) ?
+                                <Icon style={{ color: colors.success, }} name='ios-checkmark-circle' /> : <Icon style={{ color: colors.pink, }} name='ios-arrow-forward' />} */}
+                        </TouchableOpacity>)}
+                        {/* {this.props.stylerServices ? <>
                             <View style={styles.child__container}>
-                                {/* <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text> */}
                                 <View style={styles.grid__main}>
                                     <FlatList
                                         data={this.props.stylerServices}
@@ -88,7 +102,7 @@ class MyServices extends React.Component {
                             </View>
                         </> : <View style={{ flex: 1, }}>
                                 <Spinner size={80} color={colors.pink} />
-                            </View>}
+                            </View>} */}
                     </View>
                 </SafeAreaView>
             </View>
@@ -99,7 +113,7 @@ class MyServices extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        // padding: 20,
     },
     child__container: {
         // flex: 1,
@@ -131,7 +145,16 @@ const styles = StyleSheet.create({
         // marginLeft: 10,
         backgroundColor: 'rgba(0,0,0,0.5)',
         borderRadius: 5,
-    }
+    },
+    serviceList: {
+        flexDirection: 'row',
+        padding: 5,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: colors.black,
+        marginBottom: 1,
+    },
 })
 
 const mapStateToProps = state => ({
