@@ -37,7 +37,7 @@ export default ServiceStylers = (props) => {
                             <Left>
                                 <Image
                                     style={{ width: 80, height: 80, borderRadius: 5, }}
-                                    source={service__1}
+                                    source={item.userId.imageUrl ? { uri: item.userId.imageUrl } : service__1}
                                 />
                             </Left>
                             <Body style={{ position: "relative", right: 10, }}>

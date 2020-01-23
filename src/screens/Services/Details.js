@@ -137,8 +137,8 @@ class ServiceDetails extends React.Component {
                 </View>
                 <View>
                     <Image
-                        style={{ height: 300, width: "100%" }}
-                        source={service__1}
+                        style={{ height: 300, width: "100%", resizeMode: 'cover' }}
+                        source={styler__data.userId.imageUrl ? { uri: styler__data.userId.imageUrl } : service__1}
                     />
                 </View>
                 <ScrollView style={styles.container}>

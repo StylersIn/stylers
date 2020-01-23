@@ -10,15 +10,15 @@ export const doRegister = details => ({
         endpoint: `${config.api.host}/api/auth/register`,
         method: 'POST',
         types: [
-            constants.AUTH_USER,
+            constants.REGISTER,
             {
-                type: constants.AUTH_USER_SUCCESS,
+                type: constants.REGISTER_SUCCESS,
                 payload: (action, state, response) => response.json().then(response => ({
                     response
                 }))
             },
             {
-                type: constants.AUTH_USER_FAILURE,
+                type: constants.REGISTER_FAILURE,
                 meta: (action, state, res) => {
                     return {
                         status: res.status

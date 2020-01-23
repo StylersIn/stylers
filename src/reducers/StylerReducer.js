@@ -7,7 +7,7 @@ let initialState = {
 
 function filterServicePrice(state, action) {
     if (state.servicePrice) {
-        let f = state.servicePrice.findIndex(e => e.id == action.payload.id);
+        let f = state.servicePrice.findIndex(e => e.subServiceId == action.payload.subServiceId);
         let obj = [];
         if (f == -1) {
             return state.servicePrice.concat(action.payload);

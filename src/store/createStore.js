@@ -10,13 +10,16 @@ import {
 import appReducer from '../reducers/index';
 import sessionValidator from '../middlewares/sessionValidator';
 import defaultState from '../reducers/DefaultState';
-import constants from '../constants/ActionTypes';
+import * as constants from '../constants/ActionTypes';
 
 function rootReducer(state, action) {
-    // if (action.type == constants.LOGOUT) {
-    //     state = {};
-    //     AsyncStorage.clear();
-    // }
+    if (action.type == constants.LOGOUT) {
+        if (action.payload === 'loggedOut') {
+            state = {};
+        }
+
+        // AsyncStorage.clear();
+    }
     return appReducer(state, action)
 }
 

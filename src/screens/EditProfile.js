@@ -5,7 +5,7 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
-import { Container, Content, Button, ListItem, Icon, Left, Body, Right, Switch, Thumbnail, Card, Input, Item } from 'native-base';
+import { Container, Content, Button, ListItem, Icon, Left, Body, Right, Switch, Thumbnail, Card, Input, Item, Spinner } from 'native-base';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-navigation';
 import { ScrollView } from 'react-native-gesture-handler';
 import Header from '../components/Header';
 import Text from '../config/AppText';
-import { fonts } from '../constants/DefaultProps';
+import { fonts, colors } from '../constants/DefaultProps';
 
 class EditProfile extends React.Component {
     constructor(props) {
@@ -23,22 +23,23 @@ class EditProfile extends React.Component {
             toast: false,
             toastMsg: '',
             toastType: '',
+            userData: undefined,
         }
     }
 
     componentDidMount() {
-        alert('ddd')
         this.props.fetchUser(this.props.user.current.publicId);
     }
 
-    UNSAFE_componentWillReceiveProps(prevProps){
+    UNSAFE_componentWillReceiveProps(prevProps) {
         if (prevProps.user.userData && prevProps.user.userData != this.props.user.userData) {
-            console.log(prevProps.user.userData);
+            this.setState({ userData: prevProps.user.userData });
         }
     }
 
     render() {
-        const { current } = this.props.user;
+        const { current, } = this.props.user;
+        const { userData } = this.state;
         return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
@@ -49,11 +50,11 @@ class EditProfile extends React.Component {
                         />
                         <View style={{ alignItems: 'center', padding: 30, }}>
                             <Thumbnail
-                                source={require('../../assets/imgs/user.png')}
+                                source={userData && userData.imageUrl ? { uri: userData.imageUrl } : require('../../assets/imgs/user.png')}
                             />
-                            <Text style={{ fontFamily: fonts.bold, marginTop: 10, }}>John</Text>
+                            <Text style={{ fontFamily: fonts.bold, marginTop: 10, }}>{userData && userData.name}</Text>
                         </View>
-                        <Card style={styles.card_shadow}>
+                        {userData ? <Card style={styles.card_shadow}>
                             <View style={{ marginVertical: 10, marginHorizontal: 20, }}>
                                 <View>
                                     <View style={{ paddingVertical: 5, }}>
@@ -61,8 +62,8 @@ class EditProfile extends React.Component {
                                             <Input
                                                 onChangeText={e => this.name = e}
                                                 autoCapitalize={'none'}
-                                                defaultValue={current.name}
-                                                style={{ fontFamily: fonts.medium, fontSize: 12, height: 40, color: '#3E4958', }}
+                                                defaultValue={userData && userData.name}
+                                                style={{ fontFamily: fonts.medium, fontSize: 14, height: 40, color: '#3E4958', }}
                                                 placeholder='Name' />
                                         </Item>
                                     </View>
@@ -74,8 +75,8 @@ class EditProfile extends React.Component {
                                             <Input
                                                 onChangeText={e => this.email = e}
                                                 autoCapitalize={'none'}
-                                                defaultValue={current.email}
-                                                style={{ fontFamily: fonts.medium, fontSize: 12, height: 40, color: '#3E4958', }}
+                                                defaultValue={userData && userData.email}
+                                                style={{ fontFamily: fonts.medium, fontSize: 14, height: 40, color: '#3E4958', }}
                                                 placeholder='Email' />
                                         </Item>
                                     </View>
@@ -87,14 +88,16 @@ class EditProfile extends React.Component {
                                             <Input
                                                 onChangeText={e => this.email = e}
                                                 autoCapitalize={'none'}
-                                                defaultValue={current.phoneNumber}
-                                                style={{ fontFamily: fonts.medium, fontSize: 12, height: 40, color: '#3E4958' }}
+                                                defaultValue={userData && userData.phoneNumber}
+                                                style={{ fontFamily: fonts.medium, fontSize: 14, height: 40, color: '#3E4958' }}
                                                 placeholder='Phone' />
                                         </Item>
                                     </View>
                                 </View>
                             </View>
-                        </Card>
+                        </Card> : <View style={{ flex: 1, }}>
+                                <Spinner color={colors.pink} style={{ fontSize: 80, }} />
+                            </View>}
                     </ScrollView>
                 </SafeAreaView>
             </>

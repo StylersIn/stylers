@@ -10,15 +10,22 @@ let initialState = {
 
 export default function userReducer(state = initialState, action) {
     switch (action.type) {
+        case constants.INITIALIZE_APP:
+            return {
+                ...state,
+                error: undefined,
+                auth__failed: undefined,
+            }
         case constants.INITIALIZE_SUCCESS:
             return {
                 ...state,
                 authenticated: true,
-                current: action.payload.response
+                current: action.payload.response,
             }
         case constants.INITIALIZE_FAILURE:
             return {
                 ...state,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
                 auth__failed: true
             }
         case constants.AUTH_USER:

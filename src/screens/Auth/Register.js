@@ -37,12 +37,16 @@ class Register extends React.Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
+        // if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
+        //     this.setState({ isProcessing: false });
+        //     this.props.navigation.dispatch(NavigationService.resetAction('Verify'));
+        // }
+        // if (nextProps.user.status === false && nextProps.user.status != this.props.user.status) {
+        //     this.showToast(nextProps.user.message, toastType.danger);
+        // }
+        if (nextProps.register.created && nextProps.register.created != this.props.register.created) {
             this.setState({ isProcessing: false });
             this.props.navigation.dispatch(NavigationService.resetAction('Verify'));
-        }
-        if (nextProps.user.status === false && nextProps.user.status != this.props.user.status) {
-            this.showToast(nextProps.user.message, toastType.danger);
         }
         if (nextProps.user.error && nextProps.user.error != this.props.user.error) {
             this.showErr(nextProps.user.error);
@@ -233,6 +237,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     user: state.user,
+    register: state.register,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

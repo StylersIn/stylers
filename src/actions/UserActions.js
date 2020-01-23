@@ -25,8 +25,8 @@ export const InitializeApp = (token) => ({
                 type: constants.INITIALIZE_FAILURE,
                 meta: (action, state, res) => {
                     return {
-                        status: res.status,
-                        message: res.message
+                        error: res,
+                        // message: res.message
                     };
                 }
             }
@@ -140,9 +140,9 @@ export const fetchUsers = _ => ({
     }
 });
 
-export const fetchUser = publicId => (alert(publicId), {
+export const fetchUser = publicId => ({
     [RSAA]: {
-        endpoint: `${BASE_URL()}/api/auth/user/${publicId}`,
+        endpoint: `${BASE_URL()}/user/${publicId}`,
         method: 'GET',
         types: [
             constants.USER_DATA,

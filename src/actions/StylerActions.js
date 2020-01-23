@@ -282,7 +282,7 @@ export const getStats = _ => ({
     }
 });
 
-export const updateAvatar = file => (console.log(file), {
+export const updateAvatar = file => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/update/avatar`,
         method: 'PUT',

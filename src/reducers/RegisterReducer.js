@@ -12,11 +12,12 @@ export default function registerReducer(state = {}, action) {
                 isProcessing: false,
                 created: true
             };
-        // case constants.REGISTE:
-        //     return Object.assign({}, state, {
-        //         error: `network error: ${action.payload.error}`,
-        //         isProcessing: false
-        //     })
+        case constants.REGISTER_FAILURE:
+            return Object.assign({}, state, {
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+                isProcessing: false,
+                created: false,
+            })
         default:
             return state;
     }
