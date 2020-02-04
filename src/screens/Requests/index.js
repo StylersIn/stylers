@@ -4,6 +4,7 @@ import {
     StyleSheet,
     SafeAreaView,
     ScrollView,
+    StatusBar,
 } from 'react-native';
 import {
     Icon,
@@ -49,6 +50,7 @@ class Requests extends React.Component {
             notify('Appointment Status', 'Hi there! Styler has accepted your appointment.');
             this.props.listStylerRequests();
             this.setState({ accept: false, })
+            this.props.socket.emit('accept.appointment', this.state.appointment.userId.publicId);
             // if (this.props.role === roles.user) {
 
             // } else if (this.props.role === roles.styler) {
@@ -89,12 +91,13 @@ class Requests extends React.Component {
         const { appointment, isVisible, } = this.state;
         return (
             <>
+                <StatusBar barStyle="light-content" backgroundColor={colors.pink} />
                 {this.state.accept && <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, elevation: 5, zIndex: 1000, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)', }}>
                     <Spinner style={{ alignItems: "center" }} isVisible={true} size={80} color={colors.pink} />
                 </View>}
                 <SafeAreaView style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={styles.container}>
-                        <View style={{ padding: 20, }}>
+                        <View>
                             <Header
                                 hamburger={this.props.role === roles.styler ? true : false}
                                 title={`Hi ${this.props.username[0]},`}

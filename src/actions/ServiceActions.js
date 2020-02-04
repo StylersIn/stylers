@@ -96,3 +96,41 @@ export const getSubServices = (serviceId) => ({
         credentials: "same-origin"
     }
 });
+
+export const filterService = (queryParam) => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/search?service=${queryParam}`,
+        method: 'GET',
+        types: [
+            constants.FILTER_SERVICE,
+            {
+                type: constants.FILTER_SERVICE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.FILTER_SERVICE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 60000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export function resetFilter() {
+    return (dispatch, store) => {
+        dispatch({
+            type: constants.RESET_SEARCH,
+        })
+    }
+}

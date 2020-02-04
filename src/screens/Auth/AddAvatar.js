@@ -64,7 +64,8 @@ class AddAvatar extends React.Component {
     }
 
     updateAvatar = () => {
-        this.props.updateAvatar({
+        this.setState({ isProcessing: true, })
+        this.props.updateProfile({
             image: this.state.avatar,
         })
     }

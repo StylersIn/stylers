@@ -116,7 +116,7 @@ class Appointment extends React.Component {
         } else if (this.props.role === roles.styler) {
             this.props.listStylerAppointments();
         } else { }
-        
+
     }
 
     render() {
@@ -142,31 +142,35 @@ class Appointment extends React.Component {
                                 name="ios-close" />
                         </TouchableOpacity> */}
 
-                        <Header
-                            hamburger={this.props.role === roles.styler ? true : false}
-                            title={`Hi ${this.props.username[0]},`}
-                        />
-
-                        {this.props.role === roles.styler && <View style={{ marginTop: 20 }}>
-                            <Stats {...this.props} />
-                        </View>}
-
-                        <View style={{ marginTop: 20 }}>
-                            {this.props.role === roles.user && <View style={{ flexDirection: 'row', }}>
-                                <Text style={{ fontSize: 16, fontFamily: fonts.bold, color: '#4F4F4F', }}>January</Text>
-                                <Icon style={{ fontSize: 20, paddingLeft: 10, marginTop: 2, color: '#4F4F4F', }} name="ios-arrow-down" />
-                            </View>}
-                            {/* {this.props.role === roles.styler && <Text style={{ fontSize: 18, fontFamily: fonts.bold, }}>Pending Appointments</Text>} */}
+                        <View>
+                            <Header
+                                // hamburger={this.props.role === roles.styler ? true : false}
+                                hamburger
+                                title={`Hi ${this.props.username[0]},`}
+                            />
                         </View>
 
-                        <AppointmentList
-                            role={this.props.role}
-                            showDetails={this.showDetails}
-                            closeModal={this.closeModal}
-                            isProcessing={this.props.isProcessing}
-                            isVisible={this.state.isVisible}
-                            appointments={this.props.appointments}
-                        />
+                        {this.props.role === roles.styler && <View style={{ paddingLeft: 20 }}>
+                            <Stats {...this.props} />
+                        </View>}
+                        <View style={{ flex: 1, padding: 20, }}>
+                            <View style={{ marginTop: 0 }}>
+                                {this.props.role === roles.user && <View style={{ flexDirection: 'row', }}>
+                                    <Text style={{ fontSize: 16, fontFamily: fonts.bold, color: '#4F4F4F', }}>January</Text>
+                                    <Icon style={{ fontSize: 20, paddingLeft: 10, marginTop: 2, color: '#4F4F4F', }} name="ios-arrow-down" />
+                                </View>}
+                                {/* {this.props.role === roles.styler && <Text style={{ fontSize: 18, fontFamily: fonts.bold, }}>Pending Appointments</Text>} */}
+                            </View>
+
+                            <AppointmentList
+                                role={this.props.role}
+                                showDetails={this.showDetails}
+                                closeModal={this.closeModal}
+                                isProcessing={this.props.isProcessing}
+                                isVisible={this.state.isVisible}
+                                appointments={this.props.appointments}
+                            />
+                        </View>
 
                     </ScrollView>
                 </SafeAreaView>
@@ -272,7 +276,7 @@ class Appointment extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        padding: 20,
+        // padding: 20,
     },
     cardStyle: {
         borderWidth: 1,

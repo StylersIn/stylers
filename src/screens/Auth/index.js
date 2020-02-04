@@ -2,6 +2,7 @@ import React from 'react';
 import {
     StyleSheet,
     TouchableOpacity,
+    StatusBar,
 } from 'react-native';
 import { View } from 'native-base';
 import Button from '../../components/Button';
@@ -21,31 +22,33 @@ const AuthScreen = (props) => {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={{ padding: 30, alignItems: "center" }}>
-                <Text style={{ fontFamily: fonts.bold, fontSize: 25 }} >SIGN UP</Text>
-            </View>
+        <>
+            <StatusBar barStyle="light-content" backgroundColor={colors.pink} />
+            <View style={styles.container}>
+                <View style={{ padding: 30, alignItems: "center" }}>
+                    <Text style={{ fontFamily: fonts.bold, fontSize: 25 }} >SIGN UP</Text>
+                </View>
 
-            <View>
-                <Button
-                    btnTxt={"CLIENT"}
-                    onPress={() => props.navigation.navigate('Register')}
-                    size={"lg"}
-                    styles={{ backgroundColor: colors.pink }}
-                    btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                />
-            </View>
+                <View>
+                    <Button
+                        btnTxt={"CLIENT"}
+                        onPress={() => props.navigation.navigate('Register')}
+                        size={"lg"}
+                        styles={{ backgroundColor: colors.pink }}
+                        btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
+                    />
+                </View>
 
-            <View style={{ paddingTop: 20 }}>
-                <Button
-                    onPress={() => props.navigation.navigate('Stylers')}
-                    btnTxt={"STYLER"}
-                    size={"lg"}
-                    btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                />
-            </View>
+                <View style={{ paddingTop: 20 }}>
+                    <Button
+                        onPress={() => props.navigation.navigate('Stylers')}
+                        btnTxt={"STYLER"}
+                        size={"lg"}
+                        btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
+                    />
+                </View>
 
-            {/* <View style={{ paddingTop: 20 }}>
+                {/* <View style={{ paddingTop: 20 }}>
                 <Button
                     onPress={() => openImg()}
                     btnTxt={"GET IMAGE"}
@@ -54,15 +57,16 @@ const AuthScreen = (props) => {
                 />
             </View> */}
 
-            <View style={{ padding: 10, alignItems: "center" }}>
-                <TouchableOpacity
-                    style={{ flexDirection: "row" }}
-                    onPress={() => props.navigation.navigate('Login')}>
-                    <Text style={{ fontFamily: fonts.default, }} >Already a registered user?</Text>
-                    <Text style={{ color: colors.yellow, paddingHorizontal: 5, }}>Log in</Text>
-                </TouchableOpacity>
+                <View style={{ padding: 10, alignItems: "center" }}>
+                    <TouchableOpacity
+                        style={{ flexDirection: "row" }}
+                        onPress={() => props.navigation.navigate('Login')}>
+                        <Text style={{ fontFamily: fonts.default, }} >Already a registered user?</Text>
+                        <Text style={{ color: colors.yellow, paddingHorizontal: 5, }}>Log in</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
+        </>
     )
 }
 

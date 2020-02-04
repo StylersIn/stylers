@@ -6,9 +6,11 @@ import {
     ListItem,
     CheckBox,
     Icon,
+    Item,
+    Input,
 } from 'native-base';
 import Text from '../../config/AppText';
-import { fonts } from '../../constants/DefaultProps';
+import { fonts, colors } from '../../constants/DefaultProps';
 
 const services = ['Barbing', 'Shaving', 'Relaxing', 'Hair Dye'];
 const StylerServiceList = ({
@@ -19,76 +21,89 @@ const StylerServiceList = ({
     onSelectService,
     onChangeOption,
 }) => {
+    console.log(styler)
     return (
-        <View style={{ marginTop: 20 }}>
-            <Text style={{ fontFamily: fonts.bold, fontSize: 18 }}>Services</Text>
-            <Card style={styles.cardStyle}>
-                <List>
-                    {styler.services.map((service, i) => {
-                        const { _id, name, } = service.serviceId;
-                        const single = selected.find(e => e.serviceId === _id);
-                        const adult = single && single['adult'] || 0;
-                        const child = single && single['child'] || 0;
-                        return (
-                            <ListItem key={i} style={{ marginVertical: -5, }}>
-                                {/* {alert(selected.includes(_id))} */}
-                                <View style={{ marginRight: 10, }}>
-                                    <CheckBox
-                                        // onPress={() => onSelectService(_id)}
-                                        color={"#606060"}
-                                        style={{ width: 18, height: 18, alignSelf: "center", }}
-                                        checked={selected.findIndex(e => e.serviceId === _id) === -1 ? false : true}
-                                    />
-                                </View>
-                                <Text style={{ fontSize: 14, fontFamily: fonts.bold, }}>{name}</Text>
-                                <Text style={styles.service__txt__0}>Adult</Text>
-                                <TouchableOpacity
-                                    onPress={() => onChangeOption(_id, 'adult', 'add')}
-                                >
-                                    <Icon
-                                        style={{ fontSize: 16, color: "#606060", }}
-                                        type="Ionicons"
-                                        name="ios-add-circle" />
-                                </TouchableOpacity>
+        <View style={{ marginTop: 0 }}>
+            <Text style={{ fontFamily: fonts.bold, fontSize: 18 }}>Select Services</Text>
+            <Item style={[{ marginTop: 10, borderRadius: 5, backgroundColor: colors.white, }, styles.cardStyle]} regular>
+                <Icon style={{ fontSize: 20, }} type="Ionicons" name="ios-search" />
+                <Input
+                    // onChangeText={(e) => this.handleSearch(e)}
+                    style={{
+                        fontFamily: fonts.medium,
+                        fontSize: 13,
+                        height: 35,
+                    }}
+                    placeholder='' />
+                {/* {this.state.searchInput && <View style={{ marginRight: 10 }}>
+                                <Icon type="Ionicons" name="ios-close" />
+                            </View>} */}
+            </Item>
+            {/* <Card style={styles.cardStyle}> */}
+            <View>
+                {styler.services.map((service, i) => {
+                    const { _id, name, } = service.serviceId;
+                    const single = selected.find(e => e.serviceId === _id);
+                    const adult = single && single['adult'] || 0;
+                    const child = single && single['child'] || 0;
+                    return (
+                        <View key={i} style={{ marginBottom: 10, }}>
+                            <Text style={{ fontSize: 14, fontFamily: fonts.bold, marginVertical: 10, }}>{name}</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                <View>
+                                    <Text style={styles.service__txt__0}>Adult</Text>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                        <TouchableOpacity
+                                            activeOpacity={0.8}
+                                            style={styles.selectorBtn}
+                                            disabled={adult === 0 ? true : false}
+                                            onPress={() => onChangeOption(_id, 'adult', 'sub')}
+                                        >
+                                            <Icon style={styles.iconRemove} name='ios-remove' />
+                                        </TouchableOpacity>
 
-                                <View style={styles.selector__input}>
-                                    <Text style={{ fontSize: 12 }}>{adult}</Text>
+                                        <View style={styles.selector__input}>
+                                            <Text style={{ fontSize: 12 }}>{adult}</Text>
+                                        </View>
+                                        <TouchableOpacity
+                                            activeOpacity={0.8}
+                                            style={styles.selectorBtn}
+                                            onPress={() => onChangeOption(_id, 'adult', 'add')}
+                                        >
+                                            <Icon style={styles.iconAdd} name='ios-add' />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                <TouchableOpacity
-                                    disabled={adult === 0 ? true : false}
-                                    onPress={() => onChangeOption(_id, 'adult', 'sub')}
-                                >
-                                    <Icon
-                                        style={{ fontSize: 16, color: "#606060", }}
-                                        type="Ionicons"
-                                        name="ios-remove-circle" />
-                                </TouchableOpacity>
-                                <Text style={styles.service__txt__0}>Child</Text>
-                                <TouchableOpacity
-                                    onPress={() => onChangeOption(_id, 'child', 'add')}
-                                >
-                                    <Icon
-                                        style={{ fontSize: 16, color: "#606060", }}
-                                        type="Ionicons"
-                                        name="ios-add-circle" />
-                                </TouchableOpacity>
-                                <View style={styles.selector__input}>
-                                    <Text style={{ fontSize: 12 }}>{child}</Text>
+
+                                <View>
+                                    <Text style={styles.service__txt__0}>Child</Text>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                        <TouchableOpacity
+                                            activeOpacity={0.8}
+                                            style={styles.selectorBtn}
+                                            disabled={child === 0 ? true : false}
+                                            onPress={() => onChangeOption(_id, 'child', 'sub')}
+                                        >
+                                            <Icon style={styles.iconRemove} name='ios-remove' />
+                                        </TouchableOpacity>
+                                        <View style={styles.selector__input}>
+                                            <Text style={{ fontSize: 12 }}>{child}</Text>
+                                        </View>
+                                        <TouchableOpacity
+                                            activeOpacity={0.8}
+                                            style={styles.selectorBtn}
+                                            onPress={() => onChangeOption(_id, 'child', 'add')}
+                                        >
+                                            <Icon style={styles.iconAdd} name='ios-add' />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                <TouchableOpacity
-                                    disabled={child === 0 ? true : false}
-                                    onPress={() => onChangeOption(_id, 'child', 'sub')}
-                                >
-                                    <Icon
-                                        style={{ fontSize: 16, color: "#606060", }}
-                                        type="Ionicons"
-                                        name="ios-remove-circle" />
-                                </TouchableOpacity>
-                            </ListItem>
-                        )
-                    })}
-                </List>
-            </Card>
+                            </View>
+                        </View>
+                    )
+                })}
+            </View>
+            {/* </Card> */}
         </View>
     )
 }
@@ -108,23 +123,36 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.4,
         shadowRadius: 2,
         elevation: 1,
-        paddingRight: 12,
-        // marginLeft: 5,
-        // marginRight: 5,
-        marginTop: 10,
     },
     service__txt__0: {
         fontSize: 14,
         fontFamily: fonts.bold,
-        paddingHorizontal: 8,
         color: "#4F4F4F",
+        marginTop: 5,
     },
     selector__input: {
-        padding: 1,
-        paddingHorizontal: 3,
-        margin: 5,
+        height: 40,
+        width: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: "#E4E3E3",
         borderRadius: 3,
+        marginRight: 7,
+    },
+    selectorBtn: {
+        height: 40,
+        width: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.black,
+        borderRadius: 3,
+        marginRight: 7,
+    },
+    iconAdd: {
+        color: colors.pink,
+    },
+    iconRemove: {
+        color: colors.white,
     },
 })
 

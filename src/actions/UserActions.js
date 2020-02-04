@@ -5,7 +5,7 @@ import {
 } from 'redux-api-middleware';
 import AsyncStorage from '@react-native-community/async-storage';
 import config from '../config';
-const BASE_URL = () => `${config.api.host}/api/auth`;
+const BASE_URL = () => `${config.api.host}/api/user`;
 
 export const InitializeApp = (token) => ({
     [RSAA]: {
@@ -142,7 +142,7 @@ export const fetchUsers = _ => ({
 
 export const fetchUser = publicId => ({
     [RSAA]: {
-        endpoint: `${BASE_URL()}/user/${publicId}`,
+        endpoint: `${BASE_URL()}/${publicId}`,
         method: 'GET',
         types: [
             constants.USER_DATA,
@@ -170,6 +170,37 @@ export const fetchUser = publicId => ({
             "Content-Type": "application/json"
         },
         credentials: 'include'
+    }
+});
+
+export const updateProfile = file => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/update/avatar`,
+        method: 'PUT',
+        types: [
+            constants.UPDATE_PROFILE,
+            {
+                type: constants.UPDATE_PROFILE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.UPDATE_PROFILE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(file),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
     }
 });
 

@@ -5,7 +5,7 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
-import { Container, Content, Button, ListItem, Icon, Left, Body, Right, Switch, Thumbnail, Card, Input, Item, Spinner } from 'native-base';
+import { Container, Content, ListItem, Icon, Left, Body, Right, Switch, Thumbnail, Card, Input, Item, Spinner } from 'native-base';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
@@ -14,6 +14,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Header from '../components/Header';
 import Text from '../config/AppText';
 import { fonts, colors } from '../constants/DefaultProps';
+import Button from '../components/Button';
 
 class EditProfile extends React.Component {
     constructor(props) {
@@ -35,6 +36,12 @@ class EditProfile extends React.Component {
         if (prevProps.user.userData && prevProps.user.userData != this.props.user.userData) {
             this.setState({ userData: prevProps.user.userData });
         }
+    }
+
+    updateProfile = () => {
+        this.props.updateProfile({
+            image: this.state.avatar,
+        })
     }
 
     render() {
@@ -93,6 +100,15 @@ class EditProfile extends React.Component {
                                                 placeholder='Phone' />
                                         </Item>
                                     </View>
+                                </View>
+                                <View style={{ marginTop: 20 }}>
+                                    <Button
+                                        onPress={this.updateProfile}
+                                        size={"lg"}
+                                        btnTxt={"Save"}
+                                        styles={{ backgroundColor: colors.google }}
+                                        btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
+                                    />
                                 </View>
                             </View>
                         </Card> : <View style={{ flex: 1, }}>

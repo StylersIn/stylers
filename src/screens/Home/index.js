@@ -9,10 +9,14 @@ import ServiceList from './ServiceList';
 import GenderList from './GenderList';
 import Header from '../../components/Header';
 import { Spinner } from 'native-base';
+import { notify } from '../../services';
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
+        this.props.socket.on('appointment.accepted', () => {
+            notify('Appointment Accepted', 'Styler has accepted your appointment');
+        })
     }
 
     handleClick = () => {
@@ -30,7 +34,9 @@ class Home extends React.Component {
                         title={"Browse Services"}
                     />
                     {/* <GenderList {...this.props} /> */}
-                    <ServiceList {...this.props} />
+                    <View style={{ flex: 1, padding: 20, }}>
+                        <ServiceList {...this.props} />
+                    </View>
                 </View>
                 {/* </ScrollView> */}
             </SafeAreaView>
@@ -41,7 +47,7 @@ class Home extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        // padding: 20,
     }
 })
 

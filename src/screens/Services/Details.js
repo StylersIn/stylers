@@ -34,6 +34,8 @@ import { getRating, calcTotalPrice } from '../../utils/stylersUtils';
 import moment from 'moment';
 import Reviews from './Reviews';
 import ShowToast from '../../components/ShowToast';
+import { WhatsAppIcon } from '../Appointments/AppointmentAssets';
+import BottomSheet from './BottomSheet';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -47,6 +49,7 @@ class ServiceDetails extends React.Component {
             timeSelected: false,
             mode: 'date',
             show: false,
+            bottomSheet: undefined,
         }
     }
 
@@ -99,14 +102,15 @@ class ServiceDetails extends React.Component {
     }
 
     scheduleAppointment = () => {
-        const { navigation, styler, } = this.props;
-        const styler__data = navigation.getParam('styler', '');
-        const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
-        if (totalAmt === 0) {
-            this.showToast('Please select a service', toastType.danger);
-        } else {
-            this.setState({ isVisible: !this.state.isVisible })
-        }
+        this.setState({ bottomSheet: true, })
+        // const { navigation, styler, } = this.props;
+        // const styler__data = navigation.getParam('styler', '');
+        // const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
+        // if (totalAmt === 0) {
+        //     this.showToast('Please select a service', toastType.danger);
+        // } else {
+        //     this.setState({ isVisible: !this.state.isVisible, bottomSheet: true, })
+        // }
     }
 
     showToast = (text, type) => {
@@ -159,34 +163,33 @@ class ServiceDetails extends React.Component {
                                 onFinishRating={this.ratingCompleted}
                             />
                         </View>
-                        <TouchableOpacity onPress={this.openWhatsApp}>
-                            <Text style={{ fontFamily: fonts.medium, textDecorationLine: 'underline', }}>Send Message</Text>
+                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={this.openWhatsApp}>
+                            <WhatsAppIcon color={colors.whatsapp} size={18} />
+                            <Text style={{ fontFamily: fonts.medium, textDecorationLine: 'underline', paddingLeft: 5, fontSize: 16, }}>Send Message</Text>
                         </TouchableOpacity>
 
                         <Reviews
                             styler__data={styler__data}
                         />
 
-                        <StylerServiceList
-                            styler={styler__data}
-                            selected={styler.selectedService || []}
-                            onSelectService={this.selectService}
-                            onChangeOption={this.changeOption}
-                        />
-                        <View style={{ alignSelf: "flex-end", marginTop: 10 }}>
-                            <Text style={{ fontFamily: fonts.bold, fontSize: 22, }}>TOT - {`NGN${totalAmt}`}</Text>
-                        </View>
-
-                        <View style={{ marginVertical: 30, marginBottom: 20, }}>
-                            <Button
-                                onPress={this.scheduleAppointment}
-                                btnTxt={"Schedule Appointment"}
-                                size={"lg"}
-                                btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                            />
-                        </View>
                     </View>
                 </ScrollView>
+                <View style={{ marginVertical: 30, marginBottom: 20, padding: 20, }}>
+                    <Button
+                        onPress={this.scheduleAppointment}
+                        btnTxt={"Schedule Appointment"}
+                        size={"lg"}
+                        btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
+                    />
+                </View>
+                {this.state.bottomSheet && <BottomSheet
+                    {...this.props}
+                    {...this.state}
+                    selectService={this.selectService}
+                    changeOption={this.changeOption}
+                    stylerData={styler__data}
+                    totalAmt={totalAmt}
+                />}
                 <Modal
                     closeModal={this.closeModal}
                     isVisible={this.state.isVisible}
@@ -242,7 +245,7 @@ class ServiceDetails extends React.Component {
                         <View style={{ alignSelf: 'flex-end' }}>
                             <Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>Use current location</Text>
                         </View>
-                       
+
                         {/* <TouchableWithoutFeedback onPress={this.datepicker}>
                             <Card style={[styles.date__card, styles.cardStyle]}>
                                 <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>Pick your Location</Text>

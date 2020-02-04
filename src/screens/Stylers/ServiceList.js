@@ -92,8 +92,8 @@ const ServiceList = (props) => {
                     size={"lg"}
                     loading={processing}
                     styles={{ backgroundColor: !props.price ? colors.btnDisabled : colors.white, borderWidth: 1, borderColor: !props.price ? colors.btnDisabled : "#000000" }}
-                    btnTxtStyles={{ color: !props.price ? colors.white : colors.black, fontFamily: fonts.bold }}
-                />
+                    btnTxtStyles={!props.price ? { color: colors.white, } : { color: colors.black }, { fontFamily: fonts.bold }}
+            />
             </View>}
         </>
     )

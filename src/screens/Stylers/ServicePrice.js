@@ -24,7 +24,7 @@ const propTypes = {
     // onSelect: PropTypes.func,
 }
 
-class MyServices extends React.Component {
+class ServicePrice extends React.Component {
     static navigationOptions = {
         drawerIcon: ({ tintColor }) => (
             <AppointmentIcon tintColor={"none"} />
@@ -48,6 +48,8 @@ class MyServices extends React.Component {
     }
 
     getDefaultVal = (servicePrice, id, meta) => {
+        console.log('fjfjfhfjfjfhhfhfhfhfhfh')
+        // console.log(servicePrice.length > 0 && servicePrice.filter(e => e.subServiceId === id)[0] ? servicePrice.filter(e => e.subServiceId === id)[0][meta] : '')
         return servicePrice.length > 0 && servicePrice.filter(e => e.subServiceId === id)[0] ? servicePrice.filter(e => e.subServiceId === id)[0][meta] : '';
     }
 
@@ -101,8 +103,9 @@ class MyServices extends React.Component {
                                             <Input
                                                 style={{ fontFamily: fonts.medium, fontSize: 12, }}
                                                 placeholder='0.00'
+                                                keyboardType={'numeric'}
                                                 defaultValue={this.getDefaultVal(servicePrice, subService._id, 'adult')}
-                                                onEndEditing={(e) => e.nativeEvent.text ? this.props.servicePrice({ serviceId: service._id, subServiceId: subService._id, adult: e.nativeEvent.text }) : {}}
+                                                onEndEditing={(e) => this.props.servicePrice({ serviceId: service._id, subServiceId: subService._id, adult: e.nativeEvent.text })}
                                             />
                                         </Item>
                                     </View>
@@ -115,8 +118,10 @@ class MyServices extends React.Component {
                                             <Input
                                                 style={{ fontFamily: fonts.medium, fontSize: 12, }}
                                                 placeholder='0.00'
+                                                keyboardType={'numeric'}
                                                 defaultValue={this.getDefaultVal(servicePrice, subService._id, 'child')}
-                                                onEndEditing={(e) => e.nativeEvent.text ? this.props.servicePrice({ serviceId: service._id, subServiceId: subService._id, child: e.nativeEvent.text }) : {}}
+                                                // onBlur={()=>alert('fff')}
+                                                onEndEditing={(e) => this.props.servicePrice({ serviceId: service._id, subServiceId: subService._id, child: e.nativeEvent.text })}
                                             />
                                         </Item>
                                     </View>
@@ -204,4 +209,4 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyServices);
+export default connect(mapStateToProps, mapDispatchToProps)(ServicePrice);

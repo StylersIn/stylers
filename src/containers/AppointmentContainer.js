@@ -41,6 +41,7 @@ const mapStateToProps = state => ({
     location: state.map.location,
     stats: state.styler.stats,
     current: state.user.current,
+    socket: state.socket,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

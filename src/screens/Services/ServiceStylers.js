@@ -30,7 +30,7 @@ export default ServiceStylers = (props) => {
                     <EmptyAppointment />
                     <Text style={{ fontSize: 20, paddingVertical: 40, fontFamily: fonts.medium, }}>No stylers found</Text>
                 </View>}
-                {!isProcessing? <View style={{ marginTop: 20, }}>
+                {!isProcessing? <View style={{ marginTop: 0, }}>
                     {stylers.length ? <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text> : null}
                     {stylers && stylers.map((item, i) => <Card key={i}>
                         <CardItem>

@@ -16,20 +16,25 @@ import eye__lashes from '../../../assets/imgs/eye__lashes.jpeg';
 import Text from '../../config/AppText';
 import { FlatList } from 'react-native-gesture-handler';
 import Loader from '../../components/Loader';
+import { EmptyAppointment } from '../Appointments/AppointmentAssets';
 
 const ServiceList = (props) => {
     const {
-        service__list,
+        services,
         isProcessing,
+        filterErr,
     } = props;
-
     const _keyExtractor = (item, index) => item.name;
     return (
         <View style={styles.child__container}>
             <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text>
-            {!isProcessing ? <View style={styles.grid__main}>
+            {filterErr && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                <EmptyAppointment />
+                <Text style={{ fontSize: 18, paddingVertical: 40, fontFamily: fonts.medium, textAlign: 'center', }}>{filterErr}</Text>
+            </View>}
+            {!isProcessing && services && !filterErr && <View style={styles.grid__main}>
                 <FlatList
-                    data={service__list}
+                    data={services}
                     numColumns={2}
                     keyExtractor={_keyExtractor}
                     renderItem={({ item }) =>
@@ -49,7 +54,10 @@ const ServiceList = (props) => {
                         </View>
                     }
                 />
-            </View> : Loader()}
+            </View>}
+
+            {isProcessing && Loader()}
+
         </View>
     )
 }
@@ -57,7 +65,7 @@ const ServiceList = (props) => {
 const styles = StyleSheet.create({
     child__container: {
         flex: 1,
-        marginTop: 30,
+        marginTop: 0,
     },
     grid__main: {
         marginTop: 10,

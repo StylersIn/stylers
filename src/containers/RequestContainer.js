@@ -40,8 +40,10 @@ const mapStateToProps = state => ({
     requests: state.appointment.requests,
     role: state.user.current && state.user.current.role,
     username: state.user.current && state.user.current.name.split(' '),
+    publicId: state.user.current.publicId,
     accepted: state.appointment.accepted,
     stats: state.styler.stats,
+    socket: state.socket,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

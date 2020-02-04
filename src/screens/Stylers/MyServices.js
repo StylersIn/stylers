@@ -16,7 +16,7 @@ import { AppointmentIcon } from '../../navigation/assets';
 import { SafeAreaView } from 'react-navigation';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
-import { Spinner } from 'native-base';
+import { Spinner, Icon } from 'native-base';
 
 const propTypes = {
     onSelect: PropTypes.func,
@@ -31,39 +31,42 @@ class MyServices extends React.Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.stylerServices && nextProps.stylerServices != this.props.stylerServices) {
-
+            nextProps.stylerServices.map(e => this.props.servicePrice({ serviceId: e._id, subServiceId: e.subServiceId, child: e.child, adult: e.adult, }));
         }
     }
 
     componentDidMount() {
         this.props.listStylerServices();
+        this.props.listService();
     }
 
     filterCheck = (item, price = []) => {
-        return price.some(e => item.subServices.findIndex(r => r._id == e.id) >= 0);
+        return price.some(e => item.subServices.findIndex(r => r._id == e.subServiceId) >= 0);
     }
 
     render() {
         const _keyExtractor = (item, index) => item.name;
+        const { price } = this.props;
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView style={{ flex: 1, }}>
                     <View style={styles.container}>
-                        <View style={{ padding: 20, }}>
+                        <View style={{ padding: 0, }}>
                             <Header
                                 hamburger={true}
                                 title={"My Services"}
                                 action={<Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>EDIT</Text>}
                             />
                         </View>
-                        {this.props.stylerServices && this.props.stylerServices.map((item, i) => <TouchableOpacity
-                            // onPress={() => props.onSelect(item)}
+                        {this.props.service__list && this.props.service__list.map((item, i) => <TouchableOpacity
+                            onPress={() => this.props.navigation.navigate('ServicePrice', { service: item, })}
                             activeOpacity={0.8}
                             key={i}
                             style={styles.serviceList}>
-                            <Text style={{ color: colors.white, fontFamily: fonts.medium, }}>{item.serviceId.name}</Text>
-                            {/* {filterCheck(item, this.props.stylerServices.subServices) && filterCheck(item, props.price) ?
-                                <Icon style={{ color: colors.success, }} name='ios-checkmark-circle' /> : <Icon style={{ color: colors.pink, }} name='ios-arrow-forward' />} */}
+                            <Text style={{ color: colors.white, fontFamily: fonts.medium, }}>{item.name}</Text>
+                            {/* <Icon style={{ color: colors.pink, }} name='ios-arrow-forward' /> */}
+                            {this.filterCheck(item, price) && this.filterCheck(item, price) ?
+                                <Icon style={{ color: colors.success, }} name='ios-checkmark-circle' /> : <Icon style={{ color: colors.pink, }} name='ios-arrow-forward' />}
                         </TouchableOpacity>)}
                         {/* {this.props.stylerServices ? <>
                             <View style={styles.child__container}>
@@ -160,6 +163,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     service__list: state.service.services,
     stylerServices: state.styler.stylerServices,
+    price: state.styler.servicePrice,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

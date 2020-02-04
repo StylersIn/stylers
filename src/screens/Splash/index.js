@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {
-    View
+    View, StatusBar
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -74,6 +74,7 @@ class Splash extends Component {
     render() {
         return (
             <>
+                <StatusBar barStyle="light-content" backgroundColor={colors.pink} />
                 {!this.state.showErr ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.pink, }}>
                     <SplashLogo />
                     <Text style={{ marginTop: 50, fontSize: 18, color: colors.white, fontFamily: fonts.medium, }}>Welcome</Text>

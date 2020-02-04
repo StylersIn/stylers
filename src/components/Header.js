@@ -13,7 +13,7 @@ import { View, Item, Icon, Input, Card, CardItem, Body, Left, Radio, CheckBox } 
 import { ListIcon } from './assets';
 import Text from '../config/AppText';
 import PropTypes from 'prop-types';
-import { fonts } from '../constants/DefaultProps';
+import { fonts, colors } from '../constants/DefaultProps';
 import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
 import NavigationService from '../navigation/NavigationService';
 
@@ -32,6 +32,9 @@ const propTypes = {
 const { width, height } = Dimensions.get('screen');
 const options = ['Rating', 'Location', 'Price'];
 class Header extends React.Component {
+    state = {
+        searchInput: undefined,
+    }
     signOut = async () => {
         try {
             await this.props.logout();
@@ -40,16 +43,27 @@ class Header extends React.Component {
             console.log(error);
         }
     }
+    handleSearch = (e) => {
+        if (e) {
+            this.setState({ searchInput: e, })
+            this.props.filterService(e);
+        } else {
+            setTimeout(() => {
+                this.props.listService();
+            }, 500);
+        }
+    }
     render() {
         return (
-            <View style={{ marginTop: Platform.OS === 'ios' ? 0 : 0 }}>
+            <View style={{ marginTop: Platform.OS === 'ios' ? 30 : 40 }}>
                 {this.props.hamburger ? <TouchableOpacity
                     onPress={() => NavigationService.toggleDrawer()}
                     activeOpacity={0.7}
+                    style={{ paddingHorizontal: 20, width: '18%', }}
                 >
                     <HamburgerIcon />
                 </TouchableOpacity> : null}
-                <View style={{ marginTop: 15 }}>
+                <View style={{ marginTop: 15, paddingBottom: 20, paddingHorizontal: 20, }}>
                     <View style={{ alignSelf: 'flex-end' }}>
                         {this.props.close && <TouchableOpacity
                             onPress={() => NavigationService.goBack()}
@@ -100,15 +114,19 @@ class Header extends React.Component {
                     </View> : null} */}
                     </View>
                     {this.props.search ? <View style={{ zIndex: -1 }}>
-                        <Item style={{ marginTop: 20, borderRadius: 5, backgroundColor: "#C4C4C4", }} regular>
+                        <Item style={[{ marginTop: 20, borderRadius: 5, backgroundColor: colors.white, }, styles.cardStyle]} regular>
                             <Icon type="Ionicons" name="ios-search" />
                             <Input
+                                onChangeText={(e) => this.handleSearch(e)}
                                 style={{
                                     fontFamily: fonts.medium,
                                     fontSize: 13,
                                     height: 35,
                                 }}
                                 placeholder='' />
+                            {this.state.searchInput && <View style={{ marginRight: 10 }}>
+                                <Icon type="Ionicons" name="ios-close" />
+                            </View>}
                         </Item>
                     </View> : null}
                 </View>
@@ -124,12 +142,12 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         borderBottomWidth: 0,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
         shadowRadius: 2,
         elevation: 1,
-        marginLeft: 5,
-        marginRight: 5,
+        marginLeft: 0,
+        marginRight: 0,
         marginTop: 10,
     }
 })

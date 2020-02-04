@@ -54,37 +54,38 @@ class Services extends React.Component {
         const options = ['Rating', 'Location', 'Price'];
         return (
             <SafeAreaView style={{ flex: 1, }}>
-                    {this.state.showList && <View style={{ position: "absolute", right: 10, top: 125, zIndex: 1000, elevation: 5, }}>
-                        <Card style={styles.cardStyle}>
-                            <RadioGroup
-                                size={15}
-                                thickness={2}
-                                color='#606060'
-                                // selectedIndex={1}
-                                onSelect={(index, value) => this.selectListItem(index, value)}
-                            >
-                                {options.map((option, i) =>
-                                    <RadioButton
-                                        key={i}
-                                        style={{ margin: 3, padding: 1, paddingHorizontal: 5, }}
-                                        value={option.toLowerCase()} >
-                                        <Text style={{ fontSize: 12, fontFamily: fonts.bold }}>{option}</Text>
-                                    </RadioButton>)}
-                            </RadioGroup>
-                        </Card>
-                    </View>}
+                {this.state.showList && <View style={{ position: "absolute", right: 10, top: 125, zIndex: 1000, elevation: 5, }}>
+                    <Card style={styles.cardStyle}>
+                        <RadioGroup
+                            size={15}
+                            thickness={2}
+                            color='#606060'
+                            // selectedIndex={1}
+                            onSelect={(index, value) => this.selectListItem(index, value)}
+                        >
+                            {options.map((option, i) =>
+                                <RadioButton
+                                    key={i}
+                                    style={{ margin: 3, padding: 1, paddingHorizontal: 5, }}
+                                    value={option.toLowerCase()} >
+                                    <Text style={{ fontSize: 12, fontFamily: fonts.bold }}>{option}</Text>
+                                </RadioButton>)}
+                        </RadioGroup>
+                    </Card>
+                </View>}
+                <View style={{ elevation: 5 }}>
+                    <Header
+                        list
+                        hamburger
+                        search
+                        title={service.name}
+                        onChange={this.handleChange}
+                        showList={this.state.showList}
+                        selectListItem={this.selectListItem}
+                        selected={this.state.selected}
+                    />
+                </View>
                 <View style={styles.container}>
-                    <View style={{ elevation: 5 }}>
-                        <Header
-                            list
-                            title={service.name}
-                            onChange={this.handleChange}
-                            showList={this.state.showList}
-                            selectListItem={this.selectListItem}
-                            selected={this.state.selected}
-                        />
-
-                    </View>
                     <ServiceStylers {...this.props} />
                 </View>
             </SafeAreaView>
@@ -95,7 +96,7 @@ class Services extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        paddingHorizontal: 20,
     }
 })
 

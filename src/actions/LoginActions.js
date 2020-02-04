@@ -4,7 +4,7 @@ import {
     RSAA
 } from 'redux-api-middleware';
 import config from '../config';
-const BASE_URL = () => `${config.api.host}/api/auth`;
+const BASE_URL = () => `${config.api.host}/api/user`;
 
 export const doLogin = credentials => (console.log(config.api),{
     [RSAA]: {

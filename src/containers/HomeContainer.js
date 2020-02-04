@@ -8,7 +8,9 @@ import { AppointmentIcon } from '../navigation/assets';
 // const Home = (props) => <Component {...props} />
 class Home extends React.Component {
     state = {
-        isProcessing: true
+        isProcessing: true,
+        filterErr: undefined,
+        services: undefined,
     }
     static navigationOptions = {
         drawerIcon: ({ tintColor }) => (
@@ -20,7 +22,17 @@ class Home extends React.Component {
     }
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.service__list && nextProps.service__list !== this.props.service__list) {
-            this.setState({ isProcessing: false });
+            this.setState({ isProcessing: false, services: nextProps.service__list, });
+        }
+        if (nextProps.searching === true) {
+            this.setState({ isProcessing: true, filterErr: undefined, });
+        }
+        if (nextProps.resetFilter === true) {
+            this.setState({ isProcessing: false, services: nextProps.service__list, });
+        }
+        if ((nextProps.filteredServices && nextProps.filteredServices != this.props.filteredServices) ||
+            nextProps.searching == false && nextProps.searching != this, this.props.searching) {
+            this.setState({ isProcessing: false, filterErr: nextProps.message, services: nextProps.filteredServices, });
         }
     }
     render() {
@@ -31,7 +43,11 @@ class Home extends React.Component {
 const mapStateToProps = state => ({
     home: state.home,
     service__list: state.service.services,
-    // isProcessing: state.service.isProcessing,
+    socket: state.socket,
+    filteredServices: state.service.filteredServices,
+    searching: state.service.searching,
+    message: state.service.message,
+    resetFilter: state.service.v,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

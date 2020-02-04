@@ -36,10 +36,12 @@ class AllServices extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView style={{ flex: 1, }}>
-                    <View style={styles.container}>
+                    <View style={{ flex: 1, padding: 20, }}>
                         <Header
                             title={"My Services"}
                         />
+                    </View>
+                    <View style={styles.container}>
                         <View style={styles.child__container}>
                             {/* <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text> */}
                             <View style={styles.grid__main}>
@@ -75,7 +77,7 @@ class AllServices extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        // padding: 20,
     },
     child__container: {
         // flex: 1,

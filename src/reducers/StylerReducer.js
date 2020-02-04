@@ -13,6 +13,10 @@ function filterServicePrice(state, action) {
             return state.servicePrice.concat(action.payload);
         }
         obj = Object.assign(state.servicePrice[f], action.payload);
+        if (!obj.adult && !obj.child) {
+            state.servicePrice.splice(f, 1);
+            return state.servicePrice;
+        }
         state.servicePrice.splice(f, 1);
         return state.servicePrice.concat(obj);
     }

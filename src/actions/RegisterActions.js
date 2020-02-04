@@ -7,7 +7,7 @@ import config from '../config';
 
 export const doRegister = details => ({
     [RSAA]: {
-        endpoint: `${config.api.host}/api/auth/register`,
+        endpoint: `${config.api.host}/api/user/register`,
         method: 'POST',
         types: [
             constants.REGISTER,
