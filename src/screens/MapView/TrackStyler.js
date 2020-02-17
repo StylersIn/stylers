@@ -20,6 +20,7 @@ import { pickUp } from '../Assets';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import Geolocation from '@react-native-community/geolocation';
 Geocoder.init(MAP_API_KEY);
 
 const origin = { latitude: 37.3318456, longitude: -122.0296002 };
@@ -47,7 +48,7 @@ class StylerMap extends React.Component {
             longitudeDelta: LONGITUDE_DELTA,
         },
         this.props.socket.on('driverLocation', (location) => {
-            console.log(location);
+            // console.log(location);
             // this.fitAllMarkers({
             //     latitude: parseFloat(location.latitude),
             //     longitude: parseFloat(location.longitude)
@@ -61,7 +62,7 @@ class StylerMap extends React.Component {
             // })
         })
         this.props.socket.on('reviews.send', () => {
-            console.log('show review');
+            // console.log('show review');
             this.setState({ showReview: true, })
         })
     }
@@ -83,10 +84,13 @@ class StylerMap extends React.Component {
         driverLocation: undefined,
         fitOnce: false,
         completeService: false,
+        ready: true,
+        animateCount: 0,
         showReview: false,
     }
     componentDidMount() {
-        // this.props.getCurrentLocation();
+        this.props.getCurrentLocation();
+        this.getCurrentPosition();
         this.setState({ appointment: this.props.navigation.getParam('appointment', '') }, () => {
             setTimeout(() => {
                 this.fitAllMarkers();
@@ -103,53 +107,60 @@ class StylerMap extends React.Component {
             // this.props.listStylerRequests();
         }
         if (prevProps.driverLocation && prevProps.driverLocation != this.props.driverLocation) {
-            this.fitAllMarkersMain(prevProps.driverLocation);
+            if (this.state.animateCount == 0) {
+                this.setState((prevState) => ({ animateCount: prevState.animateCount + 1, }));
+                var region = {
+                    latitude: prevProps.driverLocation.latitude,
+                    longitude: prevProps.driverLocation.longitude,
+                    latitudeDelta: LATITUDE_DELTA,
+                    longitudeDelta: LONGITUDE_DELTA,
+                }
+                this.map.animateToRegion(region);
+            } else if (this.state.animateCount == 5) {
+                this.setState({ animateCount: 0, });
+            }
+            // this.fitAllMarkersMain(prevProps.driverLocation);
         }
     }
 
-    // componentWillUnmount() {
-    //     navigator.geolocation.clearWatch(this.watchID);
-    // }
+    setRegion = (region) => {
+        if (this.state.ready) {
+            this.getAddress({
+                latitude: region.latitude,
+                longitude: region.longitude,
+            })
+            setTimeout(() => this.map.animateToRegion(region), 10);
+        }
+    }
 
-    // watchLocation = () => {
-    //     const { coordinate } = this.state;
+    getCurrentPosition() {
+        try {
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    const region = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        latitudeDelta: LATITUDE_DELTA,
+                        longitudeDelta: LONGITUDE_DELTA,
+                    };
+                    this.setRegion(region);
+                },
+                (error) => {
+                    //TODO: better design
+                    alert(error.message);
+                },
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+            );
+        } catch (e) {
+            alert(e.message || "");
+        }
+    };
 
-    //     this.watchID = navigator.geolocation.watchPosition(
-    //         position => {
-    //             const { latitude, longitude } = position.coords;
-
-    //             const newCoordinate = {
-    //                 latitude,
-    //                 longitude
-    //             };
-
-    //             if (Platform.OS === "android") {
-    //                 if (this.marker) {
-    //                     this.marker._component.animateMarkerToCoordinate(
-    //                         newCoordinate,
-    //                         500 // 500 is the duration to animate the marker
-    //                     );
-    //                 }
-    //             } else {
-    //                 coordinate.timing(newCoordinate).start();
-    //             }
-
-    //             this.setState({
-    //                 region: {
-    //                     latitude,
-    //                     longitude
-    //                 }
-    //             });
-    //         },
-    //         error => console.log(error),
-    //         {
-    //             enableHighAccuracy: true,
-    //             timeout: 20000,
-    //             maximumAge: 1000,
-    //             distanceFilter: 10
-    //         }
-    //     );
-    // };
+    onMapReady = (e) => {
+        if (!this.state.ready) {
+            this.setState({ ready: true });
+        }
+    };
 
     showToastMessage = message => this.setState({ message });
 
@@ -175,8 +186,8 @@ class StylerMap extends React.Component {
     }
 
     fitAllMarkersMain = (location) => {
-        console.log('fit all')
-        console.log(location);
+        // console.log('fit all')
+        // console.log(location);
         const { appointment } = this.state;
         const MARKERS = [
             // this.region,
@@ -213,7 +224,7 @@ class StylerMap extends React.Component {
                     ref={e => this.map = e}
                     provider={'google'}
                     style={styles.map}
-                    region={this.region}
+                    // region={this.region}
                     showsUserLocation={true}
                     showsMyLocationButton={true}
                     followUserLocation={true}

@@ -29,6 +29,7 @@ class AllServices extends React.Component {
 
     componentDidMount() {
         this.props.listService();
+        this.props.getSubServices();
     }
 
     render() {
@@ -114,6 +115,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     service__list: state.service.services,
+    subServices: state.service.subService,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

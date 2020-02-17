@@ -37,7 +37,7 @@ const localNotification = (title, message, length = 35, id = 0) => {
         id: id,
         autoCancel: false,
         largeIcon: "ic_launcher",
-        smallIcon: "ic_notification",
+        smallIcon: "ic_launcher",
         bigText: message.length > length ? message : '',
         subText: "2m",
         color: "green",

@@ -36,6 +36,9 @@ class Requests extends React.Component {
             accept: false,
             key: '',
         }
+        this.props.socket.on('appointmentBooked.send', () => {
+            notify('New Appointment!!!', 'Hi there! You have a new appointment.');
+        })
     }
 
     static navigationOptions = {
@@ -45,12 +48,13 @@ class Requests extends React.Component {
     }
 
     UNSAFE_componentWillReceiveProps(prevProps) {
+        const { appointment } = this.state;
         if (prevProps.accepted && prevProps.accepted !== this.props.accepted) {
             alert('Successfully accepted')
             notify('Appointment Status', 'Hi there! Styler has accepted your appointment.');
             this.props.listStylerRequests();
             this.setState({ accept: false, })
-            this.props.socket.emit('accept.appointment', this.state.appointment.userId.publicId);
+            this.props.socket.emit('accept.appointment', appointment.userId && appointment.userId.publicId);
             // if (this.props.role === roles.user) {
 
             // } else if (this.props.role === roles.styler) {
@@ -111,7 +115,7 @@ class Requests extends React.Component {
                         </View>}
 
                         <View style={{ flex: 1, padding: 20, }}>
-                            <View style={{ marginTop: 20 }}>
+                            <View style={{ marginTop: 0 }}>
                                 {this.props.role === roles.user && <View style={{ flexDirection: 'row', }}>
                                     <Text style={{ fontSize: 16, fontFamily: fonts.bold, color: '#4F4F4F', }}>January</Text>
                                     <Icon style={{ fontSize: 20, paddingLeft: 10, marginTop: 2, color: '#4F4F4F', }} name="ios-arrow-down" />
@@ -174,7 +178,7 @@ class Requests extends React.Component {
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Service Cost</Text>
                             {appointment.services && appointment.services.map((r, key) => (
                                 <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
-                                    <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.serviceId.name}</Text>
+                                    <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.subServiceId.name}</Text>
                                     <Text style={{ fontFamily: fonts.bold, fontSize: 16, }}>{`NGN1000`}</Text>
                                 </View>
                             ))}

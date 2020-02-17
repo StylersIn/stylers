@@ -69,7 +69,7 @@ export const listService = (pageSize = 10, pageNumber = 1) => ({
 
 export const getSubServices = (serviceId) => ({
     [RSAA]: {
-        endpoint: `${BASE_URL()}/${serviceId}/sub`,
+        endpoint: `${BASE_URL()}/sub/${serviceId}`,
         method: 'GET',
         types: [
             constants.LIST_SUB_SERVICE,

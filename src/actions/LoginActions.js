@@ -5,8 +5,9 @@ import {
 } from 'redux-api-middleware';
 import config from '../config';
 const BASE_URL = () => `${config.api.host}/api/user`;
+import store from '../store/createStore';
 
-export const doLogin = credentials => (console.log(config.api),{
+export const doLogin = credentials => (console.log(config.api), {
     [RSAA]: {
         endpoint: `${BASE_URL()}/authenticate`,
         method: 'POST',
@@ -14,9 +15,12 @@ export const doLogin = credentials => (console.log(config.api),{
             constants.AUTH_USER,
             {
                 type: constants.AUTH_USER_SUCCESS,
-                payload: (action, state, response) => response.json().then(response => ({
-                    response,
-                }))
+                payload: (action, state, response) => response.json().then(response => {
+                    store.getState().socket.emit('Authorized', response.data.user);
+                    return {
+                        response,
+                    }
+                })
             },
             {
                 type: constants.AUTH_USER_FAILURE,

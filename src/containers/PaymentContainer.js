@@ -15,6 +15,7 @@ const mapStateToProps = state => ({
     pickUp: state.map.selectedAddress.location,
     streetName: state.map.selectedAddress.name,
     email: state.user.current.email,
+    socket: state.socket,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

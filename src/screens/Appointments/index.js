@@ -213,7 +213,7 @@ class Appointment extends React.Component {
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Service Cost</Text>
                             {appointment.services && appointment.services.map((r, key) => (
                                 <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
-                                    <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.serviceId.name}</Text>
+                                    <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.subServiceId.name}</Text>
                                     <Text style={{ fontFamily: fonts.bold, fontSize: 16, }}>{`NGN1000`}</Text>
                                 </View>
                             ))}

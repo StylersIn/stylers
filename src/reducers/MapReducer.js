@@ -1,7 +1,7 @@
 import * as constants from '../constants/ActionTypes';
 
 let initialState = {
-
+    location: null,
 }
 
 export default function serviceReducer(state = initialState, action) {

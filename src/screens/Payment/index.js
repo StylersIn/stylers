@@ -40,9 +40,12 @@ class Payment extends React.Component {
     }
 
     UNSAFE_componentWillReceiveProps(prevProps) {
+        const { navigation } = this.props;
+        let styler = navigation.getParam('styler', '');
         if (prevProps.booked && prevProps.booked !== this.props.booked) {
             notify('Payment Successful', 'You have successfully made payment and your request is being processed.');
             this.setState({ isVisible: true });
+            this.props.socket.emit('appointmentBooked', styler._id)
         }
     }
 

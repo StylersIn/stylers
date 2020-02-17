@@ -56,6 +56,7 @@ PODS:
     - GoogleMaps/Base
   - GooglePlaces (3.1.0):
     - GoogleMaps/Base (= 3.1.0)
+  - OneSignal (2.12.6)
   - Paystack (3.0.12):
     - Paystack/Core (= 3.0.12)
   - Paystack/Core (3.0.12)
@@ -251,6 +252,9 @@ PODS:
     - React
   - react-native-maps (0.25.0):
     - React
+  - react-native-onesignal (3.6.4):
+    - OneSignal (= 2.12.6)
+    - React (< 1.0.0, >= 0.13.0)
   - react-native-paystack (3.4.0):
     - Paystack
     - React
@@ -338,6 +342,7 @@ DEPENDENCIES:
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-google-places (from `../node_modules/react-native-google-places`)
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - react-native-onesignal (from `../node_modules/react-native-onesignal`)
   - react-native-paystack (from `../node_modules/react-native-paystack`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -372,6 +377,7 @@ SPEC REPOS:
     - Google-Maps-iOS-Utils
     - GoogleMaps
     - GooglePlaces
+    - OneSignal
     - Paystack
     - QBImagePickerController
 
@@ -416,6 +422,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-google-places"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-onesignal:
+    :path: "../node_modules/react-native-onesignal"
   react-native-paystack:
     :path: "../node_modules/react-native-paystack"
   react-native-webview:
@@ -472,6 +480,7 @@ SPEC CHECKSUMS:
   Google-Maps-iOS-Utils: c32891ff472eaaa1fca032beedafa1a013af7875
   GoogleMaps: 5c13302e6fe6bb6e686b267196586b91cd594225
   GooglePlaces: e874db179f2675c4f3eeda0b686b540273a578b0
+  OneSignal: a6df91542d1cf133b9dd19d89f2b533d8f2d3163
   Paystack: 80107f1ff7aa33ecab41dfd88be65be20e37cbed
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   RCTRequired: c639d59ed389cfb1f1203f65c2ea946d8ec586e2
@@ -489,6 +498,7 @@ SPEC CHECKSUMS:
   react-native-google-maps: 88d750ad441b19c24885f20d43a55ecac25939b5
   react-native-google-places: 978bcc6ec4bd1d9b0ab3693e3705d4f1f2459caf
   react-native-maps: 190c02ca533fddac5bb49cf17bdece3644612107
+  react-native-onesignal: 5ee6834ff54b56fc8ea33877803e8fa92633c87b
   react-native-paystack: c9c042b145e596b10ac1dc870f01d14eb04b1b49
   react-native-webview: dbfec7f16f09a71ea53731bdf5f86ae70eac4313
   React-RCTActionSheet: 89b037c0fb7d2671607cb645760164e7e0c013f6
@@ -512,6 +522,6 @@ SPEC CHECKSUMS:
   RSKImageCropper: a446db0e8444a036b34f3c43db01b2373baa4b2a
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: 14aa6599ed78c68dd6b15907e91cf91540ebcc5f
+PODFILE CHECKSUM: 0c736987a539f13e4233fabed6c92766c0773e02
 
 COCOAPODS: 1.8.4

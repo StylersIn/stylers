@@ -1,5 +1,6 @@
 import * as constants from '../constants/ActionTypes';
 import AsyncStorage from '@react-native-community/async-storage';
+import store from '../store/createStore';
 
 let initialState = {
     authenticated: false,
@@ -45,6 +46,7 @@ export default function userReducer(state = initialState, action) {
             }
             if (action.payload.response.data && action.payload.response.data.token) {
                 AsyncStorage.setItem(constants.TOKEN, action.payload.response.data.token);
+                // store.getState().socket.emit('Authorized', action.payload.response.data.user);
                 return {
                     ...state,
                     authenticated: true,

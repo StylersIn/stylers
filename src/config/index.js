@@ -4,6 +4,7 @@ const config = {
     api: {
         // host: env.BASE_URL,
         host: 'https://stylers.herokuapp.com',
+        // host: 'http://localhost:8080',
         timeout: 60000
     },
     paystack: "pk_test_c7fae17b0fc0dc90a958362549dd64ea8fb43a53",

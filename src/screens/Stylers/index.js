@@ -33,7 +33,7 @@ class Stylers extends React.Component {
         }
         if (nextProps.updated && nextProps.updated != this.props.updated) {
             this.setState({ fetching: false });
-            this.props.navigation.dispatch(NavigationService.resetAction('Appointments'));
+            this.props.navigation.dispatch(NavigationService.resetAction('Requests'));
         }
         if (nextProps.error && nextProps.error != this.props.error) {
             this.setState({ fetching: false });
@@ -105,6 +105,7 @@ class Stylers extends React.Component {
                             updateStyler={this.updateStyler}
                             processing={this.state.isProcessing}
                             price={this.props.price}
+                            subService={this.props.subService}
                         />
                     </View>
                 </SafeAreaView>

@@ -41,8 +41,8 @@ export default function (props) {
                                     <Text style={{ fontSize: 12, paddingVertical: 2, }}>{formatTime(request.CreatedAt)}</Text>
                                 </View>
                                 <View style={{ paddingHorizontal: 10, }}>
-                                    {/* {request.services.map((r, key) => (<Text key={key} style={{ fontFamily: fonts.bold }}>{r.serviceId && r.serviceId.name}</Text>))} */}
-                                    <Text style={{ fontFamily: fonts.bold }}>{request.services[0].serviceId.name}</Text>
+                                    {/* {request.services.map((r, key) => (<Text key={key} style={{ fontFamily: fonts.bold }}>{r.serviceId && r.subServiceId.name}</Text>))} */}
+                                    <Text style={{ fontFamily: fonts.bold }}>{request.services[0].subServiceId.name}</Text>
                                     <Text style={{ fontSize: 10, fontFamily: fonts.medium, marginTop: 5, }}>{request.userId.name} </Text>
                                     <Text style={{ fontSize: 10, }}>{request.streetName}</Text>
                                 </View>

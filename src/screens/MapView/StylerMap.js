@@ -20,6 +20,7 @@ import NavigationService from '../../navigation/NavigationService';
 import Geolocation from '@react-native-community/geolocation';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
+import Axios from 'axios';
 Geocoder.init(MAP_API_KEY);
 
 const origin = { latitude: 37.3318456, longitude: -122.0296002 };
@@ -29,11 +30,18 @@ const GOOGLE_MAPS_APIKEY = MAP_API_KEY;
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
-const LATITUDE = 37.78825;
-const LONGITUDE = -122.4324;
-const LATITUDE_DELTA = 0.0922;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const DEFAULT_PADDING = { top: 100, right: 100, bottom: 100, left: 100 };
+const DEFAULT_PADDING = Platform.OS === 'ios' ? { top: 200, right: 50, bottom: 400, left: 50 } : { top: 500, right: 200, bottom: 800, left: 200 };
+const LATITUDE_DELTA = Platform.OS == 'android' ? 0.007 : 0.009;
+const LONGITUDE_DELTA = Platform.OS == 'android' ? 0.007 : 0.009;
+const initialRegion = {
+    // latitude: 6.446734,
+    // longitude: 6.446734,
+    latitude: -37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+}
+// const DEFAULT_PADDING = { top: 100, right: 100, bottom: 100, left: 100 };
 const DEFAULT_PADDING_ANDROID = { top: 600, right: 600, bottom: 600, left: 600 };
 const HEADER_HEIGHT = 30;
 
@@ -51,29 +59,33 @@ class StylerMap extends React.Component {
         appointment: undefined,
         markers: [],
         coordinate: new AnimatedRegion({
-            latitude: LATITUDE,
-            longitude: LONGITUDE,
+            latitude: initialRegion.latitude,
+            longitude: initialRegion.longitude,
             latitudeDelta: 0,
             longitudeDelta: 0
         }),
         completeService: false,
         showReview: false,
+        ready: true,
+        hasRegion: false,
     }
     componentDidMount() {
-        // this.props.getCurrentLocation();
+        this.props.getCurrentLocation();
         this.setState({ appointment: this.props.navigation.getParam('appointment', '') }, () => {
             this.watchLocation();
-            this.fitAllMarkers();
         })
         this.updateStylerCurrentLocation();
+        this.getCurrentPosition()
     }
     UNSAFE_componentWillReceiveProps(prevProps) {
         if (prevProps.location && prevProps.location != this.props.location) {
-            this.getAddress({
-                latitude: prevProps.location.coords.latitude,
-                longitude: prevProps.location.coords.longitude,
-            })
+            // this.getAddress({
+            //     latitude: prevProps.location.coords.latitude,
+            //     longitude: prevProps.location.coords.longitude,
+            // })
+            this.fitAllMarkers();
             this.setState({
+                hasRegion: true,
                 region: {
                     latitude: prevProps.location.coords.latitude,
                     longitude: prevProps.location.coords.longitude,
@@ -107,6 +119,55 @@ class StylerMap extends React.Component {
     componentWillUnmount() {
         Geolocation.clearWatch(this.watchID);
     }
+
+    setRegion = (region) => {
+        if (this.state.ready) {
+            this.getAddress({
+                latitude: region.latitude,
+                longitude: region.longitude,
+            })
+            setTimeout(() => this.map.animateToRegion(region), 10);
+        }
+    }
+
+    getCurrentPosition() {
+        try {
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    const region = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        latitudeDelta: LATITUDE_DELTA,
+                        longitudeDelta: LONGITUDE_DELTA,
+                    };
+                    this.setRegion(region);
+                },
+                (error) => {
+                    //TODO: better design
+                    switch (error.code) {
+                        case 1:
+                            if (Platform.OS === "ios") {
+                                Alert.alert("", error.code);
+                            } else {
+                                Alert.alert("", error.code);
+                            }
+                            break;
+                        default:
+                            Alert.alert("", error.code);
+                    }
+                },
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+            );
+        } catch (e) {
+            alert(e.message || "");
+        }
+    };
+
+    onMapReady = (e) => {
+        if (!this.state.ready) {
+            this.setState({ ready: true });
+        }
+    };
 
     watchLocation = () => {
         const { coordinate, appointment, } = this.state;
@@ -160,23 +221,29 @@ class StylerMap extends React.Component {
 
     showToastMessage = message => this.setState({ message });
 
-    getAddress = (address) => {
-        Geocoder.from(address)
-            .then(json => {
-                var addressComponent = json.results[0].address_components[0];
-                this.setState({ currentAddress: addressComponent.short_name })
+    getAddress = (region) => {
+        Axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${region.latitude},${region.longitude}&key=${MAP_API_KEY}`)
+            .then((response) => {
+                const result = response.data.results[0];
+                this.setState({ currentAddress: result.formatted_address });
             })
-            .catch(error => console.warn(error));
+            .catch((err) => console.log(err))
     }
 
     fitAllMarkers = () => {
         const { region, appointment } = this.state;
-        const MARKERS = [region, {
+        console.log('-========================')
+        console.log(region)
+        console.log(appointment)
+        const MARKERS = [{
+            longitude: region.longitude,
+            latitude: region.latitude
+        }, {
             longitude: parseFloat(appointment.pickUp.longitude),
             latitude: parseFloat(appointment.pickUp.latitude),
         }]
         this.map.fitToCoordinates(MARKERS, {
-            edgePadding: Platform.OS == 'android' ? DEFAULT_PADDING_ANDROID : DEFAULT_PADDING,
+            edgePadding: DEFAULT_PADDING,
             animated: true,
         });
     }
@@ -203,7 +270,7 @@ class StylerMap extends React.Component {
                     ref={e => this.map = e}
                     provider={this.props.provider}
                     style={styles.map}
-                    region={this.state.region}
+                    initialRegion={initialRegion}
                     showsUserLocation={true}
                     showsMyLocationButton={true}
                     followUserLocation={true}
@@ -211,7 +278,7 @@ class StylerMap extends React.Component {
                     zoomEnabled={true}
                     loadingEnabled={true}
                 >
-                    {appointment && <MapViewDirections
+                    {appointment && this.state.hasRegion && <MapViewDirections
                         origin={this.state.region}
                         destination={appointment.pickUp.latitude + "," + appointment.pickUp.longitude}
                         apikey={GOOGLE_MAPS_APIKEY}

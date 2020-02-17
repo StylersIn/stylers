@@ -64,7 +64,8 @@ export default function serviceReducer(state = initialState, action) {
         case constants.LIST_SUB_SERVICE_SUCCESS:
             return {
                 ...state,
-                subService: action.payload,
+                subService: action.payload.response.data || [],
+                message: action.payload.response.message,
             }
         case constants.LIST_SUB_SERVICE_FAILURE:
             return {

@@ -22,6 +22,7 @@ const mapStateToProps = state => ({
     updated: state.styler.updated,
     error: state.service.error,
     price: state.styler.servicePrice,
+    subService: state.service.subService,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

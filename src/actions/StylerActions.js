@@ -128,38 +128,38 @@ export const getServiceStylers = (service, pageSize = 10, pageNumber = 1) => ({
     }
 });
 
-export const updateSelectedOption = (serviceId, type, option, min = 0, max = 5) => {
+export const updateSelectedOption = (subServiceId, type, option, min = 0, max = 5) => {
     return (dispatch, store) => {
         let service = store().styler.selectedService || [];
-        let prev = service.find(e => e.serviceId === serviceId);
+        let prev = service.find(e => e.subServiceId === subServiceId);
         let prevCount = prev && prev[type] || 0;
         let added = prevCount < max ? prevCount + 1 : max,
             subtracted = prevCount > min ? prevCount - 1 : 0 || 0;
-        if (service.findIndex(e => e.serviceId === serviceId) === -1) {
+        if (service.findIndex(e => e.subServiceId === subServiceId) === -1) {
             dispatch({
                 type: constants.UPDATE_SELECTED_SERVICE,
-                payload: service.concat({ serviceId, [type]: option === 'add' ? added : subtracted, })
+                payload: service.concat({ subServiceId, [type]: option === 'add' ? added : subtracted, })
             })
         } else {
-            let temp = service.filter(c => c.serviceId !== serviceId);
+            let temp = service.filter(c => c.subServiceId !== subServiceId);
             dispatch({
                 type: constants.UPDATE_SELECTED_SERVICE,
-                payload: temp.concat(Object.assign(prev, { serviceId, [type]: option === 'add' ? added : subtracted, }))
+                payload: temp.concat(Object.assign(prev, { subServiceId, [type]: option === 'add' ? added : subtracted, }))
             })
         }
     }
 }
 
-export const updateSelectedService = (serviceId) => {
+export const updateSelectedService = (subServiceId) => {
     return (dispatch, store) => {
         let service = store().styler.selectedService || [];
-        if (service.findIndex(e => e.serviceId === serviceId) === -1) {
+        if (service.findIndex(e => e.subServiceId === subServiceId) === -1) {
             dispatch({
                 type: constants.UPDATE_SELECTED_SERVICE,
-                payload: service.concat({ serviceId })
+                payload: service.concat({ subServiceId })
             })
         } else {
-            let temp = service.filter(c => c.serviceId !== serviceId);
+            let temp = service.filter(c => c.subServiceId !== subServiceId);
             dispatch({
                 type: constants.UPDATE_SELECTED_SERVICE,
                 payload: temp
@@ -171,7 +171,7 @@ export const updateSelectedService = (serviceId) => {
 export const updateStylerService = (services) => {
     return (dispatch, store) => {
         let service = store().styler.stylerService || [];
-        if (service.findIndex(e => e.serviceId === services.serviceId) === -1) {
+        if (service.findIndex(e => e.subServiceId === services.subServiceId) === -1) {
             dispatch({
                 type: constants.UPDATE_STYLER_SERVICE,
                 payload: service.concat(services)
@@ -180,10 +180,10 @@ export const updateStylerService = (services) => {
     }
 }
 
-export const removeStylerService = (serviceId) => {
+export const removeStylerService = (subServiceId) => {
     return (dispatch, store) => {
         let service = store().styler.stylerService || [];
-        let temp = service.filter(c => c.serviceId !== serviceId);
+        let temp = service.filter(c => c.subServiceId !== subServiceId);
         dispatch({
             type: constants.REMOVE_STYLER_SERVICE,
             payload: temp

@@ -30,7 +30,7 @@ class Splash extends Component {
         setTimeout(() => {
             AsyncStorage.getItem(constants.TOKEN)
                 .then((token) => {
-                    if (!token) this.props.navigation.navigate('Auth');
+                    if (!token) return this.props.navigation.navigate('Auth');
                     this.props.InitializeApp({ token });
                 })
         }, 1000);
@@ -49,11 +49,12 @@ class Splash extends Component {
                 this.props.navigation.dispatch(NavigationService.resetAction('Home'))
             }
         }
-        if (nextProps.user.auth__failed && nextProps.user.auth__failed != this.props.user.auth__failed) {
+        if (nextProps.user.auth__failed) {
+            // alert(nextProps.user.error )
             if (nextProps.user.error == 'Network request failed') {
                 this.setState({ showErr: true, error: 'You seem to be offline. Please kindly check that you have a stable Internet connection', })
             }
-            else this.props.navigation.navigate('Auth');
+            else this.props.navigation.dispatch(NavigationService.resetAction('Auth'));
         }
         if (nextProps.styler.status != this.props.styler.status) {
             if (typeof nextProps.styler.status !== 'undefined') {

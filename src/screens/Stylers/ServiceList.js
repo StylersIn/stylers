@@ -30,7 +30,7 @@ const ServiceList = (props) => {
 
     const _keyExtractor = (item, index) => item.name;
     const filterCheck = (item, price = []) => {
-        return price.some(e => item.subServices.findIndex(r => r._id == e.subServiceId) >= 0);
+        return price.some(e => item._id === e.serviceId);
     }
     return (
         <>

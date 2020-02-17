@@ -32,16 +32,18 @@ class ServicePrice extends React.Component {
     }
 
     state = {
-        service: undefined
+        service: undefined,
+        fetching: true,
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.stylerServices && nextProps.stylerServices != this.props.stylerServices) {
-
+        if (nextProps.subService && nextProps.subService != this.props.subService) {
+            this.setState({ fetching: false })
         }
     }
 
     componentDidMount() {
+        this.props.getSubServices(this.props.navigation.getParam('service', '')._id);
         this.setState({ service: this.props.navigation.getParam('service', '') }, () => {
             // this.props.getSubServices(this.state.service._id);
         });
@@ -50,95 +52,85 @@ class ServicePrice extends React.Component {
     getDefaultVal = (servicePrice, id, meta) => {
         console.log('fjfjfhfjfjfhhfhfhfhfhfh')
         // console.log(servicePrice.length > 0 && servicePrice.filter(e => e.subServiceId === id)[0] ? servicePrice.filter(e => e.subServiceId === id)[0][meta] : '')
-        return servicePrice.length > 0 && servicePrice.filter(e => e.subServiceId === id)[0] ? servicePrice.filter(e => e.subServiceId === id)[0][meta] : '';
+        return servicePrice.length > 0 && servicePrice.filter(e => e.subServiceId === id)[0] &&
+            servicePrice.filter(e => e.subServiceId === id)[0][meta] ? servicePrice.filter(e => e.subServiceId === id)[0][meta].toString() : '';
     }
 
     render() {
         const _keyExtractor = (item, index) => item.name;
-        const { service } = this.state;
+        const { service, fetching, } = this.state;
+        const { subService } = this.props;
         const servicePrice = this.props.price || [];
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView style={{ flex: 1, }}>
+                    <Header
+                        hamburger={true}
+                        title={service ? service.name : ''}
+                    />
                     <View style={styles.container}>
-                        <Header
-                            hamburger={true}
-                            title={service ? service.name : ''}
-                        />
                         <View style={{ width: "80%", }}>
                             <Text style={styles.basic__1}>Help us with a price in NGN for each service</Text>
                         </View>
-                        {service && service.subServices.length > 0 ? <>
-                            {/* <FlatList
-                                // contentContainerStyle={{ backgroundColor:"red" }}
-                                data={service__list && service__list.credentials.message}
-                                numColumns={2}
-                                keyExtractor={_keyExtractor}
-                                renderItem={({ item }) =>
-                                    <View style={{ flex: 1 / 2, paddingEnd: 10, justifyContent: "space-between" }}>
-                                        <TouchableOpacity
-                                            disabled={selected.findIndex(e => e.serviceId === item._id) === -1 ? false : true}
-                                            onPress={() => props.onSelect(item)}
-                                            activeOpacity={0.7}>
-                                            <Image
-                                                style={[styles.img]}
-                                                source={{ uri: item.imageUrl || imgUrl }} />
-                                            <View style={[styles.overlay, { backgroundColor: selected.findIndex(e => e.serviceId === item._id) === -1 ? 'rgba(0,0,0,0.5)' : 'rgba(200,160,200.5,0.5)' }]} />
-                                            <View style={{ position: "relative", bottom: "50%" }}>
-                                                <Text style={styles.overlayTxtMain}>{item.name}</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                }
-                            /> */}
-                            {service.subServices.map((subService, i) => <View key={i} style={styles.child__container}>
-                                <Text style={{ paddingHorizontal: 4, fontFamily: fonts.bold, fontSize: 16, }}>{subService.name}</Text>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <View style={{ width: '47%' }}>
-                                        <Text style={{ padding: 4, fontSize: 12, }}>Adult</Text>
-                                        <Item style={styles.input} regular>
-                                            <View style={styles.inputAddon}>
-                                                <Naira />
-                                            </View>
-                                            <Input
-                                                style={{ fontFamily: fonts.medium, fontSize: 12, }}
-                                                placeholder='0.00'
-                                                keyboardType={'numeric'}
-                                                defaultValue={this.getDefaultVal(servicePrice, subService._id, 'adult')}
-                                                onEndEditing={(e) => this.props.servicePrice({ serviceId: service._id, subServiceId: subService._id, adult: e.nativeEvent.text })}
-                                            />
-                                        </Item>
-                                    </View>
-                                    <View style={{ width: '47%' }}>
-                                        <Text style={{ padding: 4, fontSize: 12, }}>Child</Text>
-                                        <Item style={styles.input} regular>
-                                            <View style={styles.inputAddon}>
-                                                <Naira />
-                                            </View>
-                                            <Input
-                                                style={{ fontFamily: fonts.medium, fontSize: 12, }}
-                                                placeholder='0.00'
-                                                keyboardType={'numeric'}
-                                                defaultValue={this.getDefaultVal(servicePrice, subService._id, 'child')}
-                                                // onBlur={()=>alert('fff')}
-                                                onEndEditing={(e) => this.props.servicePrice({ serviceId: service._id, subServiceId: subService._id, child: e.nativeEvent.text })}
-                                            />
-                                        </Item>
-                                    </View>
-                                </View>
-                            </View>)}
-                            <View style={{ marginTop: 47 }}>
-                                <Button
-                                    onPress={() => this.props.navigation.goBack()}
-                                    btnTxt={"Save Price"}
-                                    size={"lg"}
-                                    btnTxtStyles={{ color: colors.white, fontFamily: fonts.bold }}
-                                />
-                            </View>
-                        </> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                        {subService && !subService.length && <>
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                                 <EmptyAppointment />
-                                <Text style={{ fontSize: 20, paddingVertical: 40, fontFamily: fonts.medium, }}>No sub services</Text>
-                            </View>}
+                                <Text style={{ fontSize: 20, paddingVertical: 40, fontFamily: fonts.medium, }}>No sub services found</Text>
+                            </View>
+                        </>}
+
+                        {fetching && <View style={{ flex: 1, justifyContent: 'center', }}>
+                            <Spinner color={colors.pink} />
+                        </View>}
+
+                        {subService && subService.length > 0 && <>
+                            <View style={{ marginTop: 10 }}>
+                                {subService.map((subService, i) => <View key={i} style={styles.child__container}>
+                                    <Text style={{ paddingHorizontal: 4, fontFamily: fonts.bold, fontSize: 16, }}>{subService.name}</Text>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <View style={{ width: '47%' }}>
+                                            <Text style={{ padding: 4, fontSize: 12, }}>Adult</Text>
+                                            <Item style={styles.input} regular>
+                                                <View style={styles.inputAddon}>
+                                                    <Naira />
+                                                </View>
+                                                <Input
+                                                    style={{ fontFamily: fonts.medium, fontSize: 12, }}
+                                                    placeholder='0.00'
+                                                    keyboardType={'numeric'}
+                                                    defaultValue={this.getDefaultVal(servicePrice, subService._id, 'adult')}
+                                                    onEndEditing={(e) => this.props.servicePrice({ serviceId: subService.serviceId, subServiceId: subService._id, adult: e.nativeEvent.text })}
+                                                />
+                                            </Item>
+                                        </View>
+                                        <View style={{ width: '47%' }}>
+                                            <Text style={{ padding: 4, fontSize: 12, }}>Child</Text>
+                                            <Item style={styles.input} regular>
+                                                <View style={styles.inputAddon}>
+                                                    <Naira />
+                                                </View>
+                                                <Input
+                                                    style={{ fontFamily: fonts.medium, fontSize: 12, }}
+                                                    placeholder='0.00'
+                                                    keyboardType={'numeric'}
+                                                    defaultValue={this.getDefaultVal(servicePrice, subService._id, 'child')}
+                                                    // onBlur={()=>alert('fff')}
+                                                    onEndEditing={(e) => this.props.servicePrice({ serviceId: subService.serviceId, subServiceId: subService._id, child: e.nativeEvent.text })}
+                                                />
+                                            </Item>
+                                        </View>
+                                    </View>
+                                </View>)}
+                                <View style={{ marginTop: 40, }}>
+                                    <Button
+                                        onPress={() => this.props.navigation.goBack()}
+                                        btnTxt={"Save Price"}
+                                        size={"lg"}
+                                        btnTxtStyles={{ color: colors.white, fontFamily: fonts.bold }}
+                                    />
+                                </View>
+                            </View>
+                        </>}
                     </View>
                 </SafeAreaView>
             </View>
@@ -149,7 +141,7 @@ class ServicePrice extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        paddingHorizontal: 20,
     },
     child__container: {
         // flex: 1,
@@ -205,6 +197,7 @@ const mapStateToProps = state => ({
     service__list: state.service.services,
     stylerServices: state.styler.stylerServices,
     price: state.styler.servicePrice,
+    subService: state.service.subService,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

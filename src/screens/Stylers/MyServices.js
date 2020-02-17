@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-navigation';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
 import { Spinner, Icon } from 'native-base';
+import NavigationService from '../../navigation/NavigationService';
 
 const propTypes = {
     onSelect: PropTypes.func,
@@ -29,9 +30,21 @@ class MyServices extends React.Component {
         )
     }
 
+    state = {
+        fetching: true,
+        processing: false,
+    }
+
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.stylerServices && nextProps.stylerServices != this.props.stylerServices) {
-            nextProps.stylerServices.map(e => this.props.servicePrice({ serviceId: e._id, subServiceId: e.subServiceId, child: e.child, adult: e.adult, }));
+            nextProps.stylerServices.map(e => this.props.servicePrice({ serviceId: e.serviceId, subServiceId: e.subServiceId, child: e.child, adult: e.adult, }));
+        }
+        if (nextProps.service__list && nextProps.service__list != this.props.service__list) {
+            this.setState({ fetching: false, });
+        }
+        if (nextProps.updated && nextProps.updated != this.props.updated) {
+            this.setState({ fetching: false });
+            this.props.navigation.dispatch(NavigationService.resetAction('Requests'));
         }
     }
 
@@ -41,11 +54,17 @@ class MyServices extends React.Component {
     }
 
     filterCheck = (item, price = []) => {
-        return price.some(e => item.subServices.findIndex(r => r._id == e.subServiceId) >= 0);
+        return price.some(e => item._id === e.serviceId);
+    }
+
+    updateStyler = () => {
+        this.setState({ processing: true });
+        this.props.updateStyler({ services: this.props.price || [] });
     }
 
     render() {
         const _keyExtractor = (item, index) => item.name;
+        const { fetching, processing } = this.state;
         const { price } = this.props;
         return (
             <View style={{ flex: 1 }}>
@@ -58,6 +77,11 @@ class MyServices extends React.Component {
                                 action={<Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>EDIT</Text>}
                             />
                         </View>
+
+                        {fetching && <View style={{ flex: 1, justifyContent: 'center', }}>
+                            <Spinner color={colors.pink} />
+                        </View>}
+
                         {this.props.service__list && this.props.service__list.map((item, i) => <TouchableOpacity
                             onPress={() => this.props.navigation.navigate('ServicePrice', { service: item, })}
                             activeOpacity={0.8}
@@ -68,6 +92,17 @@ class MyServices extends React.Component {
                             {this.filterCheck(item, price) && this.filterCheck(item, price) ?
                                 <Icon style={{ color: colors.success, }} name='ios-checkmark-circle' /> : <Icon style={{ color: colors.pink, }} name='ios-arrow-forward' />}
                         </TouchableOpacity>)}
+
+                        {this.props.service__list && <View style={{ marginVertical: 0, padding: 20 }}>
+                            <Button
+                                onPress={price ? () => this.updateStyler() : () => { }}
+                                btnTxt={"Update"}
+                                size={"lg"}
+                                loading={processing}
+                                styles={{ backgroundColor: !price ? colors.btnDisabled : colors.white, borderWidth: 1, borderColor: !price ? colors.btnDisabled : "#000000" }}
+                                btnTxtStyles={!price ? { color: colors.white, } : { color: colors.black }, { fontFamily: fonts.bold }}
+                            />
+                        </View>}
                         {/* {this.props.stylerServices ? <>
                             <View style={styles.child__container}>
                                 <View style={styles.grid__main}>
@@ -164,6 +199,7 @@ const mapStateToProps = state => ({
     service__list: state.service.services,
     stylerServices: state.styler.stylerServices,
     price: state.styler.servicePrice,
+    updated: state.styler.updated,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

@@ -6,6 +6,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import config from '../config';
 const BASE_URL = () => `${config.api.host}/api/user`;
+import store from '../store/createStore';
 
 export const InitializeApp = (token) => ({
     [RSAA]: {
@@ -16,6 +17,7 @@ export const InitializeApp = (token) => ({
             {
                 type: constants.INITIALIZE_SUCCESS,
                 payload: (action, state, response) => response.json().then(response => {
+                    store.getState().socket.emit('Authorized', response);
                     return {
                         response
                     }
@@ -173,9 +175,9 @@ export const fetchUser = publicId => ({
     }
 });
 
-export const updateProfile = file => ({
+export const updateProfile = data => ({
     [RSAA]: {
-        endpoint: `${BASE_URL()}/update/avatar`,
+        endpoint: `${BASE_URL()}/update`,
         method: 'PUT',
         types: [
             constants.UPDATE_PROFILE,
@@ -194,7 +196,7 @@ export const updateProfile = file => ({
                 }
             }
         ],
-        body: JSON.stringify(file),
+        body: JSON.stringify(data),
         options: { timeout: 10000 },
         headers: {
             Accept: "application/json",

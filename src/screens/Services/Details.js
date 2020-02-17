@@ -87,8 +87,8 @@ class ServiceDetails extends React.Component {
         this.props.updateSelectedService(serviceId);
     }
 
-    changeOption = (serviceId, type, option, min = 0, max = 5) => {
-        this.props.updateSelectedOption(serviceId, type, option);
+    changeOption = (subServiceId, type, option, min = 0, max = 5) => {
+        this.props.updateSelectedOption(subServiceId, type, option);
     }
 
     pay = () => {
@@ -101,16 +101,19 @@ class ServiceDetails extends React.Component {
         this.showToast('Please select valid appointment credentials', toastType.danger);
     }
 
-    scheduleAppointment = () => {
+    toggleSheet = () => {
         this.setState({ bottomSheet: true, })
-        // const { navigation, styler, } = this.props;
-        // const styler__data = navigation.getParam('styler', '');
-        // const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
-        // if (totalAmt === 0) {
-        //     this.showToast('Please select a service', toastType.danger);
-        // } else {
-        //     this.setState({ isVisible: !this.state.isVisible, bottomSheet: true, })
-        // }
+    }
+
+    scheduleAppointment = () => {
+        const { navigation, styler, } = this.props;
+        const styler__data = navigation.getParam('styler', '');
+        const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
+        if (totalAmt === 0) {
+            this.showToast('Please select a service', toastType.danger);
+        } else {
+            this.setState({ isVisible: !this.state.isVisible, bottomSheet: true, })
+        }
     }
 
     showToast = (text, type) => {
@@ -176,8 +179,8 @@ class ServiceDetails extends React.Component {
                 </ScrollView>
                 <View style={{ marginVertical: 30, marginBottom: 20, padding: 20, }}>
                     <Button
-                        onPress={this.scheduleAppointment}
-                        btnTxt={"Schedule Appointment"}
+                        onPress={this.toggleSheet}
+                        btnTxt={"Select Service"}
                         size={"lg"}
                         btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                     />
@@ -189,6 +192,7 @@ class ServiceDetails extends React.Component {
                     changeOption={this.changeOption}
                     stylerData={styler__data}
                     totalAmt={totalAmt}
+                    scheduleAppointment={this.scheduleAppointment}
                 />}
                 <Modal
                     closeModal={this.closeModal}

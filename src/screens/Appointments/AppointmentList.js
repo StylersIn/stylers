@@ -42,7 +42,7 @@ export default function (props) {
                                 </View>
                                 <View style={{ paddingHorizontal: 10, }}>
                                     {/* {appointment.services.map((r, key) => (<Text key={key} style={{ fontFamily: fonts.bold }}>{r.serviceId && r.serviceId.name}</Text>))} */}
-                                    <Text style={{ fontFamily: fonts.bold }}>{appointment.services[0].serviceId.name}</Text>
+                                    <Text style={{ fontFamily: fonts.bold, }}>{`${appointment.services[0].subServiceId.name}`}</Text>
                                     <Text style={{ fontSize: 10, fontFamily: fonts.medium, paddingVertical: 5, }}>{props.role == roles.user ? appointment.stylerId.name : appointment.userId.name} </Text>
                                     <Text style={{ fontSize: 10, }}>{appointment.streetName}</Text>
                                 </View>

@@ -13,6 +13,7 @@ import { colors, fonts, } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { WhatsAppIcon } from '../Appointments/AppointmentAssets';
 import StylerServiceList from './StylerServiceList';
+import Button from '../../components/Button';
 
 const HEADER_HEIGHT = 30;
 const swiperIcon = () => {
@@ -30,7 +31,15 @@ function services(props) {
                 onChangeOption={props.changeOption}
             />
             <View style={{ alignSelf: "flex-end", marginTop: 10 }}>
-                <Text style={{ fontFamily: fonts.bold, fontSize: 22, }}>TOT - {`NGN${'totalAmt'}`}</Text>
+                <Text style={{ fontFamily: fonts.bold, fontSize: 22, }}>TOT - {`NGN${props.totalAmt}`}</Text>
+            </View>
+            <View style={{ marginVertical: 30, marginBottom: 20, padding: 20, }}>
+                <Button
+                    onPress={props.scheduleAppointment}
+                    btnTxt={"Select Service"}
+                    size={"lg"}
+                    btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
+                />
             </View>
         </>
     )

@@ -38,6 +38,7 @@
     "react-native-maps": "^0.25.0",
     "react-native-maps-directions": "^1.7.3",
     "react-native-numeric-input": "^1.8.3",
+    "react-native-onesignal": "^3.6.4",
     "react-native-otp-textinput": "0.0.6",
     "react-native-paystack": "^3.4.0",
     "react-native-paystack-webview": "^2.0.2",
