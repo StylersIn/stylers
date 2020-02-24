@@ -13,6 +13,7 @@ import {
     Input,
     Icon,
     CheckBox,
+    Switch,
 } from 'native-base';
 import Button from '../../components/Button';
 import { fonts, colors, toastType } from '../../constants/DefaultProps';
@@ -27,6 +28,7 @@ import config from '../../config';
 import ShowToast from '../../components/ShowToast';
 import NavigationService from '../../navigation/NavigationService';
 import { notify } from '../../services';
+import avatar from '../../../assets/imgs/user.png';
 
 RNPaystack.init({ publicKey: config.paystack });
 
@@ -36,6 +38,7 @@ class Payment extends React.Component {
         this.state = {
             isVisible: false,
             isProcessing: false,
+            saveCard: false,
         }
     }
 
@@ -50,17 +53,17 @@ class Payment extends React.Component {
     }
 
     async chargeCard() {
-        const { navigation } = this.props;
-        let styler = navigation.getParam('styler', '');
-        let totalAmount = navigation.getParam('totalAmt', '');
+        const { stylerData, } = this.props;
+        let styler = stylerData;
         this.setState({ isProcessing: true })
-        await RNPaystack.chargeCard({
+        await RNPaystack.chargeCardWithAccessCode({
             cardNumber: this.cardNumber,
             expiryMonth: this.expiryMonth,
             expiryYear: this.expiryYear,
             cvc: this.cvc,
-            email: this.props.email,
-            amountInKobo: totalAmount * 100,
+            accessCode: this.props.transactionDetails.access_code
+            // email: this.props.email,
+            // amountInKobo: totalAmount * 100,
         })
             .then(response => {
                 // this.setState({ isProcessing: false })
@@ -71,9 +74,11 @@ class Payment extends React.Component {
                         stylerId: styler._id,
                         services: this.props.services,
                         scheduledDate: this.props.date,
-                        totalAmount: totalAmount,
+                        totalAmount: styler.totalAmt,
                         streetName: this.props.streetName,
                         pickUp: this.props.pickUp,
+                        transactionReference: response.reference,
+                        saveCard: this.state.saveCard,
                     }
                     setTimeout(() => {
                         this.props.saveAppointment(req);
@@ -98,8 +103,8 @@ class Payment extends React.Component {
     }
 
     render() {
-        const { navigation } = this.props;
-        let styler = navigation.getParam('styler', '');
+        const { navigation, stylerData, } = this.props;
+        let styler = stylerData;
         // let totalAmount = navigation.getParam('totalAmt', '');
         return (
             <View style={{ flex: 1 }}>
@@ -188,6 +193,16 @@ class Payment extends React.Component {
                                     </View>
                                 </View>
                             </View>
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, }}>
+                            <Text style={{ fontFamily: fonts.medium, fontSize: 14, }}>Save Card</Text>
+                            <Switch
+                                // ios_backgroundColor={colors.gray}
+                                trackColor={colors.pink}
+                                onValueChange={() => this.setState({ saveCard: !this.state.saveCard })}
+                                value={this.state.saveCard}
+                            />
+                        </View>
                         </View>
 
                         {/* <View style={{ flexDirection: "row", }}>
@@ -218,7 +233,7 @@ class Payment extends React.Component {
                 >
                     <View style={{ alignItems: "center", paddingVertical: 20, }}>
                         <Image
-                            source={service__1}
+                            source={styler.userId.imageUrl ? { uri: styler.userId.imageUrl } : avatar}
                             style={{ width: 110, height: 110, borderRadius: 5, }}
                         />
                         <Text style={{ fontFamily: fonts.bold, fontSize: 20, textAlign: "center", padding: 24, }}>{styler.name}</Text>

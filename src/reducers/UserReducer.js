@@ -37,10 +37,16 @@ export default function userReducer(state = initialState, action) {
                 message: undefined,
             })
         case constants.AUTH_USER_SUCCESS:
-            if (!action.payload.response.success) {
+            if (action.payload.response.status == false) {
                 return {
                     ...state,
                     status: false,
+                    message: action.payload.response.message,
+                }
+            }
+            if (!action.payload.response.success) {
+                return {
+                    ...state,
                     message: action.payload.response.message,
                 }
             }
@@ -126,6 +132,21 @@ export default function userReducer(state = initialState, action) {
             return {
                 loggingOut: true,
             }
+
+        case constants.FETCH_CARDS:
+            return Object.assign({}, state, {
+                cards: undefined,
+            })
+        case constants.FETCH_CARDS_SUCCESS:
+            return {
+                ...state,
+                cards: action.payload.response && action.payload.response.data
+            }
+        case constants.FETCH_CARDS_FAILURE:
+            return Object.assign({}, state, {
+                cards: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            })
 
         default:
             return state;

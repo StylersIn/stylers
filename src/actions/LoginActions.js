@@ -16,7 +16,7 @@ export const doLogin = credentials => (console.log(config.api), {
             {
                 type: constants.AUTH_USER_SUCCESS,
                 payload: (action, state, response) => response.json().then(response => {
-                    store.getState().socket.emit('Authorized', response.data.user);
+                    store.getState().socket.emit('auth', response.data.user);
                     return {
                         response,
                     }
@@ -48,7 +48,7 @@ export const verifySocialMediaLogin = email => ({
         types: [
             constants.VERIFY_SOCIAL,
             {
-                type: constants.VERIFY_SOCIAL_SUCCESS,
+                type: constants.AUTH_USER_SUCCESS,
                 payload: (action, state, response) => response.json().then(response => ({
                     response,
                 }))

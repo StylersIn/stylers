@@ -12,7 +12,7 @@ import HomeScreen from '../containers/HomeContainer';
 import ServiceScreen from '../containers/ServiceContainer';
 import ServiceDetails from '../screens/Services/Details';
 import PaymentScreen from '../containers/PaymentContainer';
-import NoDebitScreen from '../screens/Payment/NoDebit';
+import CardsScreen from '../screens/Payment/Cards';
 import AppointmentScreen from '../containers/AppointmentContainer';
 import ContactUsScreen from '../screens/ContactUs';
 import StylersScreen from '../screens/Auth/Stylers';
@@ -71,6 +71,7 @@ const StylerDrawerNavigator = createDrawerNavigator({
         screen: SettingsScreen
     }
 }, {
+    drawerLockMode: 'locked-closed',
     contentComponent: drawerContentComponents,
 });
 
@@ -94,6 +95,7 @@ const ClientDrawerNavigator = createDrawerNavigator({
         screen: SettingsScreen
     }
 }, {
+    drawerLockMode: 'locked-closed',
     contentComponent: drawerContentComponents,
     initialRouteName: 'Home'
 });
@@ -125,7 +127,7 @@ const AppNavigator = createStackNavigator({
     Service: ServiceScreen,
     ServiceDetails: ServiceDetails,
     Payment: PaymentScreen,
-    NoDebit: NoDebitScreen,
+    Cards: CardsScreen,
     MapView: MapViewScreen,
     StylerMap: StylerMapScreen,
     TrackStyler: TrackStylerScreen,

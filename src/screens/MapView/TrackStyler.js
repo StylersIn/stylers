@@ -41,26 +41,27 @@ const HEADER_HEIGHT = 30;
 class StylerMap extends React.Component {
     constructor(props) {
         super(props);
+        this.rating = 5;
         this.region = {
             latitude: this.props.location.coords.latitude,
             longitude: this.props.location.coords.longitude,
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
         },
-        this.props.socket.on('driverLocation', (location) => {
-            // console.log(location);
-            // this.fitAllMarkers({
-            //     latitude: parseFloat(location.latitude),
-            //     longitude: parseFloat(location.longitude)
-            // })
-            this.props.updateDriverLocation(location);
-            // this.setState({ driverLocation: location, }, () => {
-            //     // if (!this.state.fitOnce) {
-            //     //     this.fitAllMarkersMain();
-            //     //     this.setState({ fitOnce: true, })
-            //     // }
-            // })
-        })
+            this.props.socket.on('driverLocation', (location) => {
+                // console.log(location);
+                // this.fitAllMarkers({
+                //     latitude: parseFloat(location.latitude),
+                //     longitude: parseFloat(location.longitude)
+                // })
+                this.props.updateDriverLocation(location);
+                // this.setState({ driverLocation: location, }, () => {
+                //     // if (!this.state.fitOnce) {
+                //     //     this.fitAllMarkersMain();
+                //     //     this.setState({ fitOnce: true, })
+                //     // }
+                // })
+            })
         this.props.socket.on('reviews.send', () => {
             // console.log('show review');
             this.setState({ showReview: true, })
@@ -87,6 +88,7 @@ class StylerMap extends React.Component {
         ready: true,
         animateCount: 0,
         showReview: false,
+        isProcessing: false,
     }
     componentDidMount() {
         this.props.getCurrentLocation();
@@ -98,13 +100,13 @@ class StylerMap extends React.Component {
         })
     }
     UNSAFE_componentWillReceiveProps(prevProps) {
-        if (prevProps.completed && prevProps.completed !== this.props.completed) {
-            alert('Successfully completed')
-            if (this.state.appointment.userId.publicId === this.props.current.publicId) {
-                notify('Service Completed', 'Hi there! You just completed this service.');
-            }
-            this.props.navigation.dispatch(NavigationService.resetAction('Requests'))
-            // this.props.listStylerRequests();
+        if (prevProps.rating && prevProps.rating !== this.props.rating) {
+            alert('Review noted!')
+            this.props.navigation.dispatch(NavigationService.resetAction('Appointments'))
+        }
+        if (prevProps.error && prevProps.error !== this.props.error) {
+            this.setState({ isProcessing: false, })
+            alert('An error occured: ' + prevProps.error)
         }
         if (prevProps.driverLocation && prevProps.driverLocation != this.props.driverLocation) {
             if (this.state.animateCount == 0) {
@@ -211,6 +213,16 @@ class StylerMap extends React.Component {
         this.props.completeService({ appointmentId: this.state.appointment._id });
     }
 
+    rate = () => {
+        this.setState({ isProcessing: true, });
+        this.props.addRating({
+            message: this.review,
+            appointmentId: this.state.appointment._id,
+            rating: this.rating,
+            stylerId: this.state.appointment.stylerId.userId
+        });
+    }
+
     render() {
         const { appointment } = this.state;
         return (
@@ -231,7 +243,7 @@ class StylerMap extends React.Component {
                     showsCompass={true}
                     zoomEnabled={true}
                     loadingEnabled={true}
-                    // onRegionChangeComplete={this.props.driverLocation ? this.fitAllMarkersMain() : this.fitAllMarkers(this.props.driverLocation)}
+                // onRegionChangeComplete={this.props.driverLocation ? this.fitAllMarkersMain() : this.fitAllMarkers(this.props.driverLocation)}
                 >
                     {/* {appointment && <MapViewDirections
                         origin={this.state.region}
@@ -304,18 +316,19 @@ class StylerMap extends React.Component {
                                     <Rating
                                         type='star'
                                         ratingCount={5}
-                                        startingValue={0}
+                                        startingValue={5}
                                         ratingColor={colors.pink}
                                         ratingTextColor={colors.pink}
                                         ratingBackgroundColor={colors.pink}
                                         imageSize={18}
                                         showRating={false}
-                                        onFinishRating={this.ratingCompleted}
+                                        onFinishRating={e => this.rating = e}
                                     />
                                 </View>
                                 <Text style={{ marginVertical: 10, }}>Excellent</Text>
                             </View>
                             <Textarea
+                                onChangeText={e => this.review = e}
                                 rowSpan={4}
                                 placeholderTextColor={'#ccc'}
                                 style={styles.reviewInput}
@@ -327,6 +340,7 @@ class StylerMap extends React.Component {
                                     onPress={this.rate}
                                     btnTxt={"Rate"}
                                     size={"lg"}
+                                    loading={this.state.isProcessing}
                                     styles={{ height: 40, }}
                                     btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                 />
@@ -414,6 +428,8 @@ const mapStateToProps = state => ({
     current: state.user.current,
     socket: state.socket,
     driverLocation: state.map.driverLocation,
+    rating: state.appointment.rating,
+    error: state.appointment.error,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

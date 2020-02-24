@@ -109,6 +109,80 @@ export default function appointmentReducer(state = initialState, action) {
                 completed: undefined,
                 error: action.payload
             }
+        case constants.INIT_TRANSACTION:
+            return {
+                ...state,
+                transactionDetails: undefined,
+                error: undefined,
+            }
+        case constants.INIT_TRANSACTION_SUCCESS:
+            return {
+                ...state,
+                transactionDetails: action.payload.response.data,
+            }
+        case constants.INIT_TRANSACTION_FAILURE:
+            return {
+                ...state,
+                transactionDetails: undefined,
+                error: action.payload
+            }
+        case constants.COMPLETE_TRANSACTION:
+            return {
+                ...state,
+                tranx: undefined,
+                error: undefined,
+            }
+        case constants.COMPLETE_TRANSACTION_SUCCESS:
+            return {
+                ...state,
+                tranx: true,
+            }
+        case constants.COMPLETE_TRANSACTION_FAILURE:
+            return {
+                ...state,
+                tranx: undefined,
+                error: action.payload
+            }
+        case constants.CHARGE_AUTHORIZATION:
+            return {
+                ...state,
+                tranx: undefined,
+                error: undefined,
+            }
+        case constants.CHARGE_AUTHORIZATION_SUCCESS:
+            return {
+                ...state,
+                tranx: true,
+            }
+        case constants.CHARGE_AUTHORIZATION_FAILURE:
+            return {
+                ...state,
+                tranx: undefined,
+                error: action.payload
+            }
+        case constants.STYLER_DATA:
+            return {
+                ...state,
+                stylerData: action.payload,
+            }
+        case constants.ADD_RATING:
+            return {
+                ...state,
+                rating: undefined,
+                error: undefined,
+            }
+        case constants.ADD_RATING_SUCCESS:
+            return {
+                ...state,
+                rating: true,
+                error: undefined,
+            }
+        case constants.ADD_RATING_FAILURE:
+            return {
+                ...state,
+                rating: undefined,
+                error: action.payload.message
+            }
         default:
             return state;
     }

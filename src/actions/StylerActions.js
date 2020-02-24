@@ -320,3 +320,34 @@ export const servicePrice = (servicePrice) => {
         })
     }
 }
+
+export const updateAvatar = data => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/update/avatar`,
+        method: 'PUT',
+        types: [
+            constants.UPDATE_AVATAR,
+            {
+                type: constants.UPDATE_AVATAR_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.UPDATE_AVATAR_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(data),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});

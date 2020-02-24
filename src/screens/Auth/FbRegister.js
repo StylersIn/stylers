@@ -32,14 +32,20 @@ class FbRegister extends React.Component {
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         // console.log()
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
+        // if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
+        //     this.setState({ isProcessing: false });
+        //     this.props.navigation.dispatch(NavigationService.resetAction('Home'));
+        // }
+        if (nextProps.register.created && nextProps.register.created != this.props.register.created) {
+            const { navigation } = this.props;
+            const user = navigation.getParam('user', '');
             this.setState({ isProcessing: false });
-            this.props.navigation.dispatch(NavigationService.resetAction('Home'));
+            this.props.navigation.navigate('Verify', { email: user.email })
         }
         if (nextProps.user.error && nextProps.user.error != this.props.user.error) {
             this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);
@@ -143,6 +149,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     user: state.user,
+    register: state.register,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

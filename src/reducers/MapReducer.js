@@ -24,10 +24,12 @@ export default function serviceReducer(state = initialState, action) {
         case constants.GET_INPUT:
             return Object.assign({}, state, {
                 searching: true,
+                selectedAddress:undefined,
                 inputData: action.payload.value,
             })
         case constants.GET_ADDRESS_PREDICTIONS:
             return Object.assign({}, state, {
+                error: undefined,
                 predictions: action.payload,
                 searching: false,
             })
@@ -40,7 +42,7 @@ export default function serviceReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 inputData: undefined,
                 selectedAddress: action.payload,
-                predictions: {},
+                predictions: undefined,
             })
         case constants.GET_SELECTED_ADDRESS_ERROR:
             return Object.assign({}, state, {

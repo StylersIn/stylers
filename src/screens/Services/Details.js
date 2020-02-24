@@ -7,6 +7,7 @@ import {
     TouchableWithoutFeedback,
     ScrollView,
     Linking,
+    Platform,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -19,6 +20,7 @@ import {
     Icon,
     Item,
     Input,
+    Spinner,
 } from 'native-base';
 import Button from '../../components/Button';
 import { fonts, colors, toastType } from '../../constants/DefaultProps';
@@ -36,6 +38,7 @@ import Reviews from './Reviews';
 import ShowToast from '../../components/ShowToast';
 import { WhatsAppIcon } from '../Appointments/AppointmentAssets';
 import BottomSheet from './BottomSheet';
+import avatar from '../../../assets/imgs/user_two.png';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -51,6 +54,12 @@ class ServiceDetails extends React.Component {
             show: false,
             bottomSheet: undefined,
         }
+    }
+
+    componentDidMount() {
+        const { navigation, styler, } = this.props;
+        const styler__data = navigation.getParam('styler', '');
+        this.props.addStylerData(styler__data);
     }
 
     show = mode => {
@@ -92,11 +101,12 @@ class ServiceDetails extends React.Component {
     }
 
     pay = () => {
-        const { navigation, styler, } = this.props;
-        const styler__data = navigation.getParam('styler', '');
-        const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
+        const { stylerData } = this.props;
+        // const styler__data = navigation.getParam('styler', '');
+        const totalAmt = calcTotalPrice.apply(this, [stylerData, this.props.styler.selectedService]);
         if (this.state.dateSelected && this.props.selectedAddress && this.props.selectedAddress.name) {
-            return this.props.navigation.navigate('Payment', { styler: styler__data, totalAmt })
+            this.props.addStylerData(Object.assign(stylerData, { totalAmt, }));
+            return this.props.navigation.navigate('Cards', { styler: stylerData, totalAmt })
         }
         this.showToast('Please select valid appointment credentials', toastType.danger);
     }
@@ -106,9 +116,7 @@ class ServiceDetails extends React.Component {
     }
 
     scheduleAppointment = () => {
-        const { navigation, styler, } = this.props;
-        const styler__data = navigation.getParam('styler', '');
-        const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
+        const totalAmt = calcTotalPrice.apply(this, [this.props.stylerData, this.props.styler.selectedService]);
         if (totalAmt === 0) {
             this.showToast('Please select a service', toastType.danger);
         } else {
@@ -124,114 +132,129 @@ class ServiceDetails extends React.Component {
         Linking.openURL('whatsapp://send?text=hello&phone=08163237965')
     }
 
+    viewReviews = () => this.props.navigation.navigate('AllReviews', { styler: this.props.stylerData, });
+
     render() {
         const { show, date, mode } = this.state;
-        const { navigation, styler, appointment__date, } = this.props;
-        const styler__data = navigation.getParam('styler', '');
-        const totalAmt = calcTotalPrice.apply(this, [styler__data, styler.selectedService]);
+        const { navigation, styler, appointment__date, stylerData, } = this.props;
+        const totalAmt = calcTotalPrice.apply(this, [this.props.stylerData, this.props.styler.selectedService]);
 
         return (
-            <View style={{ flex: 1, }}>
-                <View style={{ position: "absolute", top: 20, right: 0, padding: 20, zIndex: 1, }}>
-                    <TouchableOpacity
-                        onPress={() => this.props.navigation.goBack()}
-                    >
-                        <Icon
-                            style={{ fontSize: 60, color: "#000000", alignSelf: "flex-end", }}
-                            type="Ionicons"
-                            name="ios-close" />
-                    </TouchableOpacity>
-                </View>
-                <View>
-                    <Image
-                        style={{ height: 300, width: "100%", resizeMode: 'cover' }}
-                        source={styler__data.userId.imageUrl ? { uri: styler__data.userId.imageUrl } : service__1}
-                    />
-                </View>
-                <ScrollView style={styles.container}>
-                    <View style={{ paddingBottom: 50 }}>
-                        <Text style={{ fontFamily: fonts.bold, fontSize: 24, paddingBottom: 5, }}>{styler__data.name}</Text>
-                        <Text>{styler__data.address}</Text>
-                        <Text style={{ fontSize: 18 }}>Starts at <Text style={{ fontSize: 18, color: "#0E5B02", fontFamily: fonts.medium, }}>{`$${styler__data.startingPrice}`}</Text></Text>
-                        <View style={{ marginVertical: 7, flexDirection: "row", paddingBottom: 5, }}>
-                            <Rating
+            <>
+                {stylerData ? <View style={styles.main}>
+                    <View style={{ position: "absolute", top: Platform.OS == 'ios' ? 20 : 0, right: 0, padding: 20, zIndex: 1, }}>
+                        <TouchableOpacity
+                            onPress={() => this.props.navigation.goBack()}
+                        >
+                            <Icon
+                                style={{ fontSize: 60, color: "#000000", alignSelf: "flex-end", }}
+                                type="Ionicons"
+                                name="ios-close" />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={[styles.imgCover, stylerData.userId.imageUrl ? { opacity: 1 } : { opacity: 0.5 }]}>
+                        {stylerData.userId.imageUrl ? <Image
+                            style={{ height: 300, width: "100%", resizeMode: 'cover', borderRadius: 5, }}
+                            source={stylerData.userId.imageUrl ? { uri: stylerData.userId.imageUrl } : service__1}
+                        /> : null}
+
+                        {!stylerData.userId.imageUrl && <Image
+                            style={[{ height: 100, width: 100, borderRadius: 5, }, Platform.OS == 'ios' ? { marginTop: 20 } : null]}
+                            source={stylerData.userId.imageUrl ? { uri: stylerData.userId.imageUrl } : avatar}
+                        />}
+                    </View>
+                    <ScrollView style={styles.container}>
+                        <View style={{ paddingBottom: 50 }}>
+                            <Text style={{ fontFamily: fonts.bold, fontSize: 24, paddingBottom: 5, }}>{stylerData.name}</Text>
+                            <Text>{stylerData.address}</Text>
+                            <Text style={{ fontSize: 18 }}>Starts at <Text style={{ fontSize: 18, color: "#0E5B02", fontFamily: fonts.bold, }}>{`NGN${stylerData.startingPrice}`}</Text></Text>
+                            <View style={{ marginVertical: 7, flexDirection: "row", paddingBottom: 5, }}>
+                                {/* <Rating
                                 type='star'
                                 ratingCount={5}
-                                startingValue={styler__data.ratings.length > 0 ? getRating(styler__data.ratings) : 0}
+                                startingValue={stylerData.ratings.length > 0 ? getRating(stylerData.ratings) : 0}
                                 ratingColor={"#E6750C"}
                                 ratingTextColor={"#E6750C"}
                                 ratingBackgroundColor={"#E6750C"}
                                 imageSize={18}
                                 showRating={false}
                                 onFinishRating={this.ratingCompleted}
-                            />
-                        </View>
-                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={this.openWhatsApp}>
-                            <WhatsAppIcon color={colors.whatsapp} size={18} />
-                            <Text style={{ fontFamily: fonts.medium, textDecorationLine: 'underline', paddingLeft: 5, fontSize: 16, }}>Send Message</Text>
-                        </TouchableOpacity>
-
-                        <Reviews
-                            styler__data={styler__data}
-                        />
-
-                    </View>
-                </ScrollView>
-                <View style={{ marginVertical: 30, marginBottom: 20, padding: 20, }}>
-                    <Button
-                        onPress={this.toggleSheet}
-                        btnTxt={"Select Service"}
-                        size={"lg"}
-                        btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                    />
-                </View>
-                {this.state.bottomSheet && <BottomSheet
-                    {...this.props}
-                    {...this.state}
-                    selectService={this.selectService}
-                    changeOption={this.changeOption}
-                    stylerData={styler__data}
-                    totalAmt={totalAmt}
-                    scheduleAppointment={this.scheduleAppointment}
-                />}
-                <Modal
-                    closeModal={this.closeModal}
-                    isVisible={this.state.isVisible}
-                >
-                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                        {show && <View style={{ alignSelf: "center", }}>
-                            <TouchableOpacity
-                                activeOpacity={0.7}
-                                onPress={() => this.setState({ show: false })}
-                            >
-                                <Icon style={{ color: colors.danger }} name="ios-close-circle-outline" />
+                            /> */}
+                                <AirbnbRating
+                                    count={getRating(stylerData.ratings)}
+                                    starStyle={{ tintColor: colors.warning, margin: 1, }}
+                                    // defaultRating={5}
+                                    showRating={false}
+                                    size={18}
+                                />
+                            </View>
+                            <TouchableOpacity style={{ flexDirection: 'row' }} onPress={this.openWhatsApp}>
+                                <WhatsAppIcon color={colors.whatsapp} size={18} />
+                                <Text style={{ fontFamily: fonts.medium, textDecorationLine: 'underline', paddingLeft: 5, fontSize: 16, }}>Send Message</Text>
                             </TouchableOpacity>
-                        </View>}
-                        {show && <DateTimePicker value={date}
-                            mode={mode}
-                            is24Hour={true}
-                            display="default"
-                            onChange={this.setDate} />}
-                        <Text style={{ fontFamily: fonts.bold, fontSize: 20, textAlign: "center", padding: 15, }}>{`NGN${totalAmt}`}</Text>
-                        <TouchableWithoutFeedback onPress={this.datepicker}>
-                            <Card style={[styles.date__card, styles.Input___shadow]}>
-                                <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.state.dateSelected ? appointment__date.toDateString() : 'Pick a Date'}</Text>
-                                <View>
-                                    <DateIcon />
-                                </View>
-                            </Card>
-                        </TouchableWithoutFeedback>
 
-                        <TouchableWithoutFeedback onPress={this.timepicker}>
-                            <Card style={[styles.date__card, styles.Input___shadow]}>
-                                <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.state.timeSelected ? appointment__date.toTimeString() : 'Pick a Time'}</Text>
-                                <View>
-                                    <TimeIcon />
-                                </View>
-                            </Card>
-                        </TouchableWithoutFeedback>
+                            <Reviews
+                                styler__data={stylerData}
+                                viewReviews={this.viewReviews}
+                            />
 
-                        {/* <Card style={[styles.Input___shadow]}>
+                        </View>
+                    </ScrollView>
+                    <View style={{ marginVertical: 0, marginBottom: 20, padding: 20, }}>
+                        <Button
+                            onPress={this.toggleSheet}
+                            btnTxt={"Select Service"}
+                            size={"lg"}
+                            btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
+                        />
+                    </View>
+                    {this.state.bottomSheet && <BottomSheet
+                        {...this.props}
+                        {...this.state}
+                        selectService={this.selectService}
+                        changeOption={this.changeOption}
+                        stylerData={stylerData}
+                        totalAmt={totalAmt}
+                        scheduleAppointment={this.scheduleAppointment}
+                    />}
+                    <Modal
+                        closeModal={this.closeModal}
+                        isVisible={this.state.isVisible}
+                    >
+                        <ScrollView contentContainerStyle={{ flexGrow: 1, zIndex: 1000, elevation: 5 }}>
+                            {show && <View style={{ alignSelf: "center", }}>
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={() => this.setState({ show: false })}
+                                >
+                                    <Icon style={{ color: colors.danger }} name="ios-close-circle-outline" />
+                                </TouchableOpacity>
+                            </View>}
+                            {show && <DateTimePicker value={date}
+                                mode={mode}
+                                is24Hour={true}
+                                display="default"
+                                onChange={this.setDate} />}
+                            <Text style={{ fontFamily: fonts.bold, fontSize: 20, textAlign: "center", padding: 15, }}>{`NGN${totalAmt}`}</Text>
+                            <TouchableWithoutFeedback onPress={this.datepicker}>
+                                <Card style={[styles.date__card, styles.Input___shadow]}>
+                                    <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.state.dateSelected ? appointment__date.toDateString() : 'Pick a Date'}</Text>
+                                    <View>
+                                        <DateIcon />
+                                    </View>
+                                </Card>
+                            </TouchableWithoutFeedback>
+
+                            <TouchableWithoutFeedback onPress={this.timepicker}>
+                                <Card style={[styles.date__card, styles.Input___shadow]}>
+                                    <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.state.timeSelected ? appointment__date.toTimeString() : 'Pick a Time'}</Text>
+                                    <View>
+                                        <TimeIcon />
+                                    </View>
+                                </Card>
+                            </TouchableWithoutFeedback>
+
+                            {/* <Card style={[styles.Input___shadow]}>
                             <Item>
                                 <Input
                                     value={this.props.selectedAddress && this.props.selectedAddress.name}
@@ -241,16 +264,16 @@ class ServiceDetails extends React.Component {
                                     placeholder='Pick your Location' />
                             </Item>
                         </Card> */}
-                        <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('MapView')}>
-                            <Card style={[styles.date__card, styles.Input___shadow]}>
-                                <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.props.selectedAddress && this.props.selectedAddress.name ? this.props.selectedAddress.name : 'Pick your Location'}</Text>
-                            </Card>
-                        </TouchableWithoutFeedback>
-                        <View style={{ alignSelf: 'flex-end' }}>
-                            <Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>Use current location</Text>
-                        </View>
+                            <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('MapView')}>
+                                <Card style={[styles.date__card, styles.Input___shadow]}>
+                                    <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>{this.props.selectedAddress && this.props.selectedAddress.name ? this.props.selectedAddress.name : 'Pick your Location'}</Text>
+                                </Card>
+                            </TouchableWithoutFeedback>
+                            <View style={{ alignSelf: 'flex-end' }}>
+                                <Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>Use current location</Text>
+                            </View>
 
-                        {/* <TouchableWithoutFeedback onPress={this.datepicker}>
+                            {/* <TouchableWithoutFeedback onPress={this.datepicker}>
                             <Card style={[styles.date__card, styles.cardStyle]}>
                                 <Text style={{ color: "#979797", fontFamily: fonts.bold, fontSize: 14, }}>Pick your Location</Text>
                                 <View>
@@ -259,31 +282,38 @@ class ServiceDetails extends React.Component {
                             </Card>
                         </TouchableWithoutFeedback> */}
 
-                        <View style={{ paddingVertical: 15, marginTop: 20, }}>
-                            <Button
-                                onPress={this.pay}
-                                btnTxt={"Pay and Confirm"}
-                                size={"lg"}
-                                btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                            />
-                        </View>
+                            <View style={{ paddingVertical: 15, marginTop: 20, }}>
+                                <Button
+                                    onPress={this.pay}
+                                    btnTxt={"Pay and Confirm"}
+                                    size={"lg"}
+                                    btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
+                                />
+                            </View>
 
-                        <View>
-                            <Button
-                                btnTxt={"Pay at Point of Service"}
-                                size={"lg"}
-                                styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
-                                btnTxtStyles={{ color: colors.black, fontFamily: fonts.bold }}
-                            />
-                        </View>
-                    </ScrollView>
-                </Modal>
-            </View>
+                            <View>
+                                <Button
+                                    btnTxt={"Pay at Point of Service"}
+                                    size={"lg"}
+                                    styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
+                                    btnTxtStyles={{ color: colors.black, fontFamily: fonts.bold }}
+                                />
+                            </View>
+                        </ScrollView>
+                    </Modal>
+                </View> : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Spinner color={colors.pink} />
+                    </View>}
+            </>
         )
     }
 }
 
 const styles = StyleSheet.create({
+    main: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'flex-end',
+    },
     container: {
         flexGrow: 1,
         padding: 20,
@@ -322,6 +352,22 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between"
     },
+    no_avatar: {
+        width: '100%',
+        height: 300,
+        backgroundColor: colors.pink,
+        opacity: 0.4,
+        // resizeMode: 'cover',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    imgCover: {
+        height: 300, width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.btnColor,
+        opacity: 0.5,
+    }
 })
 
 const mapStateToProps = state => ({
@@ -329,6 +375,7 @@ const mapStateToProps = state => ({
     styler: state.styler,
     appointment__date: state.appointment.date,
     selectedAddress: state.map.selectedAddress,
+    stylerData: state.appointment.stylerData,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

@@ -36,7 +36,7 @@ function services(props) {
             <View style={{ marginVertical: 30, marginBottom: 20, padding: 20, }}>
                 <Button
                     onPress={props.scheduleAppointment}
-                    btnTxt={"Select Service"}
+                    btnTxt={"Schedule Appointment"}
                     size={"lg"}
                     btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                 />
@@ -55,14 +55,14 @@ export default function (props) {
                 </View>
             </BottomSheet>}
 
-            {Platform.OS === 'android' && <CoordinatorLayout style={{ flex: 1, width: '100%', position: 'absolute', zIndex: 1000 }}>
+            {Platform.OS === 'android' && <CoordinatorLayout style={{ flex: 1, width: '100%', position: 'absolute', zIndex: 1000, elevation: 5, }}>
                 <View style={{ flex: 1, backgroundColor: 'transparent', width: '100%' }}></View>
                 <BottomSheetBehavior
                     // ref='bottomSheet'
-                    peekHeight={210}
+                    peekHeight={350}
                     hideable={false}
                     state={BottomSheetBehavior.STATE_COLLAPSED}>
-                    <View style={{ backgroundColor: '#ffffff' }}>
+                    <View style={{ backgroundColor: '#ffffff', paddingHorizontal: 20, }}>
                         <View style={styles.header}>
                             <View style={styles.drawerIcon}></View>
                         </View>

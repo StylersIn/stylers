@@ -27,7 +27,8 @@ export default function loginReducer(state = {}, action) {
             return Object.assign({}, state, {
                 status: undefined,
                 isProcessing: true,
-                error: undefined
+                error: undefined,
+                socialAccount: undefined,
             })
         case constants.VERIFY_SOCIAL_SUCCESS:
             return {
@@ -37,7 +38,8 @@ export default function loginReducer(state = {}, action) {
             };
         case constants.VERIFY_SOCIAL_FAILURE:
             return Object.assign({}, state, {
-                error: action.payload,
+                error: action.payload.response && action.payload.response.message,
+                socialAccount: action.payload.response.socialAccount,
                 isProcessing: false,
                 status: undefined,
             })

@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         flex: 1,
-        zIndex: 200,
+        zIndex: 1000,
         elevation: 500,
         alignItems: 'center',
         flexDirection: 'column',

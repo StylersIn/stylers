@@ -206,6 +206,36 @@ export const updateProfile = data => ({
     }
 });
 
+export const fetchCards = _ => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/cards`,
+        method: 'GET',
+        types: [
+            constants.FETCH_CARDS,
+            {
+                type: constants.FETCH_CARDS_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.FETCH_CARDS_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
 export const logout = _ => {
     return (dispatch) => {
         dispatch({ type: constants.LOGOUT })

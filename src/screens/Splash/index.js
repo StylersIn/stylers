@@ -80,7 +80,7 @@ class Splash extends Component {
                     <SplashLogo />
                     <Text style={{ marginTop: 50, fontSize: 18, color: colors.white, fontFamily: fonts.medium, }}>Welcome</Text>
                 </View> : <View style={{ flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center', }}>
-                        <Text style={{ marginTop: 50, fontSize: 12, textAlign: 'center', color: colors.danger, fontFamily: fonts.medium, }}>{this.state.error}</Text>
+                        <Text style={{ marginTop: 50, fontSize: 12, textAlign: 'center', color: colors.danger, fontFamily: fonts.medium, marginHorizontal: 50, }}>{this.state.error}</Text>
                         <View style={{ marginTop: 20, width: '100%' }}>
                             <Button
                                 onPress={this.reload}

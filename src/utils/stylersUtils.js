@@ -4,18 +4,6 @@ const options__time = {
     timeZone: "Africa/Accra", hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit"
 }
 
-export const getRating = (ratings) => {
-    let sum = 0,
-        average = 0;
-    // sum = ratings.reduce((a, b) => a[rating] + b[rating]);
-    // average = sum / ratings.length;
-    for (let i = 0; i < ratings.length; i++) {
-        sum += parseInt(ratings[i].rating, 10)
-    }
-    average = sum / ratings.length;
-    return average;
-}
-
 export const calcTotalPrice = (styler, selected) => {
     let total = 0;
     selected.map(e => {
@@ -52,4 +40,12 @@ export const getDay = (d) => {
     var date = new Date(d);
     var e = date.getDay();
     return e == 0 ? 'Sun' : e == 1 ? 'Mon' : e == 2 ? 'Tues' : e == 3 ? 'Wed' : e == 4 ? 'Thu' : e == 5 ? 'Fri' : e == 6 ? 'Sat' : null;
+}
+
+export const getRating = (ratings = []) => {
+    if (ratings.length > 0) {
+        let r = ratings.reduce((p, c) => p + c.rating, 0);
+        return r / ratings.length;
+    }
+    return 0;
 }

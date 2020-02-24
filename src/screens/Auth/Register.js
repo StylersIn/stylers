@@ -46,7 +46,8 @@ class Register extends React.Component {
         // }
         if (nextProps.register.created && nextProps.register.created != this.props.register.created) {
             this.setState({ isProcessing: false });
-            this.props.navigation.dispatch(NavigationService.resetAction('Verify'));
+            this.props.navigation.navigate('Verify', { email: this.email })
+            // this.props.navigation.dispatch(NavigationService.resetAction('Verify'));
         }
         if (nextProps.user.error && nextProps.user.error != this.props.user.error) {
             this.showErr(nextProps.user.error);

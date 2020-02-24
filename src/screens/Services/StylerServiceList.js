@@ -44,8 +44,6 @@ const StylerServiceList = ({
                 {styler.services.map((service, i) => {
                     const { _id, name, } = service.subServiceId;
                     const single = selected.find(e => e.subServiceId === _id);
-                    console.log("======3=3=3=3===============")
-                    console.log(selected)
                     const adult = single && single['adult'] || 0;
                     const child = single && single['child'] || 0;
                     return (

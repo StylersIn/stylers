@@ -221,7 +221,7 @@ class Appointment extends React.Component {
                         <View style={{ marginTop: 40 }}>
                             {this.props.role === roles.user && !appointment.accepted && <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
-                                    onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
+                                    // onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
                                     btnTxt={"Cancel Appointment"}
                                     size={"lg"}
                                     styles={{ backgroundColor: colors.white, height: 40, borderWidth: 1, borderColor: "#000000", }}
@@ -237,7 +237,7 @@ class Appointment extends React.Component {
                                     styles={{ height: 40, backgroundColor: colors.black, }}
                                     btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                 />
-                            </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user && (!appointment.completed || !appointment.accepted) ? <View style={{ marginTop: 10, width: '100%' }}>
+                            </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user && (!appointment.completed && appointment.accepted) ? <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
                                     onPress={this.trackStyler}
                                     btnTxt={"Track Styler"}

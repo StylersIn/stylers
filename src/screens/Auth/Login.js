@@ -45,7 +45,7 @@ class Login extends React.Component {
         }
         if (nextProps.user.status == false && nextProps.user.status != this.props.user.status) {
             // this.showToast(`Error: ${nextProps.user.message}`, toastType.danger);
-            this.props.navigation.navigate('Verify', { email: this.email })
+            this.props.navigation.navigate('Verify', { email: this.email || this.state.social_user.email })
             this.setState({ isProcessing: false, });
         }
         if (nextProps.styler.status != this.props.styler.status) {
@@ -62,19 +62,19 @@ class Login extends React.Component {
         if (nextProps.user.error) {
             this.showErr(nextProps.user.error);
         }
-        if (nextProps.social_login_status != this.props.social_login_status) {
-            // alert(nextProps.social_login_status);
-            if (nextProps.social_login_status === true) {
-                this.props.navigation.navigate('FbRegister', { user: this.state.social_user });
-            }
-            if (nextProps.social_login_status === 0) {
-                this.props.navigation.dispatch(NavigationService.resetAction('Home'))
-            }
-            if (nextProps.social_login_status === 1) {
-                this.setState({ verify: false, })
-                this.showErr(`Email address tied to this account already exists`);
-                // this.showToast(`Error: Email address tied to this account already exists`, toastType.danger);
-            }
+        if (nextProps.socialAccount == false && nextProps.socialAccount != this.props.socialAccount) {
+            this.props.navigation.navigate('FbRegister', { user: this.state.social_user });
+            // if (nextProps.social_login_status === true) {
+            //     this.props.navigation.navigate('FbRegister', { user: this.state.social_user });
+            // }
+            // if (nextProps.social_login_status === 0) {
+            //     this.props.navigation.dispatch(NavigationService.resetAction('Home'))
+            // }
+            // if (nextProps.social_login_status === 1) {
+            //     this.setState({ verify: false, })
+            //     this.showErr(`Email address tied to this account already exists`);
+            //     // this.showToast(`Error: Email address tied to this account already exists`, toastType.danger);
+            // }
         }
     }
     doLogin = () => {
@@ -256,7 +256,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     user: state.user,
     styler: state.styler,
-    social_login_status: state.login.status,
+    socialAccount: state.login.socialAccount,
+    error: state.login.error,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

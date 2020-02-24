@@ -30,7 +30,10 @@ export default function (props) {
                             </View>
                             <View style={{ alignItems: 'flex-end' }}>
                                 <Text style={styles.txt__one}>Your rating</Text>
-                                <Text style={styles.txt__two}>3.5</Text>
+                                {/* <Text style={styles.txt__two}>3.5</Text> */}
+                                {!props.stats ? <View>
+                                    <Text style={{ color: colors.white, marginTop: 5, fontSize: 10, }}>Loading...</Text>
+                                </View> : <Text style={styles.txt__two}>{props.stats && props.stats.rating}</Text>}
                             </View>
                         </View>
                     </CardItem>

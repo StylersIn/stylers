@@ -36,6 +36,10 @@ class AddAvatar extends React.Component {
             this.setState({ isProcessing: false });
             this.props.navigation.dispatch(NavigationService.resetAction('StylerService'));
         }
+        if (nextProps.error && nextProps.error != this.props.error) {
+            this.setState({ isProcessing: false });
+            alert(nextProps.error);
+        }
     }
 
     openGallery = () => {
@@ -65,7 +69,7 @@ class AddAvatar extends React.Component {
 
     updateAvatar = () => {
         this.setState({ isProcessing: true, })
-        this.props.updateProfile({
+        this.props.updateAvatar({
             image: this.state.avatar,
         })
     }
@@ -128,6 +132,7 @@ const mapStateToProps = state => ({
     status: state.user.status,
     message: state.user.message,
     avatar: state.styler.avatar,
+    error: state.styler.error,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispatch);

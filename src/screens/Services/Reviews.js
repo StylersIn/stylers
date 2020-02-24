@@ -2,6 +2,7 @@ import React from 'react';
 import {
     View,
     StyleSheet,
+    TouchableOpacity,
 } from 'react-native';
 import {
     Card,
@@ -17,27 +18,36 @@ export default function (props) {
     return (
         <View style={{ marginTop: 20 }}>
             <Text style={{ fontFamily: fonts.bold, fontSize: 18 }}>Reviews</Text>
-            {!props.styler__data.review.length ? <Text style={{ fontSize: 12, color: '#bbb' }}>No Reviews yet!</Text> : <Card style={styles.cardStyle}>
-                <CardItem>
-                    <Body>
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={{ fontFamily: fonts.bold, fontSize: 15 }}>{props.styler__data.review[0].userId.name}</Text>
-                            <Text style={{ paddingLeft: 10, fontSize: 10, color: "#979797", marginTop: 4, }}>{moment(props.styler__data.review[0].CreatedAt).fromNow()}</Text>
-                        </View>
-                        <View style={{ marginVertical: 7, flexDirection: "row", }}>
-                            <Rating
+            {!props.styler__data.review.length ?
+                <Text style={{ fontSize: 12, color: '#bbb' }}>No Reviews yet!</Text> : props.styler__data.review.slice(0, 2).map((review, i) => <Card key={i} style={styles.cardStyle}>
+                    <CardItem>
+                        <Body>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{ fontFamily: fonts.bold, fontSize: 15 }}>{review.userId.name}</Text>
+                                <Text style={{ paddingLeft: 10, fontSize: 8, color: "#979797", marginTop: 6, fontStyle: 'italic', }}>{moment(review.CreatedAt).fromNow()}</Text>
+                            </View>
+                            <View style={{ marginVertical: 7, flexDirection: "row", }}>
+                                {/* <Rating
                                 type='star'
                                 ratingCount={3}
                                 imageSize={14}
                                 showRating={false}
                                 onFinishRating={this.ratingCompleted}
-                            />
-                        </View>
-                        <Text style={{ fontFamily: fonts.medium, fontSize: 12 }}>{props.styler__data.review[0].message}</Text>
-                        <Text style={{ alignSelf: "flex-end", fontSize: 11, fontStyle: "italic", color: "#1E1C95", }}>All Reviews</Text>
-                    </Body>
-                </CardItem>
-            </Card>}
+                            /> */}
+                                <AirbnbRating
+                                    count={5}
+                                    starStyle={{ tintColor: colors.warning, margin: 1, }}
+                                    showRating={false}
+                                    size={10}
+                                />
+                            </View>
+                            <Text style={{ fontFamily: fonts.medium, fontSize: 10 }}>{review.message}</Text>
+                        </Body>
+                    </CardItem>
+                </Card>)}
+            {props.styler__data.review.length ? <TouchableOpacity onPress={() => props.viewReviews()}>
+                <Text style={{ alignSelf: "flex-end", fontSize: 14, marginTop: 5, fontStyle: "italic", color: "#1E1C95", }}>All Reviews</Text>
+            </TouchableOpacity> : null}
         </View>
     )
 }
@@ -61,6 +71,7 @@ const styles = StyleSheet.create({
         // marginLeft: 5,
         // marginRight: 5,
         marginTop: 10,
+        paddingBottom: 5,
     },
     Input___shadow: {
         marginTop: 10,
