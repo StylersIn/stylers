@@ -30,6 +30,7 @@ import Modal from '../../components/Modal';
 import { DateIcon, LocationIcon, TimeIcon } from '../Services/ServiceAssets';
 import NavigationService from '../../navigation/NavigationService';
 import avatar from '../../../assets/imgs/user.png';
+import { notify } from '../../services';
 
 const { width, height } = Dimensions.get('window');
 
@@ -37,7 +38,7 @@ class NoDebit extends React.Component {
 
     state = {
         fetching: true,
-        selectedCard: {},
+        selectedCard: undefined,
         isVisible: false,
         isProcessing: false,
     }
@@ -56,8 +57,33 @@ class NoDebit extends React.Component {
             this.setState({ fetching: false, })
         }
         if (prevProps.tranx && prevProps.tranx != this.props.tranx) {
-            this.setState({ isVisible: true, isProcessing: false, })
+            this.completeTransaction();
         }
+        if (prevProps.booked && prevProps.booked !== this.props.booked) {
+            notify('Payment Successful', 'You have successfully made payment and your request is being processed.');
+            this.setState({ isVisible: true });
+            // this.props.socket.emit('appointmentBooked', styler._id)
+        }
+        if (prevProps.error && prevProps.error != this.props.error) {
+            alert(prevProps.error);
+        }
+    }
+
+    completeTransaction = () => {
+        const { stylerData, } = this.props;
+        let styler = stylerData;
+        var req = {
+            stylerId: styler.userId._id,
+            services: this.props.services,
+            scheduledDate: this.props.date,
+            totalAmount: styler.totalAmt,
+            streetName: this.props.streetName,
+            pickUp: this.props.pickUp,
+            transactionReference: null,
+        }
+        setTimeout(() => {
+            this.props.saveAppointment(req);
+        }, 500);
     }
 
     selectCard = (card) => {
@@ -125,6 +151,7 @@ class NoDebit extends React.Component {
                                             onPress={() => this.chargeCard()}
                                             btnTxt={"Pay"}
                                             loading={this.state.isProcessing}
+                                            disabled={!this.state.selectedCard ? true : false}
                                             size={"lg"}
                                             btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                                         />
@@ -232,6 +259,11 @@ const mapStateToProps = state => ({
     stylerData: state.appointment.stylerData,
     tranx: state.appointment.tranx,
     date: state.appointment.date,
+    pickUp: state.map.selectedAddress.location,
+    streetName: state.map.selectedAddress.name,
+    services: state.styler.selectedService,
+    booked: state.appointment.booked,
+    error: state.appointment.error,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

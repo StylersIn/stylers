@@ -19,7 +19,7 @@ const propTypes = ({
     loading: PropTypes.bool,
 })
 
-const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, onPress, loading, }) => {
+const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, onPress, loading, disabled, }) => {
     const mainStyles = [{
         width: size === 'sm' ? 103 : "100%",
         height: size === 'sm' ? 36 : 48,
@@ -45,8 +45,8 @@ const CustomButton = ({ btnTxt, Icon, size = "lg", styles, btnTxtStyles, onPress
     return (
         <Button
             light
-            disabled={loading ? true : false}
-            style={mainStyles}
+            disabled={loading || disabled ? true : false}
+            style={[mainStyles, disabled ? { backgroundColor: colors.btnDisabled } : null]}
             onPress={() => onPress()}
         >
             {Icon ? <View style={{ paddingHorizontal: 10, }}>{Icon}</View> : null}

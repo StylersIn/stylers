@@ -8,7 +8,7 @@ import Text from '../../config/AppText';
 import { Thumbnail, Card, CardItem, Icon, Spinner, Textarea } from 'native-base';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
 import { fonts, colors, MAP_API_KEY } from '../../constants/DefaultProps';
-import { CallIcon, ChatIcon, CloseIcon, ArrowDown, SwiperIcon, PickUpIcon, } from './MapAssets';
+import { ComingIcon, PickUpIcon, } from './MapAssets';
 import MapViewDirections from 'react-native-maps-directions';
 import styler_location from '../../../assets/imgs/styler-location.jpg';
 import styler_img from '../../../assets/imgs/styler_img.png';
@@ -89,6 +89,7 @@ class StylerMap extends React.Component {
         animateCount: 0,
         showReview: false,
         isProcessing: false,
+        count: 0,
     }
     componentDidMount() {
         this.props.getCurrentLocation();
@@ -109,18 +110,37 @@ class StylerMap extends React.Component {
             alert('An error occured: ' + prevProps.error)
         }
         if (prevProps.driverLocation && prevProps.driverLocation != this.props.driverLocation) {
-            if (this.state.animateCount == 0) {
-                this.setState((prevState) => ({ animateCount: prevState.animateCount + 1, }));
-                var region = {
-                    latitude: prevProps.driverLocation.latitude,
-                    longitude: prevProps.driverLocation.longitude,
-                    latitudeDelta: LATITUDE_DELTA,
-                    longitudeDelta: LONGITUDE_DELTA,
-                }
-                this.map.animateToRegion(region);
-            } else if (this.state.animateCount == 5) {
-                this.setState({ animateCount: 0, });
+            const { count, } = this.state;
+            var region = {
+                latitude: prevProps.driverLocation.latitude,
+                longitude: prevProps.driverLocation.longitude,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
             }
+            if (this.state.count == 0) {
+                this.map.animateToRegion(region);
+            }
+            if (count == 10) {
+                console.log('we start again');
+                this.setState({ count: 0, }, () => this.map.animateToRegion(region));
+            }
+            this.setState({ driverLocation: region });
+            this.setState(prevState => {
+                return { count: prevState.count + 1 }
+            })
+
+            // if (this.state.animateCount == 0) {
+            //     this.setState((prevState) => ({ animateCount: prevState.animateCount + 1, }));
+            //     var region = {
+            //         latitude: prevProps.driverLocation.latitude,
+            //         longitude: prevProps.driverLocation.longitude,
+            //         latitudeDelta: LATITUDE_DELTA,
+            //         longitudeDelta: LONGITUDE_DELTA,
+            //     }
+            //     this.map.animateToRegion(region);
+            // } else if (this.state.animateCount == 5) {
+            //     this.setState({ animateCount: 0, });
+            // }
             // this.fitAllMarkersMain(prevProps.driverLocation);
         }
     }
@@ -151,7 +171,7 @@ class StylerMap extends React.Component {
                     //TODO: better design
                     alert(error.message);
                 },
-                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+                { enableHighAccuracy: true, timeout: 20000, }
             );
         } catch (e) {
             alert(e.message || "");
@@ -225,6 +245,7 @@ class StylerMap extends React.Component {
 
     render() {
         const { appointment } = this.state;
+        const { driverLocation } = this.props;
         return (
             <View style={styles.container}>
                 {this.state.completeService && <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, elevation: 5, zIndex: 1000, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)', }}>
@@ -264,33 +285,24 @@ class StylerMap extends React.Component {
                         <PickUpIcon />
                     </Marker>}
 
-                    {this.props.driverLocation && appointment && <Marker
+                    {/* {this.props.driverLocation && appointment && <Marker
                         title={'Styler Coming'}
                         image={styler_img}
                         key={appointment.stylerId.publicId}
                         coordinate={this.props.driverLocation}
-                    />}
-
-
-                    {/* <Marker
-                        title={'PickUp'}
-                        // image={pickUpIcon}
-                        key={appointment.userId}
-                        coordinate={appointment.pickUp}
-                    >
-                        <View style={styles.marker}>
-                            <Text style={styles.text}>5mins</Text>
-                        </View>
-                        <View style={{ position: 'absolute', left: 24, bottom: 2 }}>
-                            <PickUpIcon />
-                        </View>
-                    </Marker> */}
-                    {/* <Marker.Animated
-                        ref={marker => {
-                            this.marker = marker;
-                        }}
-                        coordinate={this.state.coordinate}
-                    /> */}
+                    />} */}
+                    {driverLocation && (
+                        <>
+                            <MapView.Marker
+                                coordinate={driverLocation}
+                                title={'coming...'}>
+                                <ComingIcon
+                                    width={50}
+                                    height={40}
+                                />
+                            </MapView.Marker>
+                        </>
+                    )}
                 </MapView>
                 <BottomSheet
                     {...this.props}

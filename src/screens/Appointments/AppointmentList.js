@@ -20,7 +20,7 @@ import { getDate, getDay, formatTime } from '../../utils/stylersUtils';
 export default function (props) {
     return (
         <View style={{ flex: 1, }}>
-            <View style={{ flex: 1, marginTop: 20, }}>
+            <View style={{ flex: 1, marginTop: 0, }}>
                 {!props.isProcessing && props.appointments.length === 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                     <EmptyAppointment />
                     <Text style={{ fontSize: 20, paddingVertical: 40, fontFamily: fonts.medium, }}>No scheduled appointments</Text>
@@ -28,7 +28,7 @@ export default function (props) {
                 {!props.isProcessing ? <View>
                     {props.appointments.length && props.role === roles.user ? <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text> : null}
                     {props.appointments.length && props.role === roles.styler ? <Text style={{ fontSize: 18, fontFamily: fonts.bold }}>Pending Appointments</Text> : null}
-                    {props.appointments.map((appointment, i) => <TouchableWithoutFeedback
+                    {props.appointments.sort().reverse().map((appointment, i) => <TouchableWithoutFeedback
                         key={i}
                         onPress={() => props.showDetails(appointment)}
                         activeOpacity={0.7}

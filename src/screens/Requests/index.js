@@ -20,6 +20,8 @@ import Button from '../../components/Button';
 import Header from '../../components/Header';
 import Stats from '../Appointments/Stats';
 import { notify } from '../../services';
+import * as constants from '../../constants/ActionTypes';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const options = { year: 'numeric', month: 'long', day: 'numeric' };
 // weekday: 'long', 
@@ -47,14 +49,22 @@ class Requests extends React.Component {
         )
     }
 
+    componentDidMount() {
+        AsyncStorage.getItem('oneSignalUserId', (err, Id) => {
+            if (Id) {
+                this.props.updateProfile({ oneSignalUserId: Id });
+            }
+        })
+    }
+
     UNSAFE_componentWillReceiveProps(prevProps) {
         const { appointment } = this.state;
-        if (prevProps.accepted && prevProps.accepted !== this.props.accepted) {
+        if (prevProps.updated && prevProps.updated !== this.props.updated) {
             alert('Successfully accepted')
-            notify('Appointment Status', 'Hi there! Styler has accepted your appointment.');
+            // notify('Appointment Status', 'Hi there! Styler has accepted your appointment.');
             this.props.listStylerRequests();
             this.setState({ accept: false, })
-            this.props.socket.emit('accept.appointment', appointment.userId && appointment.userId.publicId);
+            // this.props.socket.emit('accept.appointment', appointment.userId && appointment.userId.publicId);
             // if (this.props.role === roles.user) {
 
             // } else if (this.props.role === roles.styler) {
@@ -81,15 +91,21 @@ class Requests extends React.Component {
         return _service.adult * appointment
     }
 
-    acceptAppointement = (Id) => {
-        this.setState({ accept: true, key: 'accept' })
-        this.props.acceptAppointment(Id);
+    updateAppointmentStatus(Id, status) {
+        if (status == constants.ACCEPTED) {
+            this.setState({ accept: true, key: 'accept' })
+        }
+        this.props.updateAppointmentStatus(Id, status);
     }
 
-    declineAppointment = () => {
-        this.setState({ isProcessing: true })
-        // this.props.acceptAppointment(appointment._id);
+    updateState = () => {
+        this.setState({ accept: true, key: 'accept' })
     }
+
+    // declineAppointment = () => {
+    //     this.setState({ isProcessing: true })
+    //     // this.props.acceptAppointment(appointment._id);
+    // }
 
     render() {
         const { appointment, isVisible, } = this.state;
@@ -130,8 +146,8 @@ class Requests extends React.Component {
                                 isProcessing={this.props.isProcessing}
                                 isVisible={this.state.isVisible}
                                 requests={this.props.requests}
-                                accept={this.acceptAppointement}
-                                decline={this.declineAppointment}
+                                accept={(id) => this.updateAppointmentStatus(id, constants.ACCEPTED)}
+                                decline={(id) => this.updateAppointmentStatus(id, constants.CANCELLED)}
                                 requestKey={this.state.key}
                                 loading={this.state.isProcessing}
                             />
@@ -176,12 +192,14 @@ class Requests extends React.Component {
                         </View>
                         <View style={{ marginTop: 15, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Service Cost</Text>
-                            {appointment.services && appointment.services.map((r, key) => (
+                            {appointment.services && appointment.services.map((r, key) => {
+                                let adult = r.subServiceId.adult || 0;
+                                let child = r.subServiceId.child || 0;
                                 <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                                     <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.subServiceId.name}</Text>
-                                    <Text style={{ fontFamily: fonts.bold, fontSize: 16, }}>{`NGN1000`}</Text>
+                                    <Text style={{ fontFamily: fonts.bold, fontSize: 16, }}>{`NGN${adult + child}`}</Text>
                                 </View>
-                            ))}
+                            })}
                         </View>
                         <View style={{ marginTop: 40 }}>
                             {this.props.role === roles.user && <View style={{ marginTop: 10, width: '100%' }}>

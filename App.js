@@ -1,11 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React from 'react';
 import { updateProfile } from './src/actions/UserActions';
 import * as actionAcreators from './src/actions';
@@ -15,11 +7,17 @@ import { Provider } from 'react-redux';
 import store from './src/store/createStore';
 import RootContainer from './src/containers/RootContainer';
 import OneSignal from 'react-native-onesignal'; // Import package from node modules
+import config from './src/config';
+import { Text } from 'native-base';
+import Axios from 'axios';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class App extends React.Component {
   constructor(properties) {
     super(properties);
-    OneSignal.init("a3fc8c03-722d-4260-a759-a31c24f44010", { kOSSettingsKeyAutoPrompt: true });// set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
+    OneSignal.init(config.one_signal_app_id, {
+      kOSSettingsKeyAutoPrompt: true,
+    }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
 
     OneSignal.addEventListener('received', this.onReceived);
     OneSignal.addEventListener('opened', this.onOpened);
@@ -33,7 +31,7 @@ class App extends React.Component {
   }
 
   onReceived(notification) {
-    console.log("Notification received: ", notification);
+    console.log('Notification received: ', notification);
   }
 
   onOpened(openResult) {
@@ -44,8 +42,11 @@ class App extends React.Component {
   }
 
   onIds(device) {
-    // store.dispatch(updateProfile(device));
-    console.log('Device info: ', device);
+    AsyncStorage.setItem('oneSignalUserId', device.userId);
+    // if (store.getState().user.authenticated) {
+    //   store.dispatch(updateProfile(device));
+    // }
+    // console.log('Device info: ', device);
   }
 
   render() {

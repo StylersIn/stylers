@@ -10,12 +10,25 @@ import GenderList from './GenderList';
 import Header from '../../components/Header';
 import { Spinner } from 'native-base';
 import { notify } from '../../services';
+import OneSignal from 'react-native-onesignal';
+import { updateProfile } from '../../actions/UserActions';
+import config from '../../config';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
         this.props.socket.on('appointment.accepted', () => {
             notify('Appointment Accepted', 'Styler has accepted your appointment');
+        })
+    }
+
+    componentDidMount() {
+        AsyncStorage.getItem('oneSignalUserId', (err, Id) => {
+            alert(Id)
+            if (Id) {
+                this.props.updateProfile({ oneSignalUserId: Id });
+            }
         })
     }
 

@@ -36,6 +36,7 @@ export const removeStylerService = stylerActions.removeStylerService;
 export const updateStyler = stylerActions.updateStyler;
 export const checkStylerRegStatus = stylerActions.checkStylerRegStatus;
 export const acceptAppointment = appointmentActions.acceptAppointment;
+export const updateAppointmentStatus = appointmentActions.updateAppointmentStatus;
 export const getCurrentLocation = mapActions.getCurrentLocation;
 export const getInputData = mapActions.getInputData;
 export const getAddressPredictions = mapActions.getAddressPredictions;

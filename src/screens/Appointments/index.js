@@ -28,6 +28,7 @@ import Stats from './Stats';
 import Geocoder from 'react-native-geocoding';
 import { notify } from '../../services';
 import { formatDate, formatTime, } from '../../utils/stylersUtils';
+import * as constants from '../../constants/ActionTypes';
 
 const options = { year: 'numeric', month: 'long', day: 'numeric' };
 // weekday: 'long', 
@@ -154,13 +155,12 @@ class Appointment extends React.Component {
                             <Stats {...this.props} />
                         </View>}
                         <View style={{ flex: 1, padding: 20, }}>
-                            <View style={{ marginTop: 0 }}>
+                            {/* <View style={{ marginTop: 0 }}>
                                 {this.props.role === roles.user && <View style={{ flexDirection: 'row', }}>
                                     <Text style={{ fontSize: 16, fontFamily: fonts.bold, color: '#4F4F4F', }}>January</Text>
                                     <Icon style={{ fontSize: 20, paddingLeft: 10, marginTop: 2, color: '#4F4F4F', }} name="ios-arrow-down" />
                                 </View>}
-                                {/* {this.props.role === roles.styler && <Text style={{ fontSize: 18, fontFamily: fonts.bold, }}>Pending Appointments</Text>} */}
-                            </View>
+                            </View> */}
 
                             <AppointmentList
                                 role={this.props.role}
@@ -219,8 +219,9 @@ class Appointment extends React.Component {
                             ))}
                         </View>
                         <View style={{ marginTop: 40 }}>
-                            {this.props.role === roles.user && !appointment.accepted && <View style={{ marginTop: 10, width: '100%' }}>
+                            {this.props.role === roles.user && appointment.status == constants.BOOKED && <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
+                                    onPress={() => { }}
                                     // onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
                                     btnTxt={"Cancel Appointment"}
                                     size={"lg"}
@@ -228,7 +229,8 @@ class Appointment extends React.Component {
                                     btnTxtStyles={{ color: colors.black, fontFamily: fonts.bold }}
                                 />
                             </View>}
-                            {this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.styler && (!appointment.completed || !appointment.accepted) ? <View style={{ marginTop: 10, width: '100%' }}>
+                            {this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.styler &&
+                                appointment.status == constants.ACCEPTED ? <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
                                     onPress={this.beginService}
                                     btnTxt={"Begin Service"}
@@ -237,7 +239,8 @@ class Appointment extends React.Component {
                                     styles={{ height: 40, backgroundColor: colors.black, }}
                                     btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                 />
-                            </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user && (!appointment.completed && appointment.accepted) ? <View style={{ marginTop: 10, width: '100%' }}>
+                                </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user &&
+                                    appointment.status == constants.ACCEPTED ? <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
                                     onPress={this.trackStyler}
                                     btnTxt={"Track Styler"}
@@ -248,7 +251,7 @@ class Appointment extends React.Component {
                                 />
                             </View> : !this.IsDateInPast(appointment.scheduledDate) ? <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
-                                    onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
+                                    onPress={() => alert('module disabled...')}
                                     btnTxt={"Reschedule"}
                                     size={"lg"}
                                     styles={{ height: 40, }}

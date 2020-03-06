@@ -21,6 +21,7 @@ import Geolocation from '@react-native-community/geolocation';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import Axios from 'axios';
+import * as constants from '../../constants/ActionTypes';
 Geocoder.init(MAP_API_KEY);
 
 const origin = { latitude: 37.3318456, longitude: -122.0296002 };
@@ -156,7 +157,7 @@ class StylerMap extends React.Component {
                             Alert.alert("", error.code);
                     }
                 },
-                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+                { enableHighAccuracy: true, timeout: 20000, }
             );
         } catch (e) {
             alert(e.message || "");
@@ -248,9 +249,9 @@ class StylerMap extends React.Component {
         });
     }
 
-    endService = () => {
+    endService = (status) => {
         this.setState({ completeService: true, })
-        this.props.completeService({ appointmentId: this.state.appointment._id });
+        this.props.updateAppointmentStatus({ appointmentId: this.state.appointment._id }, constants.COMPLETED);
     }
 
     rate = () => {
@@ -268,9 +269,9 @@ class StylerMap extends React.Component {
                 </View>}
                 <MapView
                     ref={e => this.map = e}
-                    provider={this.props.provider}
+                    provider={'google'}
                     style={styles.map}
-                    initialRegion={initialRegion}
+                    // initialRegion={initialRegion}
                     showsUserLocation={true}
                     showsMyLocationButton={true}
                     followUserLocation={true}

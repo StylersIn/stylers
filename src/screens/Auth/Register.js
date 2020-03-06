@@ -21,6 +21,7 @@ import { FacebookIcon, GoogleIcon } from './AuthAssets';
 import ShowToast from '../../components/ShowToast';
 import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
 import NavigationService from '../../navigation/NavigationService';
+import { LoginManager, AccessToken } from 'react-native-fbsdk';
 // import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('screen');
@@ -33,6 +34,7 @@ class Register extends React.Component {
             validationErr: false,
             pwMatchErr: false,
             mainErr: undefined,
+            social_user: {},
         }
     }
 
@@ -85,6 +87,42 @@ class Register extends React.Component {
 
     handleClick = () => {
         this.props.navigation.navigate('Home')
+    }
+
+    initUser(token) {
+        fetch('https://graph.facebook.com/v2.10/me?fields=id,name,first_name,last_name,email,gender,link,locale,timezone,updated_time,verified&access_token=' + token)
+            .then((response) => response.json())
+            .then((json) => {
+                this.setState({ social_user: json });
+                setTimeout(() => {
+                    this.props.verifySocialMediaLogin({ email: json.email });
+                }, 0);
+            })
+            .catch(() => {
+                reject('ERROR GETTING DATA FROM FACEBOOK')
+            })
+    }
+
+    fbLogin = () => {
+        this.setState({ verify: true })
+        LoginManager.logInWithPermissions(['public_profile', 'email', 'user_friends']).then(
+            (result) => {
+                if (result.isCancelled) {
+                    this.setState({ verify: false })
+                    console.log('Login cancelled')
+                } else {
+                    AccessToken.getCurrentAccessToken().then(
+                        (data) => {
+                            // console.log(data.accessToken.toString())
+                            this.initUser(data.accessToken.toString())
+                        }
+                    )
+                }
+            },
+            (error) => {
+                console.log('Login fail with error: ' + error)
+            }
+        )
     }
 
     render() {
@@ -195,17 +233,16 @@ class Register extends React.Component {
                         <Text style={{ fontFamily: fonts.bold }}>OR</Text>
                     </View>
 
-                    <View>
+                    {/* <View>
                         <Button
-                            // onPress={this.handleClick.bind(this)}
-                            onPress={() => alert('Sorry, we are currently fixing this module!')}
+                            onPress={this.fbLogin.bind(this)}
                             size={"lg"}
                             Icon={<FacebookIcon />}
                             styles={{ backgroundColor: colors.facebook }}
                             btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
                         />
-                    </View>
-                    <View style={{ marginTop: 20 }}>
+                    </View> */}
+                    {/* <View style={{ marginTop: 20 }}>
                         <Button
                             // onPress={this.handleClick.bind(this)}
                             onPress={() => alert('Sorry, we are currently fixing this module!')}
@@ -214,7 +251,7 @@ class Register extends React.Component {
                             styles={{ backgroundColor: colors.google }}
                             btnTxtStyles={{ color: "white", fontFamily: fonts.default }}
                         />
-                    </View>
+                    </View> */}
 
                     <View style={{ marginVertical: 20, }}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>

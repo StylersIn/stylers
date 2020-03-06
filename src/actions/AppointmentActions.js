@@ -141,20 +141,20 @@ export const updateLocation = location => {
     }
 };
 
-export const acceptAppointment = appointmentId => ({
+export const updateAppointmentStatus = (appointmentId, status) => (console.log(appointmentId, status), {
     [RSAA]: {
-        endpoint: `${BASE_URL()}/appointment/accept`,
+        endpoint: `${BASE_URL()}/appointment/status/${status}`,
         method: 'PUT',
         types: [
-            constants.ACCEPT_APPOINTMENT,
+            constants.UPDATE_APPOINTMENT_STATUS,
             {
-                type: constants.ACCEPT_APPOINTMENT_SUCCESS,
+                type: constants.UPDATE_APPOINTMENT_STATUS_SUCCESS,
                 payload: (action, state, response) => response.json().then(response => ({
                     response,
                 }))
             },
             {
-                type: constants.ACCEPT_APPOINTMENT_FAILURE,
+                type: constants.UPDATE_APPOINTMENT_STATUS_FAILURE,
                 meta: (action, state, res) => {
                     return {
                         status: res.status

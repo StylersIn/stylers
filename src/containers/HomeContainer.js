@@ -7,6 +7,9 @@ import { AppointmentIcon } from '../navigation/assets';
 
 // const Home = (props) => <Component {...props} />
 class Home extends React.Component {
+    constructor(props) {
+        super(props);
+    }
     state = {
         isProcessing: true,
         filterErr: undefined,

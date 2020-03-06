@@ -6,6 +6,7 @@ import {
     Platform,
     PermissionsAndroid,
     Dimensions,
+    ScrollView,
 } from "react-native";
 import {
     Item,
@@ -57,7 +58,7 @@ const MapSearch = ({
     return (
         <View style={styles.searchBox}>
             <View style={{ marginTop: 20, padding: 15 }}>
-                <Card style={[{ padding: 10 }, styles.cardShadow]}>
+                <Card style={[{ padding: 20 }, styles.cardShadow]}>
                     <View style={{ flexDirection: "row" }}>
                         <View style={{ marginTop: 0, padding: 10 }}>
                             <View style={styles.locationCircle}>
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     },
     cardShadow: {
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 10,
         borderColor: '#ddd',
         borderBottomWidth: 0,
         shadowColor: '#000',

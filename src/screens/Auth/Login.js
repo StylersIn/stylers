@@ -217,7 +217,7 @@ class Login extends React.Component {
                         }
                     }
                     onLogoutFinished={() => console.log("logout.")} /> */}
-                    <View style={{ marginTop: 20 }}>
+                    {/* <View style={{ marginTop: 20 }}>
                         <Button
                             // onPress={this.fbLogin.bind(this)}
                             onPress={() => alert('Sorry, we are currently fixing this module!')}
@@ -226,7 +226,7 @@ class Login extends React.Component {
                             styles={{ backgroundColor: colors.google }}
                             btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
                         />
-                    </View>
+                    </View> */}
                     {/* <GoogleSigninButton
                         style={{ width: 192, height: 48 }}
                         size={GoogleSigninButton.Size.Wide}

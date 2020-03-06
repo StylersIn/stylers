@@ -18,6 +18,14 @@ function rootReducer(state, action) {
             state = {};
         }
 
+        if (action.type == constants.COMPLETE_APPOINTMENT_SUCCESS || action.type == constants.CHARGE_AUTHORIZATION_SUCCESS) {
+            state = Object.assign(state, {
+                appointment: undefined,
+                styler: { selectedService: {}, },
+                map: undefined,
+            })
+        }
+
         // AsyncStorage.clear();
     }
     return appReducer(state, action)

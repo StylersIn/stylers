@@ -71,7 +71,7 @@ class Payment extends React.Component {
                     this.showToast(`Payment Successful ${'\n'} Please wait patiently while we complete your transaction...`, toastType.success, 3000);
 
                     var req = {
-                        stylerId: styler._id,
+                        stylerId: styler.userId._id,
                         services: this.props.services,
                         scheduledDate: this.props.date,
                         totalAmount: styler.totalAmt,
@@ -79,6 +79,7 @@ class Payment extends React.Component {
                         pickUp: this.props.pickUp,
                         transactionReference: response.reference,
                         saveCard: this.state.saveCard,
+                        initial: true,
                     }
                     setTimeout(() => {
                         this.props.saveAppointment(req);
