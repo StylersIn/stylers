@@ -15,7 +15,7 @@ import * as constants from '../constants/ActionTypes';
 function rootReducer(state, action) {
     if (action.type == constants.LOGOUT) {
         if (action.payload === 'loggedOut') {
-            state = {};
+            state = defaultState;
         }
 
         if (action.type == constants.COMPLETE_APPOINTMENT_SUCCESS || action.type == constants.CHARGE_AUTHORIZATION_SUCCESS) {

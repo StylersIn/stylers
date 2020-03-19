@@ -233,9 +233,6 @@ class StylerMap extends React.Component {
 
     fitAllMarkers = () => {
         const { region, appointment } = this.state;
-        console.log('-========================')
-        console.log(region)
-        console.log(appointment)
         const MARKERS = [{
             longitude: region.longitude,
             latitude: region.latitude

@@ -7,7 +7,7 @@ import config from '../config';
 const BASE_URL = () => `${config.api.host}/api/user`;
 import store from '../store/createStore';
 
-export const doLogin = credentials => (console.log(config.api), {
+export const doLogin = credentials => (console.log(config.api.host), {
     [RSAA]: {
         endpoint: `${BASE_URL()}/authenticate`,
         method: 'POST',
@@ -16,7 +16,6 @@ export const doLogin = credentials => (console.log(config.api), {
             {
                 type: constants.AUTH_USER_SUCCESS,
                 payload: (action, state, response) => response.json().then(response => {
-                    store.getState().socket.emit('auth', response.data.user);
                     return {
                         response,
                     }

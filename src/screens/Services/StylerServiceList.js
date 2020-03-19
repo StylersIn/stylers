@@ -16,12 +16,9 @@ const services = ['Barbing', 'Shaving', 'Relaxing', 'Hair Dye'];
 const StylerServiceList = ({
     styler,
     selected,
-    // adult,
-    // child,
     onSelectService,
     onChangeOption,
 }) => {
-    console.log(styler)
     return (
         <View style={{ marginTop: 0 }}>
             <Text style={{ fontFamily: fonts.bold, fontSize: 18 }}>Select Services</Text>

@@ -59,3 +59,4 @@ export const chargeAuthorization = appointmentActions.chargeAuthorization;
 export const addStylerData = appointmentActions.addStylerData;
 export const addRating = appointmentActions.addRating;
 export const updateAvatar = stylerActions.updateAvatar;
+export const changePassword = userActions.changePassword;

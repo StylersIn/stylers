@@ -3,16 +3,17 @@ import {
     View,
     StyleSheet,
     Image,
+    TouchableOpacity,
+    ScrollView,
 } from 'react-native';
 import { Container, Content, ListItem, Icon, Left, Body, Right, Switch } from 'native-base';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import Header from '../components/Header';
 import Text from '../config/AppText';
-import { fonts, colors, } from '../constants/DefaultProps';
+import { fonts, colors, roles, } from '../constants/DefaultProps';
 import { SettingsIcon, AppointmentIcon } from '../navigation/assets';
 import NavigationService from '../navigation/NavigationService';
 import Button from '../components/Button';
@@ -44,6 +45,7 @@ class Settings extends React.Component {
     }
 
     render() {
+        const { user: { current: { role } } } = this.props;
         return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
@@ -56,37 +58,36 @@ class Settings extends React.Component {
                         <View style={{ paddingHorizontal: 20, }}>
                             <Text style={{ fontFamily: fonts.bold, marginTop: 30, fontSize: 16, }}>Account</Text>
                             <View style={{ marginTop: 20, }}>
-                                <View>
+                                {role == roles.styler && <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={() => this.props.navigation.navigate('EditProfile')}
+                                >
                                     <View style={{ paddingVertical: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
-                                        <TouchableOpacity
-                                            activeOpacity={0.7}
-                                            onPress={() => this.props.navigation.navigate('EditProfile')}
-                                        >
-                                            <Text>Edit Profile</Text>
-                                        </TouchableOpacity>
+                                        <Text>Edit Profile</Text>
                                         <Icon style={{ fontSize: 20, }} name='ios-arrow-forward' />
                                     </View>
                                     <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View>
-                                </View>
-                                <View>
+                                </TouchableOpacity>}
+                                {role == roles.styler && <TouchableOpacity
+                                    onPress={() => this.props.navigation.navigate('MyServices')}
+                                    activeOpacity={0.7}
+                                >
                                     <View style={{ paddingVertical: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
                                         <Text>Manage services</Text>
                                         <Icon style={{ fontSize: 20, }} name='ios-arrow-forward' />
                                     </View>
                                     <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View>
-                                </View>
-                                <View>
+                                </TouchableOpacity>}
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={() => this.props.navigation.navigate('ChangePassword')}
+                                >
                                     <View style={{ paddingVertical: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
-                                        <TouchableOpacity
-                                            activeOpacity={0.7}
-                                            onPress={() => this.props.navigation.navigate('ChangePassword')}
-                                        >
-                                            <Text>Change password</Text>
-                                        </TouchableOpacity>
+                                        <Text>Change password</Text>
                                         <Icon style={{ fontSize: 20, }} name='ios-arrow-forward' />
                                     </View>
                                     <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View>
-                                </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
 

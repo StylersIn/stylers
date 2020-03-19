@@ -22,7 +22,7 @@ import Text from '../config/AppText';
 import InitializeApp from '../screens/InitializeApp';
 import GiftCardScreen from '../screens/GiftCard';
 import RequestScreen from '../containers/RequestContainer';
-import MyServices from '../screens/Stylers/MyServices';
+import MyServicesScreen from '../screens/Stylers/MyServices';
 import FbRegisterScreen from '../screens/Auth/FbRegister';
 import VerifyScreen from '../screens/Auth/Verify';
 import MapViewScreen from '../containers/MapContainer';
@@ -59,7 +59,7 @@ const StylerDrawerNavigator = createDrawerNavigator({
         screen: AppointmentScreen,
     },
     'My Services': {
-        screen: MyServices
+        screen: MyServicesScreen
     },
     // 'Wallet': {
     //     screen: NoDebitScreen
@@ -125,6 +125,7 @@ const AppNavigator = createStackNavigator({
         // })
     },
     Service: ServiceScreen,
+    MyServices: MyServicesScreen,
     ServiceDetails: ServiceDetails,
     Payment: PaymentScreen,
     Cards: CardsScreen,

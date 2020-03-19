@@ -35,7 +35,7 @@ export default function (props) {
                             <View style={{ position: 'relative', left: 10 }}>
                                 <Text style={{ fontFamily: fonts.bold }}>{props.appointment.userId && props.appointment.userId.name}</Text>
                                 <View style={{ padding: 2, paddingHorizontal: 4, borderRadius: 3, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
-                                    <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.bold, position: 'relative', bottom: 1, }}>Point of service</Text>
+                                    <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.bold, position: 'relative', bottom: 1, }}>Card Payment</Text>
                                 </View>
                             </View>
                         </View>
@@ -138,7 +138,7 @@ export default function (props) {
                                     <View style={{ position: 'relative', left: 10 }}>
                                         <Text style={{ fontFamily: fonts.bold }}>{props.appointment.userId && props.appointment.userId.name}</Text>
                                         <View style={{ padding: 2, paddingHorizontal: 4, borderRadius: 3, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
-                                            <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.bold, position: 'relative', bottom: 1, }}>Point of service</Text>
+                                            <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.bold, position: 'relative', bottom: 1, }}>Card Payment</Text>
                                         </View>
                                     </View>
                                 </View>

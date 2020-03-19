@@ -44,10 +44,11 @@ export default function userReducer(state = initialState, action) {
                     message: action.payload.response.message,
                 }
             }
-            if (!action.payload.response.success) {
+            if (action.payload.response.success == false) {
                 return {
                     ...state,
                     message: action.payload.response.message,
+                    authenticated: false,
                 }
             }
             if (action.payload.response.data && action.payload.response.data.token) {
@@ -122,6 +123,21 @@ export default function userReducer(state = initialState, action) {
                 userData: undefined,
                 error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             })
+        case constants.UPDATE_PROFILE:
+            return Object.assign({}, state, {
+                profileUpdateError: undefined,
+                profileUpdated: undefined,
+            })
+        case constants.UPDATE_PROFILE_SUCCESS:
+            return {
+                ...state,
+                profileUpdated: true,
+            }
+        case constants.UPDATE_PROFILE_FAILURE:
+            return Object.assign({}, state, {
+                profileUpdated: undefined,
+                profileUpdateError: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            })
         case constants.LOGOUT:
             if (action.payload === 'loggedOut') {
                 return {
@@ -146,6 +162,24 @@ export default function userReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 cards: undefined,
                 error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            })
+        case constants.CHANGE_PASSWORD:
+            return Object.assign({}, state, {
+                changingPassword: true,
+                changePasswordError: undefined,
+            })
+        case constants.CHANGE_PASSWORD_SUCCESS:
+            return {
+                ...state,
+                changingPassword: undefined,
+                changedPassword: true,
+            }
+        case constants.CHANGE_PASSWORD_FAILURE:
+            return Object.assign({}, state, {
+                cards: undefined,
+                changingPassword: undefined,
+                changedPassword: undefined,
+                changePasswordError: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             })
 
         default:

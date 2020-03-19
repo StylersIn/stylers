@@ -1,16 +1,16 @@
 import React from 'react';
-import { updateProfile } from './src/actions/UserActions';
-import * as actionAcreators from './src/actions';
-import { connect } from 'react-redux';
-import { StyleSheet, View, } from 'react-native';
+import { StyleSheet, View, AppState, } from 'react-native';
 import { Provider } from 'react-redux';
 import store from './src/store/createStore';
 import RootContainer from './src/containers/RootContainer';
 import OneSignal from 'react-native-onesignal'; // Import package from node modules
 import config from './src/config';
 import { Text } from 'native-base';
-import Axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import SocketIOClient from 'socket.io-client';
+
+const BASE_URL = config.api.host,
+    socket = SocketIOClient(`${BASE_URL}`);
 
 class App extends React.Component {
   constructor(properties) {
@@ -19,9 +19,13 @@ class App extends React.Component {
       kOSSettingsKeyAutoPrompt: true,
     }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
 
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('opened', this.onOpened);
-    OneSignal.addEventListener('ids', this.onIds);
+    if (AppState.currentState != 'active') {
+      OneSignal.addEventListener('received', this.onReceived);
+      OneSignal.addEventListener('opened', this.onOpened);
+      OneSignal.addEventListener('ids', this.onIds);
+    }
+
+    socket.on('appointmentBooked.send', () => console.log('Yesss booked!!'));
   }
 
   componentWillUnmount() {

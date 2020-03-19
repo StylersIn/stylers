@@ -14,6 +14,7 @@ import Header from '../components/Header';
 import Text from '../config/AppText';
 import { fonts, colors } from '../constants/DefaultProps';
 import Button from '../components/Button';
+import NavigationService from '../navigation/NavigationService';
 
 class ChangePassword extends React.Component {
     constructor(props) {
@@ -26,6 +27,36 @@ class ChangePassword extends React.Component {
         }
     }
 
+    UNSAFE_componentWillReceiveProps(prevProps) {
+        if (prevProps.changedPassword && prevProps.changedPassword != this.props.changedPassword) {
+            this.setState({ isProcessing: false, });
+            alert('Password chaged successfully');
+            NavigationService.goBack();
+        }
+        if (prevProps.changePasswordError && prevProps.changePasswordError != this.props.changePasswordError) {
+            this.setState({ isProcessing: false, });
+            alert(prevProps.changePasswordError);
+        }
+    }
+
+    changePassword = () => {
+        this.setState({ isProcessing: true, });
+        if (!this.oldPassword || !this.newPassword) {
+            alert('Please enter valid credentials');
+            this.setState({ isProcessing: false, });
+            return;
+        }
+        if (this.newPassword !== this.reNewPassword) {
+            alert('New Password does not match the confirm new password');
+            this.setState({ isProcessing: false, });
+            return;
+        }
+        this.props.changePassword({
+            oldPassword: this.oldPassword,
+            newPassword: this.newPassword,
+        })
+    }
+
     render() {
         return (
             <>
@@ -35,13 +66,14 @@ class ChangePassword extends React.Component {
                             close={true}
                             title={'Change Password'}
                         />
-                        <View style={{ marginTop: 20, }}>
+                        <View style={{ marginTop: 20, paddingHorizontal: 20, }}>
                             <Item style={{ marginTop: 10, borderRadius: 5, }}
                                 error={(this.email === undefined || this.email === '') && this.state.validationErr}
                                 regular>
                                 <Input
-                                    onChangeText={e => this.email = e}
+                                    onChangeText={e => this.oldPassword = e}
                                     autoCapitalize={'none'}
+                                    secureTextEntry
                                     style={{ fontFamily: fonts.medium, fontSize: 12, height: 40, }}
                                     placeholder='Old password' />
                             </Item>
@@ -49,8 +81,9 @@ class ChangePassword extends React.Component {
                                 error={(this.email === undefined || this.email === '') && this.state.validationErr}
                                 regular>
                                 <Input
-                                    onChangeText={e => this.email = e}
+                                    onChangeText={e => this.newPassword = e}
                                     autoCapitalize={'none'}
+                                    secureTextEntry
                                     style={{ fontFamily: fonts.medium, fontSize: 12, height: 40, }}
                                     placeholder='New password' />
                             </Item>
@@ -58,21 +91,22 @@ class ChangePassword extends React.Component {
                                 error={(this.email === undefined || this.email === '') && this.state.validationErr}
                                 regular>
                                 <Input
-                                    onChangeText={e => this.email = e}
+                                    onChangeText={e => this.reNewPassword = e}
                                     autoCapitalize={'none'}
+                                    secureTextEntry
                                     style={{ fontFamily: fonts.medium, fontSize: 12, height: 40, }}
                                     placeholder='Confirm password' />
                             </Item>
-                        </View>
-                        <View style={{ marginTop: 20 }}>
-                            <Button
-                                // onPress={this.doLogin}
-                                btnTxt={"Change Password"}
-                                size={"lg"}
-                                loading={this.state.isProcessing ? true : false}
-                                styles={{ height: 40, }}
-                                btnTxtStyles={{ color: colors.white, fontFamily: fonts.medium, }}
-                            />
+                            <View style={{ marginTop: 20 }}>
+                                <Button
+                                    onPress={this.changePassword}
+                                    btnTxt={"Change Password"}
+                                    size={"lg"}
+                                    loading={this.state.isProcessing}
+                                    styles={{ height: 40, }}
+                                    btnTxtStyles={{ color: colors.white, fontFamily: fonts.medium, }}
+                                />
+                            </View>
                         </View>
                     </ScrollView>
                 </SafeAreaView>
@@ -84,7 +118,7 @@ class ChangePassword extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        // padding: 20,
         // justifyContent: "center",
     },
 })
@@ -92,6 +126,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     user: state.user,
     styler: state.styler,
+    changedPassword: state.user.changedPassword,
+    changePasswordError: state.user.changePasswordError,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);
