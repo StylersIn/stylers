@@ -20,6 +20,7 @@ import { fonts, colors, toastType } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { FacebookIcon, GoogleIcon } from './AuthAssets';
 import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
+import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
 import ShowToast from '../../components/ShowToast';
 import { SafeAreaView } from 'react-navigation';
 // import Toast from 'react-native-root-toast';
@@ -33,6 +34,10 @@ class Register extends React.Component {
         super(props);
         this.state = {
             isProcessing: false,
+            validationErr: false,
+            mainErr: undefined,
+            verify: false,
+            social_user: {},
         }
     }
 
@@ -52,36 +57,54 @@ class Register extends React.Component {
         }
     }
     initUser(token) {
-        fetch('https://graph.facebook.com/v2.5/me?fields=email,name,friends&access_token=' + token)
+        fetch('https://graph.facebook.com/v2.10/me?fields=id,name,first_name,last_name,email,gender,link,locale,timezone,updated_time,verified&access_token=' + token)
             .then((response) => response.json())
             .then((json) => {
-                // Some user object has been set up somewhere, build that user here
-                // user.name = json.name
-                // user.id = json.id
-                // user.user_friends = json.friends
-                // user.email = json.email
-                // user.username = json.name
-                // user.loading = false
-                // user.loggedIn = true
-                // user.avatar = setAvatar(json.id)
-                console.log(json)
+                this.setState({ social_user: json });
+                setTimeout(() => {
+                    console.log(json.email)
+                    this.props.verifySocialMediaLogin({ email: json.email });
+                }, 0);
             })
             .catch(() => {
                 reject('ERROR GETTING DATA FROM FACEBOOK')
             })
+    }
+
+    fbLogin = () => {
+        this.setState({ verify: true })
+        LoginManager.logInWithPermissions(['public_profile', 'email', 'user_friends']).then(
+            (result) => {
+                if (result.isCancelled) {
+                    this.setState({ verify: false })
+                    console.log('Login cancelled')
+                } else {
+                    AccessToken.getCurrentAccessToken().then(
+                        (data) => {
+                            // console.log(data.accessToken.toString())
+                            this.initUser(data.accessToken.toString())
+                        }
+                    )
+                }
+            },
+            (error) => {
+                console.log('Login fail with error: ' + error)
+            }
+        )
     }
     addStyler = () => {
         this.setState({ isProcessing: true });
         let email = this.email,
             name = this.name,
             phone = this.phone,
-            address = this.address,
+            gender = this.gender,
+            // address = this.address,
             description = this.description,
             password = this.password,
             confirmPassword = this.confirmPassword,
             startingPrice = this.startingPrice;
 
-        if (!name || !email || !phone || !address || !password || !startingPrice) {
+        if (!name || !email || !phone || !password || !startingPrice || !gender) {
             this.showToast('Invalid login credentials!', toastType.danger);
         } else if (password !== confirmPassword) {
             this.showToast('Password and Confirm Password does not match', toastType.danger);
@@ -90,7 +113,8 @@ class Register extends React.Component {
                 name: name,
                 email: email,
                 phoneNumber: phone,
-                address: address,
+                gender,
+                // address: address,
                 description: description,
                 password: password,
                 startingPrice: startingPrice,
@@ -118,7 +142,7 @@ class Register extends React.Component {
                         <Input
                             onChangeText={e => this.name = e}
                             style={{ fontFamily: fonts.medium, fontSize: 13 }}
-                            placeholder='Your name' />
+                            placeholder='Business name' />
                     </Item>
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
@@ -133,19 +157,40 @@ class Register extends React.Component {
                             style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Phone Number' />
                     </Item>
-                    <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
+                    <View style={{ marginVertical: 8 }}>
+                        <RadioGroup
+                            size={18}
+                            thickness={2}
+                            color='#606060'
+                            style={{ flexDirection: 'row' }}
+                            // selectedIndex={1}
+                            onSelect={(index, value) => this.gender = value}
+                        >
+                            <RadioButton
+                                // style={{ margin: 3, padding: 1, paddingHorizontal: 5, }}
+                                value={'M'} >
+                                <Text style={{ fontSize: 12, fontFamily: fonts.medium, }}>{'Male'}</Text>
+                            </RadioButton>
+                            <RadioButton
+                                // style={{ margin: 3, padding: 1, paddingHorizontal: 5, }}
+                                value={'F'} >
+                                <Text style={{ fontSize: 12, fontFamily: fonts.medium }}>{'Female'}</Text>
+                            </RadioButton>
+                        </RadioGroup>
+                    </View>
+                    {/* <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
                             onChangeText={e => this.address = e}
                             style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Address' />
-                    </Item>
+                    </Item> */}
                     <Form style={{ marginTop: 10, }} regular>
                         <Textarea
                             onChangeText={e => this.description = e}
                             rowSpan={5}
                             style={{ fontFamily: fonts.medium, fontSize: 13, borderRadius: 5, }}
                             bordered
-                            placeholder="Description" />
+                            placeholder="Please tell us about your business (Optional)" />
                     </Form>
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
@@ -180,11 +225,21 @@ class Register extends React.Component {
                         />
                     </View>
 
-                    <View style={{ alignItems: "center", paddingVertical: 10 }}>
+                    {/* <View style={{ alignItems: "center", paddingVertical: 10 }}>
                         <Text style={{ fontFamily: fonts.bold }}>OR</Text>
-                    </View>
+                    </View> */}
 
-                    <LoginButton
+                    {/* <View>
+                        <Button
+                            onPress={this.fbLogin.bind(this)}
+                            size={"lg"}
+                            Icon={<FacebookIcon />}
+                            styles={{ backgroundColor: colors.facebook }}
+                            btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
+                        />
+                    </View> */}
+
+                    {/* <LoginButton
                         style={{ height: 48, width: '100%', backgroundColor: colors.facebook }}
                         onLoginFinished={
                             (error, result) => {
@@ -203,7 +258,7 @@ class Register extends React.Component {
                                 }
                             }
                         }
-                        onLogoutFinished={() => console.log("logout.")} />
+                        onLogoutFinished={() => console.log("logout.")} /> */}
                     {/* <View>
                         <Button
                             // onPress={this.handleClick.bind(this)}
@@ -213,7 +268,7 @@ class Register extends React.Component {
                             btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
                         />
                     </View> */}
-                    <View style={{ marginTop: 20 }}>
+                    {/* <View style={{ marginTop: 20 }}>
                         <Button
                             // onPress={this.handleClick.bind(this)}
                             // onPress={() => alert('Sorry, we are currently fixing this module!')}
@@ -221,7 +276,7 @@ class Register extends React.Component {
                             Icon={<GoogleIcon />}
                             btnTxtStyles={{ color: "white", fontFamily: fonts.default }}
                         />
-                    </View>
+                    </View> */}
 
                     <View style={{ marginVertical: 20, }}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>

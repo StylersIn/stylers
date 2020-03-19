@@ -4,6 +4,7 @@ import {
     StyleSheet,
     Image,
     TouchableOpacity,
+    ScrollView,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -50,7 +51,6 @@ class ServicePrice extends React.Component {
     }
 
     getDefaultVal = (servicePrice, id, meta) => {
-        console.log('fjfjfhfjfjfhhfhfhfhfhfh')
         // console.log(servicePrice.length > 0 && servicePrice.filter(e => e.subServiceId === id)[0] ? servicePrice.filter(e => e.subServiceId === id)[0][meta] : '')
         return servicePrice.length > 0 && servicePrice.filter(e => e.subServiceId === id)[0] &&
             servicePrice.filter(e => e.subServiceId === id)[0][meta] ? servicePrice.filter(e => e.subServiceId === id)[0][meta].toString() : '';
@@ -65,10 +65,11 @@ class ServicePrice extends React.Component {
             <View style={{ flex: 1 }}>
                 <SafeAreaView style={{ flex: 1, }}>
                     <Header
-                        hamburger={true}
+                        // hamburger={true}
+                        close
                         title={service ? service.name : ''}
                     />
-                    <View style={styles.container}>
+                    <ScrollView contentContainerStyle={styles.container}>
                         <View style={{ width: "80%", }}>
                             <Text style={styles.basic__1}>Help us with a price in NGN for each service</Text>
                         </View>
@@ -131,7 +132,7 @@ class ServicePrice extends React.Component {
                                 </View>
                             </View>
                         </>}
-                    </View>
+                    </ScrollView>
                 </SafeAreaView>
             </View>
         )
@@ -140,7 +141,7 @@ class ServicePrice extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         paddingHorizontal: 20,
     },
     child__container: {

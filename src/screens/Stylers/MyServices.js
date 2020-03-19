@@ -72,9 +72,9 @@ class MyServices extends React.Component {
                     <View style={styles.container}>
                         <View style={{ padding: 0, }}>
                             <Header
-                                hamburger={true}
+                                hamburger
                                 title={"My Services"}
-                                action={<Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>EDIT</Text>}
+                                // action={<Text style={{ fontFamily: fonts.bold, color: colors.pink, }}>EDIT</Text>}
                             />
                         </View>
 

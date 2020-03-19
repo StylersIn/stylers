@@ -141,7 +141,7 @@ export const updateLocation = location => {
     }
 };
 
-export const updateAppointmentStatus = (appointmentId, status) => (console.log(appointmentId, status), {
+export const updateAppointmentStatus = (appointmentId, status) => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/appointment/status/${status}`,
         method: 'PUT',
@@ -303,7 +303,7 @@ export const addStylerData = data => {
     }
 };
 
-export const addRating = data => (console.log(data), {
+export const addRating = data => ({
     [RSAA]: {
         endpoint: `${config.api.host}/api/appointment/rating`,
         method: 'PUT',

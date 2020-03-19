@@ -14,7 +14,7 @@ export const addService = credentials => ({
             constants.ADD_SERVICE,
             {
                 type: constants.ADD_SERVICE_SUCCESS,
-                payload: (action, state, response) => response.json().then(credentials => (console.log(credentials), {
+                payload: (action, state, response) => response.json().then(credentials => ({
                     credentials,
                 }))
             },
@@ -45,7 +45,7 @@ export const listService = (pageSize = 10, pageNumber = 1) => ({
             constants.LIST_SERVICE,
             {
                 type: constants.LIST_SERVICE_SUCCESS,
-                payload: (action, state, response) => response.json().then(credentials => (console.log(credentials), {
+                payload: (action, state, response) => response.json().then(credentials => ({
                     credentials,
                 }))
             },
@@ -75,7 +75,7 @@ export const getSubServices = (serviceId) => ({
             constants.LIST_SUB_SERVICE,
             {
                 type: constants.LIST_SUB_SERVICE_SUCCESS,
-                payload: (action, state, response) => response.json().then(response => (console.log(response), {
+                payload: (action, state, response) => response.json().then(response => ({
                     response,
                 }))
             },

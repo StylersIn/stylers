@@ -14,7 +14,6 @@ import Text from '../../config/AppText';
 import { RatingIcon, BankIcon, ClientIcon } from './AppointmentAssets';
 
 export default function (props) {
-    console.log(props)
     const appnts = props.appointments && props.appointments.filter(e => e.completed === true) || {};
     return (
         <View style={{ flex: 1, }}>

@@ -25,7 +25,6 @@ class Home extends React.Component {
 
     componentDidMount() {
         AsyncStorage.getItem('oneSignalUserId', (err, Id) => {
-            alert(Id)
             if (Id) {
                 this.props.updateProfile({ oneSignalUserId: Id });
             }

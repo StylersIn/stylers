@@ -5,8 +5,17 @@ export default function registerReducer(state = {}, action) {
         case constants.REGISTER:
             return Object.assign({}, state, {
                 isProcessing: true,
+                message: undefined,
+                created: undefined,
             })
         case constants.REGISTER_SUCCESS:
+            if (action.payload.response.success == false) {
+                return {
+                    ...state,
+                    message: action.payload.response.message,
+                    created: false,
+                }
+            }
             return {
                 ...state,
                 isProcessing: false,

@@ -80,7 +80,6 @@ export function getAddressPredictions() {
 
 //get selected address
 export function getSelectedAddress(payload) {
-    console.log(payload)
     return (dispatch, store) => {
         RNGooglePlaces.lookUpPlaceByID(payload)
             .then((results) => {

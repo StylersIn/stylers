@@ -51,7 +51,7 @@ class Verify extends React.Component {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, }}>
                 <View style={styles.container}>
-                    <Text style={{ textAlign: 'center', fontFamily: fonts.bold, fontSize: 20, padding: 30, }}>Enter the 4-digit code sent to your email</Text>
+                    <Text style={{ textAlign: 'center', fontFamily: fonts.bold, fontSize: 20, padding: 30, }}>Enter the 4-digit code sent to your phone</Text>
 
                     {/* <Form style={{ width: '100%', marginTop: 50, }}>
                         <Item floatingLabel>

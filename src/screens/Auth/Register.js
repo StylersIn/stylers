@@ -51,8 +51,8 @@ class Register extends React.Component {
             this.props.navigation.navigate('Verify', { email: this.email })
             // this.props.navigation.dispatch(NavigationService.resetAction('Verify'));
         }
-        if (nextProps.user.error && nextProps.user.error != this.props.user.error) {
-            this.showErr(nextProps.user.error);
+        if (nextProps.register.message && nextProps.register.message != this.props.register.message) {
+            this.showErr(nextProps.register.message);
         }
     }
 
@@ -229,9 +229,9 @@ class Register extends React.Component {
                         />
                     </View>
 
-                    <View style={{ alignItems: "center", paddingVertical: 10 }}>
+                    {/* <View style={{ alignItems: "center", paddingVertical: 10 }}>
                         <Text style={{ fontFamily: fonts.bold }}>OR</Text>
-                    </View>
+                    </View> */}
 
                     {/* <View>
                         <Button

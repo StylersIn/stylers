@@ -291,14 +291,14 @@ class ServiceDetails extends React.Component {
                                 />
                             </View>
 
-                            <View>
+                            {/* <View>
                                 <Button
                                     btnTxt={"Pay at Point of Service"}
                                     size={"lg"}
                                     styles={{ backgroundColor: colors.white, borderWidth: 1, borderColor: "#000000" }}
                                     btnTxtStyles={{ color: colors.black, fontFamily: fonts.bold }}
                                 />
-                            </View>
+                            </View> */}
                         </ScrollView>
                     </Modal>
                 </View> : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

@@ -60,9 +60,11 @@ class NoDebit extends React.Component {
             this.completeTransaction();
         }
         if (prevProps.booked && prevProps.booked !== this.props.booked) {
+            const { stylerData, } = this.props;
+            let styler = stylerData;
             notify('Payment Successful', 'You have successfully made payment and your request is being processed.');
             this.setState({ isVisible: true });
-            // this.props.socket.emit('appointmentBooked', styler._id)
+            this.props.socket.emit('appointmentBooked', styler.userId.publicId)
         }
         if (prevProps.error && prevProps.error != this.props.error) {
             alert(prevProps.error);
@@ -73,7 +75,8 @@ class NoDebit extends React.Component {
         const { stylerData, } = this.props;
         let styler = stylerData;
         var req = {
-            stylerId: styler.userId._id,
+            stylerId: styler._id,
+            stylerUserId: styler.userId._id,
             services: this.props.services,
             scheduledDate: this.props.date,
             totalAmount: styler.totalAmt,
@@ -144,18 +147,18 @@ class NoDebit extends React.Component {
                                                 <Text style={{ fontSize: 18, fontFamily: fonts.bold, marginLeft: 15, alignSelf: 'center', }}>{`**** **** **** ${card.cardNumber}`}</Text>
                                             </View>
                                         </TouchableOpacity>)}
-                                    </ScrollView>
 
-                                    <View style={{ marginTop: 50, }}>
-                                        <Button
-                                            onPress={() => this.chargeCard()}
-                                            btnTxt={"Pay"}
-                                            loading={this.state.isProcessing}
-                                            disabled={!this.state.selectedCard ? true : false}
-                                            size={"lg"}
-                                            btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                                        />
-                                    </View>
+                                        <View style={{ flex: 1, marginTop: 50, }}>
+                                            <Button
+                                                onPress={() => this.chargeCard()}
+                                                btnTxt={"Pay"}
+                                                loading={this.state.isProcessing}
+                                                disabled={!this.state.selectedCard ? true : false}
+                                                size={"lg"}
+                                                btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
+                                            />
+                                        </View>
+                                    </ScrollView>
                                 </> : <>
                                         <View style={{ position: "absolute", right: 0, padding: 20, zIndex: 1, }}>
                                             <TouchableOpacity
@@ -264,6 +267,7 @@ const mapStateToProps = state => ({
     services: state.styler.selectedService,
     booked: state.appointment.booked,
     error: state.appointment.error,
+    socket: state.socket,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

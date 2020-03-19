@@ -43,12 +43,12 @@ class Payment extends React.Component {
     }
 
     UNSAFE_componentWillReceiveProps(prevProps) {
-        const { navigation } = this.props;
-        let styler = navigation.getParam('styler', '');
+        const { navigation, stylerData, } = this.props;
+        let styler = stylerData;
         if (prevProps.booked && prevProps.booked !== this.props.booked) {
             notify('Payment Successful', 'You have successfully made payment and your request is being processed.');
             this.setState({ isVisible: true });
-            this.props.socket.emit('appointmentBooked', styler._id)
+            this.props.socket.emit('appointmentBooked', styler.userId.publicId)
         }
     }
 
@@ -71,7 +71,8 @@ class Payment extends React.Component {
                     this.showToast(`Payment Successful ${'\n'} Please wait patiently while we complete your transaction...`, toastType.success, 3000);
 
                     var req = {
-                        stylerId: styler.userId._id,
+                        stylerId: styler._id,
+                        stylerUserId: styler.userId._id,
                         services: this.props.services,
                         scheduledDate: this.props.date,
                         totalAmount: styler.totalAmt,

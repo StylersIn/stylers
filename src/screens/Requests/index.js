@@ -5,6 +5,7 @@ import {
     SafeAreaView,
     ScrollView,
     StatusBar,
+    RefreshControl,
 } from 'react-native';
 import {
     Icon,
@@ -102,6 +103,12 @@ class Requests extends React.Component {
         this.setState({ accept: true, key: 'accept' })
     }
 
+    _onRefresh = () => {
+        this.setState({ refreshing: true });
+        this.props.listStylerRequests();
+        this.props.getStats();
+    }
+
     // declineAppointment = () => {
     //     this.setState({ isProcessing: true })
     //     // this.props.acceptAppointment(appointment._id);
@@ -116,7 +123,15 @@ class Requests extends React.Component {
                     <Spinner style={{ alignItems: "center" }} isVisible={true} size={80} color={colors.pink} />
                 </View>}
                 <SafeAreaView style={{ flex: 1 }}>
-                    <ScrollView contentContainerStyle={styles.container}>
+                    <ScrollView
+                        contentContainerStyle={styles.container}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this._onRefresh}
+                            />
+                        }
+                    >
                         <View>
                             <Header
                                 hamburger={this.props.role === roles.styler ? true : false}
@@ -166,7 +181,7 @@ class Requests extends React.Component {
                             <View>
                                 <Text style={{ fontFamily: fonts.bold }}>{appointment.userId && appointment.userId.name}</Text>
                                 <View style={{ padding: 2, borderRadius: 6, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
-                                    <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.medium, position: 'relative', bottom: 1, }}>Point of service</Text>
+                                    <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.medium, position: 'relative', bottom: 1, }}>Card Payment</Text>
                                 </View>
                             </View>
                         </View>
@@ -193,12 +208,17 @@ class Requests extends React.Component {
                         <View style={{ marginTop: 15, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Service Cost</Text>
                             {appointment.services && appointment.services.map((r, key) => {
-                                let adult = r.subServiceId.adult || 0;
-                                let child = r.subServiceId.child || 0;
-                                <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
-                                    <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.subServiceId.name}</Text>
-                                    <Text style={{ fontFamily: fonts.bold, fontSize: 16, }}>{`NGN${adult + child}`}</Text>
-                                </View>
+                                let adult = r.adult || 0;
+                                let child = r.child || 0;
+                                let data = appointment.stylerId.services.filter(e => e.subServiceId == r.subServiceId._id),
+                                    filteredData = data.length ? data[0] : {};
+                                let tot = (adult * filteredData.adult) + (child * filteredData.child);
+                                return (
+                                    <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
+                                        <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.subServiceId.name}</Text>
+                                        <Text style={{ fontFamily: fonts.bold, fontSize: 16, }}>{`NGN${tot}`}</Text>
+                                    </View>
+                                )
                             })}
                         </View>
                         <View style={{ marginTop: 40 }}>

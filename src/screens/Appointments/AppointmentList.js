@@ -16,6 +16,7 @@ import { EmptyAppointment } from './AppointmentAssets';
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
 import { getDate, getDay, formatTime } from '../../utils/stylersUtils';
+import * as constants from '../../constants/ActionTypes';
 
 export default function (props) {
     return (
@@ -28,12 +29,14 @@ export default function (props) {
                 {!props.isProcessing ? <View>
                     {props.appointments.length && props.role === roles.user ? <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text> : null}
                     {props.appointments.length && props.role === roles.styler ? <Text style={{ fontSize: 18, fontFamily: fonts.bold }}>Pending Appointments</Text> : null}
-                    {props.appointments.sort().reverse().map((appointment, i) => <TouchableWithoutFeedback
+                    {props.appointments.map((appointment, i) => <TouchableWithoutFeedback
                         key={i}
                         onPress={() => props.showDetails(appointment)}
                         activeOpacity={0.7}
                     >
-                        <Card style={[styles.Input___shadow, appointment.completed ? { borderColor: colors.success } : appointment.accepted ? { borderColor: colors.pink } : { borderColor: '#000000' }]}>
+                        <Card style={[styles.Input___shadow, appointment.status == constants.CANCELLED ? { borderColor: colors.danger } :
+                            appointment.status == constants.COMPLETED ? { borderColor: colors.success } :
+                                appointment.status == constants.ACCEPTED ? { borderColor: colors.pink } : { borderColor: '#000000' }]}>
                             <CardItem style={{ borderRadius: 4 }}>
                                 <View style={{ borderRightWidth: 0.5, borderColor: "#979797", alignItems: "center", paddingRight: 10, }}>
                                     <Text style={{ fontFamily: fonts.bold, fontSize: 18, paddingVertical: 2, }}>{getDate(appointment.scheduledDate)}</Text>

@@ -62,6 +62,15 @@ class Appointment extends React.Component {
                 this.setState({ refreshing: false });
             }
         }
+        if (prevProps.updated && prevProps.updated !== this.props.updated) {
+            alert('Appointment has been cancelled successfully');
+            this.setState({ isVisible: false, isProcessing: false, });
+            if (this.props.role === roles.user) {
+                this.props.listAppointments();
+            } else if (this.props.role === roles.styler) {
+                this.props.listStylerAppointments();
+            } else { }
+        }
     }
 
     showDetails = (appointment) => this.setState({ isVisible: true, appointment, });
@@ -117,7 +126,10 @@ class Appointment extends React.Component {
         } else if (this.props.role === roles.styler) {
             this.props.listStylerAppointments();
         } else { }
+    }
 
+    updateAppointmentStatus(Id, status) {
+        this.props.updateAppointmentStatus(Id, status);
     }
 
     render() {
@@ -149,6 +161,24 @@ class Appointment extends React.Component {
                                 hamburger
                                 title={`Hi ${this.props.username[0]},`}
                             />
+                            <View style={{ paddingHorizontal: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ width: 10, height: 10, borderRadius: 10 / 2, backgroundColor: colors.black }}></View>
+                                    <Text style={{ fontFamily: fonts.medium, position: 'relative', bottom: 4, left: 2 }}>Booked</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ width: 10, height: 10, borderRadius: 10 / 2, backgroundColor: colors.pink }}></View>
+                                    <Text style={{ fontFamily: fonts.medium, position: 'relative', bottom: 4, left: 2 }}>Accepted</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ width: 10, height: 10, borderRadius: 10 / 2, backgroundColor: colors.success }}></View>
+                                    <Text style={{ fontFamily: fonts.medium, position: 'relative', bottom: 4, left: 2 }}>Completed</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ width: 10, height: 10, borderRadius: 10 / 2, backgroundColor: colors.danger }}></View>
+                                    <Text style={{ fontFamily: fonts.medium, position: 'relative', bottom: 4, left: 2 }}>Cancelled</Text>
+                                </View>
+                            </View>
                         </View>
 
                         {this.props.role === roles.styler && <View style={{ paddingLeft: 20 }}>
@@ -185,7 +215,7 @@ class Appointment extends React.Component {
                             <View style={{ position: 'relative', left: 10 }}>
                                 <Text style={{ fontFamily: fonts.bold }}>{appointment.userId && appointment.userId.name}</Text>
                                 <View style={{ padding: 2, borderRadius: 6, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
-                                    <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.medium, position: 'relative', bottom: 1, }}>Point of service</Text>
+                                    <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.medium, position: 'relative', bottom: 1, }}>Card Payment</Text>
                                 </View>
                             </View>
                         </View>
@@ -211,18 +241,24 @@ class Appointment extends React.Component {
                         </View>
                         <View style={{ marginTop: 15, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Service Cost</Text>
-                            {appointment.services && appointment.services.map((r, key) => (
-                                <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
-                                    <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.subServiceId.name}</Text>
-                                    <Text style={{ fontFamily: fonts.bold, fontSize: 16, }}>{`NGN1000`}</Text>
-                                </View>
-                            ))}
+                            {appointment.services && appointment.services.map((r, key) => {
+                                let adult = r.adult || 0;
+                                let child = r.child || 0;
+                                let data = appointment.stylerId.services.filter(e => e.subServiceId == r.subServiceId._id),
+                                    filteredData = data.length ? data[0] : {};
+                                let tot = (adult * filteredData.adult) + (child * filteredData.child);
+                                return (
+                                    <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
+                                        <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.subServiceId.name}</Text>
+                                        <Text style={{ fontFamily: fonts.bold, fontSize: 16, }}>{`NGN${tot}`}</Text>
+                                    </View>
+                                )
+                            })}
                         </View>
                         <View style={{ marginTop: 40 }}>
                             {this.props.role === roles.user && appointment.status == constants.BOOKED && <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
-                                    onPress={() => { }}
-                                    // onPress={() => this.props.navigation.dispatch(NavigationService.resetAction('Home'))}
+                                    onPress={() => this.updateAppointmentStatus(appointment._id, constants.CANCELLED)}
                                     btnTxt={"Cancel Appointment"}
                                     size={"lg"}
                                     styles={{ backgroundColor: colors.white, height: 40, borderWidth: 1, borderColor: "#000000", }}

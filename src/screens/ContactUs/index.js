@@ -61,14 +61,14 @@ class ContactUs extends React.Component {
                                 style={{ fontSize: 24, color: "#606060" }}
                                 type="Ionicons"
                                 name="ios-call" />
-                            <Text style={styles.basic__1}>(+234) 70 1235 3578</Text>
+                            <Text style={styles.basic__1}>(+234) 81 4555 8251</Text>
                         </View>
                         <View style={{ flexDirection: "row" }}>
                             <Icon
                                 style={{ fontSize: 24, color: "#606060" }}
                                 type="Ionicons"
                                 name="ios-mail" />
-                            <Text style={styles.basic__1}>support@mobilestylers.com</Text>
+                            <Text style={styles.basic__1}>contact@stylerin.com</Text>
                         </View>
                     </View>
                     <View>
