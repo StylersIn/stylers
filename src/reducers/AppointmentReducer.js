@@ -52,7 +52,7 @@ export default function appointmentReducer(state = initialState, action) {
                 isProcessing: false,
                 requests: action.payload
                     && action.payload.response
-                    && action.payload.response.data,
+                    && action.payload.response.data.sort().reverse(),
             }
         case constants.LIST_REQUESTS_FAILURE:
             return {

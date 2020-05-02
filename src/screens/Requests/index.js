@@ -39,9 +39,9 @@ class Requests extends React.Component {
             accept: false,
             key: '',
         }
-        this.props.socket.on('appointmentBooked.send', () => {
-            notify('New Appointment!!!', 'Hi there! You have a new appointment.');
-        })
+        // this.props.socket.on('appointmentBooked.send', () => {
+        //     notify('New Appointment!!!', 'Hi there! You have a new appointment.');
+        // })
     }
 
     static navigationOptions = {
@@ -51,11 +51,15 @@ class Requests extends React.Component {
     }
 
     componentDidMount() {
-        AsyncStorage.getItem('oneSignalUserId', (err, Id) => {
-            if (Id) {
-                this.props.updateProfile({ oneSignalUserId: Id });
-            }
-        })
+        const { user: { oneSignalId }, } = this.props;
+        if (!oneSignalId) {
+            AsyncStorage.getItem('oneSignalUserId', (err, Id) => {
+                if (Id) {
+                    this.props.updateOneSignal({ oneSignalUserId: Id });
+                }
+            })
+        }
+        return this.props.updateOneSignal({ oneSignalUserId: oneSignalId });
     }
 
     UNSAFE_componentWillReceiveProps(prevProps) {

@@ -33,6 +33,8 @@ import EditProfileScreen from '../screens/EditProfile';
 import ChangePasswordScreen from '../screens/ChangePassword';
 import AddAvatarScreen from '../screens/Auth/AddAvatar';
 import ServicePriceScreen from '../screens/Stylers/ServicePrice';
+import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
+import ConfirmForgotPasswordScreen from '../screens/Auth/ConfirmForgotPassword';
 
 const drawerContentComponents = (props) => (
     <Container style={{ backgroundColor: colors.black }}>
@@ -134,6 +136,8 @@ const AppNavigator = createStackNavigator({
     TrackStyler: TrackStylerScreen,
     EditProfile: EditProfileScreen,
     ChangePassword: ChangePasswordScreen,
+    ForgotPassword: ForgotPasswordScreen,
+    ConfirmForgotPassword: ConfirmForgotPasswordScreen,
 },
     {
         initialRouteName: "Splash",

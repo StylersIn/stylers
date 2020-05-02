@@ -105,18 +105,23 @@ class Appointment extends React.Component {
     }
 
     beginService = () => {
-        if (this.props.location) {
-            return this.navigateToMap();
-        }
-        else {
-            this.props.getCurrentLocation();
-        }
+        this.navigateToMap();
+        // if (this.props.location) {
+        //     return this.navigateToMap();
+        // }
+        // else {
+        //     this.props.getCurrentLocation();
+        // }
         this.setState({ isProcessing: true, })
     }
 
     trackStyler = () => {
-        this.props.getCurrentLocation();
+        // this.props.getCurrentLocation();
         this.setState({ isProcessing: true, })
+        setTimeout(() => {
+            this.navigateToMap();
+            this.setState({ isProcessing: false, })
+        }, 2000);
     }
 
     _onRefresh = () => {
@@ -285,7 +290,8 @@ class Appointment extends React.Component {
                                     styles={{ height: 40, backgroundColor: colors.black, }}
                                     btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                 />
-                            </View> : !this.IsDateInPast(appointment.scheduledDate) ? <View style={{ marginTop: 10, width: '100%' }}>
+                            </View> : !this.IsDateInPast(appointment.scheduledDate) ? null : null}
+                            {/* <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
                                     onPress={() => alert('module disabled...')}
                                     btnTxt={"Reschedule"}
@@ -293,10 +299,10 @@ class Appointment extends React.Component {
                                     styles={{ height: 40, }}
                                     btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                 />
-                            </View> : null}
+                            </View> */}
                             <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
-                                    onPress={() => Linking.openURL(`whatsapp://send?text=hello&phone=${appointment.stylerId.phoneNumber}`)}
+                                    onPress={() => Linking.openURL(`whatsapp://send?text=hello&phone=+234${appointment.stylerId.phoneNumber}`)}
                                     btnTxt={"Message"}
                                     size={"lg"}
                                     Icon={<WhatsAppIcon />}

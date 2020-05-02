@@ -41,6 +41,11 @@ class FbRegister extends React.Component {
         //     this.setState({ isProcessing: false });
         //     this.props.navigation.dispatch(NavigationService.resetAction('Home'));
         // }
+        if (nextProps.register.created == false && nextProps.register.created != this.props.register.created) {
+            alert(nextProps.register.message);
+            this.setState({ isProcessing: false, });
+            // this.showToast(`Error: ${nextProps.register.message}`, toastType.danger);
+        }
         if (nextProps.register.created && nextProps.register.created != this.props.register.created) {
             const { navigation } = this.props;
             const user = navigation.getParam('user', '');
@@ -61,12 +66,14 @@ class FbRegister extends React.Component {
         let phoneNumber = this.phone;
         let gender = this.gender;
         let password = 'facebook';
+        let socialId = user.id;
         return this.props.doRegister({
-            email,
+            email: email || this.email,
             name,
             phoneNumber,
             gender,
             password,
+            socialId,
             type: 'social-login',
         })
     }
@@ -81,6 +88,8 @@ class FbRegister extends React.Component {
     }
 
     render() {
+        const { navigation } = this.props;
+        const user = navigation.getParam('user', '');
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView contentContainerStyle={styles.container}>
@@ -89,8 +98,20 @@ class FbRegister extends React.Component {
                     </View>
                     {this.state.validationErr && <Text style={{ color: colors.danger }}>One or more fields are missing</Text>}
                     {this.state.pwMatchErr && <Text style={{ color: colors.danger }}>Password and confirm password does not match</Text>}
+                    {!user.email && <Item style={{ marginTop: 10, borderRadius: 5, }}
+                        error={(this.email === undefined) && this.state.validationErr}
+                        regular>
+                        <Input
+                            onChangeText={e => this.email = e}
+                            style={{
+                                fontFamily: fonts.medium
+                                , fontSize: 13
+                            }}
+                            autoCapitalize={'none'}
+                            placeholder='Email address' />
+                    </Item>}
                     <Item style={{ marginTop: 10, borderRadius: 5, }}
-                        error={(this.phone === undefined || this.phone === '') && this.state.validationErr}
+                        error={(this.phone === undefined) && this.state.validationErr}
                         regular>
                         <Input
                             onChangeText={e => this.phone = e}

@@ -46,7 +46,11 @@ class Register extends React.Component {
         // if (nextProps.user.status === false && nextProps.user.status != this.props.user.status) {
         //     this.showToast(nextProps.user.message, toastType.danger);
         // }
-        if (nextProps.register.created && nextProps.register.created != this.props.register.created) {
+        if (nextProps.register.created == false && nextProps.register.created != this.props.register.created) {
+            alert(nextProps.register.message);
+            this.setState({ isProcessing: false, });
+        }
+        if (nextProps.register.created == true && nextProps.register.created != this.props.register.created) {
             this.setState({ isProcessing: false });
             this.props.navigation.navigate('Verify', { email: this.email })
             // this.props.navigation.dispatch(NavigationService.resetAction('Verify'));

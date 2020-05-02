@@ -14,6 +14,8 @@ import {
     Icon,
     Form,
     Textarea,
+    Spinner,
+    List,
 } from 'native-base';
 import Button from '../../components/Button';
 import { fonts, colors, toastType } from '../../constants/DefaultProps';
@@ -23,21 +25,49 @@ import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
 import ShowToast from '../../components/ShowToast';
 import { SafeAreaView } from 'react-navigation';
-// import Toast from 'react-native-root-toast';
 import { LoginButton, AccessToken } from 'react-native-fbsdk';
 import NavigationService from '../../navigation/NavigationService';
+import CountryPicker, { getAllCountries } from 'react-native-country-picker-modal';
 
 const { width, height } = Dimensions.get('screen');
+const COUNTRY = ['NG'];
 
 class Register extends React.Component {
     constructor(props) {
         super(props);
+        let userLocaleCountryCode = 'NG';
+        let cca2 = userLocaleCountryCode;
+        let callingCode = null;
+        getAllCountries()
+            .then((country) => country.filter(e => COUNTRY.includes(e.cca2)))
+            .then((country) => {
+                if (!cca2 || !country) {
+                    this.setState({ callingCode: '234', countryCode: 'NG' })
+                } else {
+                    this.setState({ callingCode: country[0].callingCode[0] })
+                }
+            });
+
         this.state = {
             isProcessing: false,
             validationErr: false,
             mainErr: undefined,
             verify: false,
             social_user: {},
+            country: '',
+            region: '',
+            validationErr: false,
+            cca2,
+            callingCode,
+            visible: false,
+            countryCode: 'NG',
+            withFilter: true,
+            withFlag: true,
+            withCountryNameButton: true,
+            withAlphaFilter: true,
+            withCallingCode: true,
+            withEmoji: true,
+            editable: true,
         }
     }
 
@@ -51,6 +81,10 @@ class Register extends React.Component {
         }
         if (nextProps.user.status && nextProps.user.status != this.props.user.status) {
             this.showToast(nextProps.user.message, toastType.danger);
+        }
+        if (nextProps.styler.created == false && nextProps.styler.created != this.props.styler.created) {
+            alert(nextProps.styler.message);
+            this.setState({ isProcessing: false, });
         }
         if (nextProps.styler.error && nextProps.styler.error != this.props.styler.error) {
             this.showToast(`Error: ${nextProps.user.error}`, toastType.danger);
@@ -93,6 +127,7 @@ class Register extends React.Component {
         )
     }
     addStyler = () => {
+        const { callingCode, countryCode, } = this.state;
         this.setState({ isProcessing: true });
         let email = this.email,
             name = this.name,
@@ -109,15 +144,22 @@ class Register extends React.Component {
         } else if (password !== confirmPassword) {
             this.showToast('Password and Confirm Password does not match', toastType.danger);
         } else {
+            const { selectedAddress, } = this.props;
             return this.props.addStyler({
                 name: name,
                 email: email,
                 phoneNumber: phone,
                 gender,
-                // address: address,
+                address: 'Enugu',
                 description: description,
                 password: password,
                 startingPrice: startingPrice,
+                callingCode,
+                countryCode,
+                city:{
+                    name: selectedAddress.name,
+                    coordinates: [selectedAddress.location.longitude, selectedAddress.location.latitude],
+                },
             })
         }
     }
@@ -131,7 +173,57 @@ class Register extends React.Component {
         this.props.navigation.navigate('StylerService')
     }
 
+    selectCountry(val) {
+        this.setState({ country: val });
+    }
+
+    selectRegion(val) {
+        this.setState({ region: val });
+    }
+    openModal = () => {
+        this.setState({ visible: true });
+    }
+
     render() {
+        const onSelect = value => {
+            // this.props.countryCode(value.cca2);
+            this.setState({ cca2: value.cca2, callingCode: value.callingCode, countryCode: value.cca2, visible: true, });
+        }
+        const onClose = _ => this.setState({ visible: false, });
+        const handleSelectedAddress = (placeID) => {
+            getSelectedAddress(placeID)
+        }
+        const handleSearch = (val) => {
+            getInputData({
+                value: val
+            });
+            getAddressPredictions();
+        }
+        _keyExtractor = (item, index) => item.name;
+        const {
+            visible,
+            callingCode,
+            countryCode,
+            withFilter,
+            withFlag,
+            withCountryNameButton,
+            withAlphaFilter,
+            withCallingCode,
+            withEmoji,
+            editable,
+        } = this.state;
+
+        const {
+            getAddressPredictions,
+            getInputData,
+            inputData,
+            searching,
+            predictions,
+            error,
+            getSelectedAddress,
+            selectedAddress,
+            clearInputData
+        } = this.props;
         return (
             <SafeAreaView style={{ flex: 1, }}>
                 <ScrollView contentContainerStyle={styles.container}>
@@ -142,21 +234,93 @@ class Register extends React.Component {
                         <Input
                             onChangeText={e => this.name = e}
                             style={{ fontFamily: fonts.medium, fontSize: 13 }}
+                            autoCorrect={false}
                             placeholder='Business name' />
                     </Item>
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
                             onChangeText={e => this.email = e}
                             autoCapitalize={"none"}
+                            autoCorrect={false}
                             style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Email' />
                     </Item>
-                    <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
+                    <Item style={{ marginTop: 10, borderRadius: 5, height: 50, }} regular>
+                        <TouchableOpacity
+                            style={styles.inputAddon}
+                            onPress={this.openModal}
+                        >
+                            <CountryPicker
+                                {...{
+                                    countryCode,
+                                    withFilter,
+                                    withFlag,
+                                    // withCountryNameButton,
+                                    withAlphaFilter,
+                                    withCallingCode,
+                                    withEmoji,
+                                    onSelect,
+                                    onClose,
+                                }}
+                                visible={visible}
+                            />
+                            <Text style={styles.addonTxt}>{callingCode}</Text>
+                            <Icon style={styles.addonTxt} name="ios-arrow-down" />
+                        </TouchableOpacity>
                         <Input
                             onChangeText={e => this.phone = e}
                             style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Phone Number' />
                     </Item>
+                    <Item style={{ marginTop: 10, borderRadius: 5, height: 50, }} regular>
+                        <Input
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
+                            onChangeText={handleSearch.bind(this)}
+                            placeholder={'Enter city name'}
+                            autoCorrect={false}
+                            placeholderTextColor='#9BABB4'
+                            autoFocus={false}
+                            editable={selectedAddress ? false : true}
+                            value={!inputData && selectedAddress ? selectedAddress.name : inputData}
+                        />
+                        {searching && <View style={{ marginRight: 10, }}>
+                            <Spinner style={{ fontSize: 10, }} size='small' />
+                        </View>}
+                        {selectedAddress && <TouchableOpacity
+                            onPress={() => clearInputData()}
+                            activeOpacity={0.7}
+                            style={{ marginRight: 10, zIndex: 1000, elevation: 8, }}>
+                            <Icon style={{ fontSize: 30 }} name="ios-close" />
+                        </TouchableOpacity>}
+                    </Item>
+                    {predictions && <ScrollView contentContainerStyle={{ width: '100%', height: 200, position: 'relative', backgroundColor: "#FCFCFC", borderRadius: 5, }}>
+                        {error && !searching && <View style={{ width: "90%", marginTop: 30, alignItems: "center", padding: 20, flexDirection: "row" }}>
+                            <Icon type='Ionicons' name='ios-information-circle-outline' />
+                            <Text style={{ paddingLeft: 20 }}>{error}</Text>
+                        </View>}
+
+                        <View style={styles.searchResultsWrapper}>
+                            <List
+                                dataArray={predictions}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderRow={(item) =>
+                                    <TouchableOpacity
+                                        activeOpacity={0.7}
+                                        onPress={() => handleSelectedAddress(item.placeID)}
+                                        style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#ffffff', marginTop: 2, padding: 20, }}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Icon style={{ fontSize: 20, color: colors.pink }} name='ios-pin' />
+                                            <View style={{ paddingLeft: 30, paddingRight: 10 }}>
+                                                <Text style={styles.primaryText}>{item.primaryText}</Text>
+                                                <Text style={styles.secondaryText}>{item.secondaryText}</Text>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                }
+                            />
+                        </View>
+                    </ScrollView>}
+                    
                     <View style={{ marginVertical: 8 }}>
                         <RadioGroup
                             size={18}
@@ -178,12 +342,6 @@ class Register extends React.Component {
                             </RadioButton>
                         </RadioGroup>
                     </View>
-                    {/* <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
-                        <Input
-                            onChangeText={e => this.address = e}
-                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
-                            placeholder='Address' />
-                    </Item> */}
                     <Form style={{ marginTop: 10, }} regular>
                         <Textarea
                             onChangeText={e => this.description = e}
@@ -296,12 +454,44 @@ const styles = StyleSheet.create({
         paddingBottom: 30,
         marginTop: 50,
         justifyContent: "center",
-    }
+    },
+    inputAddon: {
+        height: '100%',
+        width: 95,
+        backgroundColor: colors.pink,
+        // borderTopLeftRadius: 50 / 2,
+        // borderBottomLeftRadius: 50 / 2,
+        justifyContent: 'space-evenly',
+        paddingHorizontal: 15,
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    addonTxt: {
+        color: colors.white,
+        fontSize: 12,
+        fontFamily: fonts.medium,
+    },
+    primaryText: {
+        fontFamily: fonts.bold,
+        color: '#222B2F',
+        fontSize: 13,
+        marginBottom: 3
+    },
+    secondaryText: {
+        color: '#9BABB4',
+        fontSize: 11,
+    },
 })
 
 const mapStateToProps = state => ({
     styler: state.styler,
     user: state.user,
+    location: state.map.location,
+    inputData: state.map.inputData,
+    searching: state.map.searching,
+    predictions: state.map.predictions,
+    selectedAddress: state.map.selectedAddress,
+    error: state.map.error,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

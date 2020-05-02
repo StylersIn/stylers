@@ -36,8 +36,10 @@ class Settings extends React.Component {
     }
 
     signOut = async () => {
+        const { user: { current: { publicId }, oneSignalId }, } = this.props;
         try {
-            await this.props.logout();
+            await this.props.socket.emit('removeOneSignalID', { publicId, oneSignalUserId: oneSignalId });
+            await this.props.logout(oneSignalId);
             NavigationService.navigate('Auth');
         } catch (error) {
             console.log(error);
@@ -129,6 +131,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     user: state.user,
     styler: state.styler,
+    socket: state.socket,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

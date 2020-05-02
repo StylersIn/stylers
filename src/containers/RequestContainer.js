@@ -58,6 +58,7 @@ const mapStateToProps = state => ({
     updated: state.appointment.updated,
     stats: state.styler.stats,
     socket: state.socket,
+    user: state.user,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

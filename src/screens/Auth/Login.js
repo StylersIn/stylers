@@ -45,8 +45,11 @@ class Login extends React.Component {
         }
         if (nextProps.user.status == false && nextProps.user.status != this.props.user.status) {
             // this.showToast(`Error: ${nextProps.user.message}`, toastType.danger);
-            this.props.navigation.navigate('Verify', { email: this.email || this.state.social_user.email })
             this.setState({ isProcessing: false, });
+            return this.props.navigation.navigate('Verify', { 
+                email: this.email || this.state.social_user.id ,
+                key: this.email ? 'email' : 'socialId'
+            })
         }
         if (nextProps.styler.status != this.props.styler.status) {
             if (typeof nextProps.styler.status !== 'undefined') {
@@ -117,7 +120,7 @@ class Login extends React.Component {
                 this.setState({ social_user: json });
                 setTimeout(() => {
                     console.log(json.email)
-                    this.props.verifySocialMediaLogin({ email: json.email });
+                    this.props.verifySocialMediaLogin({ socialId: json.id });
                 }, 0);
             })
             .catch(() => {
@@ -127,7 +130,7 @@ class Login extends React.Component {
 
     fbLogin = () => {
         this.setState({ verify: true })
-        LoginManager.logInWithPermissions(['public_profile', 'email', 'user_friends']).then(
+        LoginManager.logInWithPermissions(['public_profile', 'email']).then(
             (result) => {
                 if (result.isCancelled) {
                     this.setState({ verify: false })
@@ -234,9 +237,14 @@ class Login extends React.Component {
                         onPress={this._signIn}
                         disabled={this.state.isSigninInProgress} /> */}
 
-                    <View style={{ marginVertical: 20, }}>
+                    <View style={{ marginTop: 20, }}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
                             <Text>Dont't have an account? Sign up</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ marginTop: 10, }}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgotPassword')}>
+                            <Text style={{ color: colors.danger }}>Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
                 </>}

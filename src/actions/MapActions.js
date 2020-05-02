@@ -55,7 +55,8 @@ export function getAddressPredictions() {
         let userInput = store().map.inputData;
         RNGooglePlaces.getAutocompletePredictions(userInput,
             {
-                country: "NG"
+                // country: "NG",
+                type: "political",
             }
         )
             .then((results) =>
@@ -131,11 +132,18 @@ export const updateStylerCurrentLocation = (location) => ({
     }
 })
 
-export function updateDriverLocation(location) {
+export function updateUserStylerLocation(location) {
     return (dispatch, store) => {
         dispatch({
-            type: constants.UPDATE_DRIVER_LOCATION,
+            type: constants.UPDATE_USER_STYLER_LOCATION,
             payload: location,
         })
+    }
+}
+
+export function clearInputData(payload) {
+    return {
+        type: constants.CLEAR_INPUT,
+        payload
     }
 }

@@ -49,7 +49,7 @@ export default ServiceStylers = (props) => {
                                         <Text style={{ fontFamily: fonts.bold, fontSize: 25 }}>{item.name[0]}</Text>
                                     </View>}
                                 </Left>
-                                <Body style={{ position: "relative", right: 10, flexDirection: 'column', justifyContent: 'space-evenly', }}>
+                                <Body style={{ position: "relative", right: 0, flexDirection: 'column', justifyContent: 'space-evenly', }}>
                                     <View>
                                         <Text style={{ fontFamily: fonts.bold }}>{item.name}</Text>
                                     </View>

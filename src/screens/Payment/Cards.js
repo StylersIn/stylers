@@ -62,7 +62,7 @@ class NoDebit extends React.Component {
         if (prevProps.booked && prevProps.booked !== this.props.booked) {
             const { stylerData, } = this.props;
             let styler = stylerData;
-            notify('Payment Successful', 'You have successfully made payment and your request is being processed.');
+            // notify('Payment Successful', 'You have successfully made payment and your request is being processed.');
             this.setState({ isVisible: true });
             this.props.socket.emit('appointmentBooked', styler.userId.publicId)
         }

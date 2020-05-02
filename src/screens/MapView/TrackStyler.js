@@ -2,21 +2,17 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, } from 'react-native';
+import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, Vibration, Image, } from 'react-native';
 import MapView, { ProviderPropType, Marker, AnimatedRegion } from 'react-native-maps';
 import Text from '../../config/AppText';
 import { Thumbnail, Card, CardItem, Icon, Spinner, Textarea } from 'native-base';
-import service__1 from '../../../assets/imgs/service__1.jpeg';
 import { fonts, colors, MAP_API_KEY } from '../../constants/DefaultProps';
 import { ComingIcon, PickUpIcon, } from './MapAssets';
-import MapViewDirections from 'react-native-maps-directions';
-import styler_location from '../../../assets/imgs/styler-location.jpg';
 import styler_img from '../../../assets/imgs/styler_img.png';
 import Geocoder from 'react-native-geocoding';
 import { notify } from '../../services';
 import BottomSheet from './BottomSheet';
 import NavigationService from '../../navigation/NavigationService';
-import { pickUp } from '../Assets';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import { Rating, AirbnbRating } from 'react-native-ratings';
@@ -33,7 +29,9 @@ const ASPECT_RATIO = width / height;
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
 const LATITUDE_DELTA = 0.0922;
+const LATITUDE_DELTA_PLUS = 0.02;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const LONGITUDE_DELTA_PLUS = LATITUDE_DELTA_PLUS * ASPECT_RATIO;
 const DEFAULT_PADDING = { top: 100, right: 100, bottom: 100, left: 100 };
 const DEFAULT_PADDING_ANDROID = { top: 600, right: 600, bottom: 600, left: 600 };
 const HEADER_HEIGHT = 30;
@@ -43,18 +41,18 @@ class StylerMap extends React.Component {
         super(props);
         this.rating = 5;
         this.region = {
-            latitude: this.props.location.coords.latitude,
-            longitude: this.props.location.coords.longitude,
+            latitude: 0,
+            longitude: 0,
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
         },
-            this.props.socket.on('driverLocation', (location) => {
+            this.props.socket.on('stylerLocation.send', (location) => {
                 // console.log(location);
                 // this.fitAllMarkers({
                 //     latitude: parseFloat(location.latitude),
                 //     longitude: parseFloat(location.longitude)
                 // })
-                this.props.updateDriverLocation(location);
+                this.props.updateUserStylerLocation(location);
                 // this.setState({ driverLocation: location, }, () => {
                 //     // if (!this.state.fitOnce) {
                 //     //     this.fitAllMarkersMain();
@@ -64,13 +62,14 @@ class StylerMap extends React.Component {
             })
         this.props.socket.on('reviews.send', () => {
             // console.log('show review');
+            Vibration.vibrate();
             this.setState({ showReview: true, })
         })
     }
     state = {
         region: {
-            latitude: this.props.location.coords.latitude,
-            longitude: this.props.location.coords.longitude,
+            latitude: 0,
+            longitude: 0,
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
         },
@@ -82,7 +81,7 @@ class StylerMap extends React.Component {
             latitudeDelta: 0,
             longitudeDelta: 0
         }),
-        driverLocation: undefined,
+        userStylerLocation: undefined,
         fitOnce: false,
         completeService: false,
         ready: true,
@@ -95,8 +94,18 @@ class StylerMap extends React.Component {
         this.props.getCurrentLocation();
         this.getCurrentPosition();
         this.setState({ appointment: this.props.navigation.getParam('appointment', '') }, () => {
+            // setTimeout(() => {
+            //     this.fitAllMarkers();
+            // }, 1000);
+            const { appointment } = this.state;
+            var region = {
+                latitude: parseFloat(appointment.pickUp.latitude),
+                longitude: parseFloat(appointment.pickUp.longitude),
+                latitudeDelta: LATITUDE_DELTA_PLUS,
+                longitudeDelta: LONGITUDE_DELTA_PLUS,
+            }
             setTimeout(() => {
-                this.fitAllMarkers();
+                this.map.animateToRegion(region);
             }, 1000);
         })
     }
@@ -109,11 +118,11 @@ class StylerMap extends React.Component {
             this.setState({ isProcessing: false, })
             alert('An error occured: ' + prevProps.error)
         }
-        if (prevProps.driverLocation && prevProps.driverLocation != this.props.driverLocation) {
+        if (prevProps.userStylerLocation && prevProps.userStylerLocation != this.props.userStylerLocation) {
             const { count, } = this.state;
             var region = {
-                latitude: prevProps.driverLocation.latitude,
-                longitude: prevProps.driverLocation.longitude,
+                latitude: prevProps.userStylerLocation.latitude,
+                longitude: prevProps.userStylerLocation.longitude,
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
             }
@@ -124,7 +133,7 @@ class StylerMap extends React.Component {
                 console.log('we start again');
                 this.setState({ count: 0, }, () => this.map.animateToRegion(region));
             }
-            this.setState({ driverLocation: region });
+            this.setState({ userStylerLocation: region });
             this.setState(prevState => {
                 return { count: prevState.count + 1 }
             })
@@ -171,7 +180,7 @@ class StylerMap extends React.Component {
                     //TODO: better design
                     alert(error.message);
                 },
-                { enableHighAccuracy: true, timeout: 20000, }
+                { enableHighAccuracy: false, timeout: 20000, }
             );
         } catch (e) {
             alert(e.message || "");
@@ -245,7 +254,7 @@ class StylerMap extends React.Component {
 
     render() {
         const { appointment } = this.state;
-        const { driverLocation } = this.props;
+        const { userStylerLocation } = this.props;
         return (
             <View style={styles.container}>
                 {this.state.completeService && <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, elevation: 5, zIndex: 1000, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)', }}>
@@ -291,14 +300,14 @@ class StylerMap extends React.Component {
                         key={appointment.stylerId.publicId}
                         coordinate={this.props.driverLocation}
                     />} */}
-                    {driverLocation && (
+                    {userStylerLocation && (
                         <>
                             <MapView.Marker
-                                coordinate={driverLocation}
+                                coordinate={userStylerLocation}
                                 title={'coming...'}>
-                                <ComingIcon
-                                    width={50}
-                                    height={40}
+                                <Image
+                                    style={{ width: 60, height: 60, resizeMode: 'contain', }}
+                                    source={styler_img}
                                 />
                             </MapView.Marker>
                         </>
@@ -439,7 +448,7 @@ const mapStateToProps = state => ({
     error: state.appointment.error,
     current: state.user.current,
     socket: state.socket,
-    driverLocation: state.map.driverLocation,
+    userStylerLocation: state.map.userStylerLocation,
     rating: state.appointment.rating,
     error: state.appointment.error,
 })

@@ -2,7 +2,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, } from 'react-native';
+import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, Image, } from 'react-native';
 import MapView, { ProviderPropType, Marker, AnimatedRegion } from 'react-native-maps';
 import Text from '../../config/AppText';
 import { Thumbnail, Card, CardItem, Icon, Spinner, Textarea } from 'native-base';
@@ -52,8 +52,8 @@ class StylerMap extends React.Component {
     }
     state = {
         region: {
-            latitude: this.props.location.coords.latitude,
-            longitude: this.props.location.coords.longitude,
+            latitude: 0,
+            longitude: 0,
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
         },
@@ -100,7 +100,7 @@ class StylerMap extends React.Component {
             })
         }
 
-        if (prevProps.completed && prevProps.completed !== this.props.completed) {
+        if (prevProps.updated && prevProps.updated !== this.props.updated) {
             alert('Successfully completed')
             if (this.state.appointment.userId.publicId === this.props.current.publicId) {
                 notify('Service Completed', 'Hi there! You just completed this service.');
@@ -127,7 +127,8 @@ class StylerMap extends React.Component {
                 latitude: region.latitude,
                 longitude: region.longitude,
             })
-            setTimeout(() => this.map.animateToRegion(region), 10);
+            this.fitAllMarkers();
+            // setTimeout(() => this.map.animateToRegion(region), 10);
         }
     }
 
@@ -141,6 +142,7 @@ class StylerMap extends React.Component {
                         latitudeDelta: LATITUDE_DELTA,
                         longitudeDelta: LONGITUDE_DELTA,
                     };
+                    this.setState({ region, })
                     this.setRegion(region);
                 },
                 (error) => {
@@ -157,7 +159,7 @@ class StylerMap extends React.Component {
                             Alert.alert("", error.code);
                     }
                 },
-                { enableHighAccuracy: true, timeout: 20000, }
+                { enableHighAccuracy: false, timeout: 20000, }
             );
         } catch (e) {
             alert(e.message || "");
@@ -212,9 +214,9 @@ class StylerMap extends React.Component {
             },
             error => console.log(error),
             {
-                enableHighAccuracy: true,
+                enableHighAccuracy: false,
                 timeout: 20000,
-                maximumAge: 1000,
+                // maximumAge: 1000,
                 distanceFilter: 10
             }
         );
@@ -248,7 +250,7 @@ class StylerMap extends React.Component {
 
     endService = (status) => {
         this.setState({ completeService: true, })
-        this.props.updateAppointmentStatus({ appointmentId: this.state.appointment._id }, constants.COMPLETED);
+        this.props.updateAppointmentStatus(this.state.appointment._id, constants.COMPLETED);
     }
 
     rate = () => {
@@ -285,10 +287,14 @@ class StylerMap extends React.Component {
                     />}
                     {region && appointment && <Marker
                         title={appointment.stylerId.name}
-                        image={styler_img}
                         key={appointment.stylerId.publicId}
                         coordinate={region}
-                    />}
+                    >
+                        <Image
+                            style={{ width: 60, height: 60, resizeMode: 'contain', }}
+                            source={styler_img}
+                        />
+                    </Marker>}
 
                     {appointment && <Marker
                         title={'Destination'}
@@ -400,7 +406,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     location: state.map.location,
-    completed: state.appointment.completed,
+    updated: state.appointment.updated,
     currentAddress: state.map.currentAddress,
     error: state.appointment.error,
     current: state.user.current,

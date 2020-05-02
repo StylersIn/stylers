@@ -20,6 +20,7 @@ class Verify extends React.Component {
         token: '',
         isProcessing: false,
         mobile: undefined,
+        error: undefined,
     }
 
     UNSAFE_componentWillReceiveProps(prevProps) {
@@ -35,15 +36,18 @@ class Verify extends React.Component {
     }
 
     verify = () => {
-        this.setState({ isProcessing: true, })
+        const { navigation } = this.props;
+        this.setState({ isProcessing: true, error: undefined, })
         this.props.verifyAccount({
-            email: this.props.navigation.getParam('email', 'test'),
+            email: navigation.getParam('email', 'email'),
+            key: navigation.getParam('key', 'email'),
             token: this.state.token,
         })
     }
 
     showToast = (text, type) => {
-        ShowToast(text, type);
+        // ShowToast(text, type);
+        this.setState({ error: text });
         this.setState({ isProcessing: false });
     }
 
@@ -72,6 +76,9 @@ class Verify extends React.Component {
                         tintColor={colors.pink}
                         keyboardType="numeric"
                     />
+                    {this.state.error && <View style={{ alignItems: 'center', marginTop: 10 }}>
+                        <Text style={{ fontFamily: fonts.medium, fontSize: 14, color: colors.danger, }}>{this.state.error}</Text>
+                    </View>}
                 </View>
                 <View style={{ padding: 30, marginVertical: 10, alignItems: 'center', }}>
                     <Button
@@ -96,7 +103,7 @@ const styles = StyleSheet.create({
     },
     textInputContainer: {
         alignContent: 'center',
-        marginVertical: 50,
+        marginTop: 50,
     }
 })
 

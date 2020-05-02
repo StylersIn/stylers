@@ -207,6 +207,69 @@ export const updateProfile = data => ({
     }
 });
 
+export const updateOneSignal = data => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/update/onesignal`,
+        method: 'PUT',
+        types: [
+            constants.UPDATE_PROFILE,
+            {
+                type: constants.UPDATE_PROFILE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                    oneSignalId: data.oneSignalUserId,
+                }))
+            },
+            {
+                type: constants.UPDATE_PROFILE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(data),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const removeID = data => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/remove/onesignal`,
+        method: 'PUT',
+        types: [
+            constants.UPDATE_PROFILE,
+            {
+                type: constants.UPDATE_PROFILE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.UPDATE_PROFILE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(data),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
 export const fetchCards = _ => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/cards`,
@@ -268,12 +331,77 @@ export const changePassword = data => ({
     }
 });
 
-export const logout = _ => {
+export const sendConfirmationCode = data => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/forgotPasswordToken`,
+        method: 'PUT',
+        types: [
+            constants.SEND_CONFIRMATION_CODE,
+            {
+                type: constants.SEND_CONFIRMATION_CODE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.SEND_CONFIRMATION_CODE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
+        body: JSON.stringify(data),
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const confirmPasswordChange = data => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/forgotPassword`,
+        method: 'POST',
+        types: [
+            constants.CONFIRM_PASSWORD_CHANGE,
+            {
+                type: constants.CONFIRM_PASSWORD_CHANGE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.CONFIRM_PASSWORD_CHANGE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
+        body: JSON.stringify(data),
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const logout = data => {
     return (dispatch) => {
         dispatch({ type: constants.LOGOUT })
         AsyncStorage.clear((err) => {
             if (!err) {
-                dispatch({ type: constants.LOGOUT, payload: 'loggedOut' })
+                dispatch({ type: constants.LOGOUT, payload: {
+                    meta:'loggedOut',
+                    oneSignalId: data,
+                } })
             }
         })
     }

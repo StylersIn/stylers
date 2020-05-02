@@ -24,8 +24,14 @@ export default function serviceReducer(state = initialState, action) {
         case constants.GET_INPUT:
             return Object.assign({}, state, {
                 searching: true,
-                selectedAddress:undefined,
+                selectedAddress: undefined,
                 inputData: action.payload.value,
+            })
+        case constants.CLEAR_INPUT:
+            return Object.assign({}, state, {
+                searching: false,
+                inputData: undefined,
+                selectedAddress: undefined,
             })
         case constants.GET_ADDRESS_PREDICTIONS:
             return Object.assign({}, state, {
@@ -62,9 +68,9 @@ export default function serviceReducer(state = initialState, action) {
                 updated: undefined,
                 error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             })
-        case constants.UPDATE_DRIVER_LOCATION:
+        case constants.UPDATE_USER_STYLER_LOCATION:
             return Object.assign({}, state, {
-                driverLocation: action.payload,
+                userStylerLocation: action.payload,
             })
         default:
             return state;

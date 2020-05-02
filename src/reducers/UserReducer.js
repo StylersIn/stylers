@@ -132,6 +132,7 @@ export default function userReducer(state = initialState, action) {
             return {
                 ...state,
                 profileUpdated: true,
+                oneSignalId: action.payload.oneSignalId,
             }
         case constants.UPDATE_PROFILE_FAILURE:
             return Object.assign({}, state, {
@@ -139,10 +140,11 @@ export default function userReducer(state = initialState, action) {
                 profileUpdateError: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             })
         case constants.LOGOUT:
-            if (action.payload === 'loggedOut') {
+            if (action.payload && action.payload.meta === 'loggedOut') {
                 return {
                     state: {},
                     loggedOut: true,
+                    oneSignalId: action.payload.oneSignalId,
                 }
             }
             return {
@@ -181,7 +183,38 @@ export default function userReducer(state = initialState, action) {
                 changedPassword: undefined,
                 changePasswordError: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             })
-
+        case constants.SEND_CONFIRMATION_CODE:
+            return Object.assign({}, state, {
+                error: undefined,
+            })
+        case constants.SEND_CONFIRMATION_CODE_SUCCESS:
+            return {
+                ...state,
+                error: undefined,
+                codeSent: true,
+            }
+        case constants.SEND_CONFIRMATION_CODE_FAILURE:
+            return Object.assign({}, state, {
+                cards: undefined,
+                codeSent: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            })
+        case constants.CONFIRM_PASSWORD_CHANGE:
+            return Object.assign({}, state, {
+                error: undefined,
+            })
+        case constants.CONFIRM_PASSWORD_CHANGE_SUCCESS:
+            return {
+                ...state,
+                error: undefined,
+                passwordChanged: true,
+            }
+        case constants.CONFIRM_PASSWORD_CHANGE_FAILURE:
+            return Object.assign({}, state, {
+                cards: undefined,
+                passwordChanged: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            })
         default:
             return state;
     }

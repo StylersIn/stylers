@@ -51,6 +51,7 @@ const mapStateToProps = state => ({
     searching: state.service.searching,
     message: state.service.message,
     resetFilter: state.service.v,
+    user: state.user,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

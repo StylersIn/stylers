@@ -34,7 +34,7 @@ export default function stylerReducer(state = initialState, action) {
             if (!action.payload.response.success) {
                 return {
                     ...state,
-                    status: false,
+                    created: false,
                     message: action.payload.response.message,
                 }
             }

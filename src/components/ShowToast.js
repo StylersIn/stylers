@@ -6,7 +6,7 @@ import { Icon } from 'native-base';
 import Text from '../config/AppText';
 
 const danger = "danger", success = "success", info = "info", warning = "warning";
-const ShowToast = (text, type, duration = 2000) => {
+const ShowToast = (text, type, duration = 3000) => {
     let bgColor = type === danger ? colors.danger :
         type === success ? colors.success :
             type === info ? colors.info :
