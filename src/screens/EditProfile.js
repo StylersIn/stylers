@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-navigation';
 import { ScrollView } from 'react-native-gesture-handler';
 import Header from '../components/Header';
 import Text from '../config/AppText';
-import { fonts, colors } from '../constants/DefaultProps';
+import { fonts, colors, roles } from '../constants/DefaultProps';
 import Button from '../components/Button';
 import ContentLoader, { FacebookLoader, InstagramLoader } from 'react-native-easy-content-loader';
 import NavigationService from '../navigation/NavigationService';
@@ -116,84 +116,85 @@ class EditProfile extends React.Component {
                             title={'Edit Profile'}
                         />
                         <View style={{ alignItems: 'center', paddingHorizontal: 30, }}>
-                            {uri ? <Thumbnail
-                                style={{ width: 100, height: 100, borderRadius: 100 / 2 }}
-                                source={{ uri }}
-                            /> : <Thumbnail
+                            {current.role == roles.styler && <View>
+                                {uri ? <Thumbnail
                                     style={{ width: 100, height: 100, borderRadius: 100 / 2 }}
-                                    source={userData && userData.imageUrl ? { uri: userData.imageUrl } : require('../../assets/imgs/user.png')}
-                                />}
-                            <TouchableOpacity
-                                onPress={this.openGallery}
-                                activeOpacity={0.8}
-                                style={{
-                                    width: 25,
-                                    height: 25,
-                                    borderRadius: 25 / 2,
-                                    backgroundColor: '#ccc',
-                                    position: 'relative',
-                                    justifyContent: 'center',
-                                    bottom: 20,
-                                    left: 30,
-                                }}>
-                                <Icon style={{ fontSize: 25, textAlign: 'center', color: colors.pink }} name="ios-add" />
-                            </TouchableOpacity>
-                            <Text style={{ fontFamily: fonts.bold, marginTop: 10, }}>{userData && userData.name}</Text>
-
+                                    source={{ uri }}
+                                /> : <Thumbnail
+                                        style={{ width: 100, height: 100, borderRadius: 100 / 2 }}
+                                        source={userData && userData.imageUrl ? { uri: userData.imageUrl } : require('../../assets/imgs/user.png')}
+                                    />}
+                                <TouchableOpacity
+                                    onPress={this.openGallery}
+                                    activeOpacity={0.8}
+                                    style={{
+                                        width: 25,
+                                        height: 25,
+                                        borderRadius: 25 / 2,
+                                        backgroundColor: '#ccc',
+                                        position: 'relative',
+                                        justifyContent: 'center',
+                                        bottom: 20,
+                                        left: 30,
+                                    }}>
+                                    <Icon style={{ fontSize: 25, textAlign: 'center', color: colors.pink }} name="ios-add" />
+                                </TouchableOpacity>
+                                <Text style={{ fontFamily: fonts.bold, marginTop: 10, }}>{userData && userData.name}</Text>
+                            </View>}
                             <Card style={styles.card_shadow}>
-                            <View style={{ marginVertical: 10, marginHorizontal: 20, }}>
-                                <View>
-                                    <View style={{ paddingVertical: 5, }}>
-                                        <Item style={{ marginTop: 10, borderRadius: 5, }} inlineLabel>
-                                            <Input
-                                                onChangeText={e => this.name = e}
-                                                autoCapitalize={'none'}
-                                                defaultValue={userData && userData.name}
-                                                style={{ fontFamily: fonts.medium, fontSize: 14, height: 40, color: '#3E4958', }}
-                                                placeholder='Name' />
-                                        </Item>
+                                <View style={{ marginVertical: 10, marginHorizontal: 20, }}>
+                                    <View>
+                                        <View style={{ paddingVertical: 5, }}>
+                                            <Item style={{ marginTop: 10, borderRadius: 5, }} inlineLabel>
+                                                <Input
+                                                    onChangeText={e => this.name = e}
+                                                    autoCapitalize={'none'}
+                                                    defaultValue={userData && userData.name}
+                                                    style={{ fontFamily: fonts.medium, fontSize: 14, height: 40, color: '#3E4958', }}
+                                                    placeholder='Name' />
+                                            </Item>
+                                        </View>
+                                        {/* <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View> */}
                                     </View>
-                                    {/* <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View> */}
-                                </View>
-                                <View>
-                                    <View style={{ paddingVertical: 5, }}>
-                                        <Item style={{ marginTop: 10, borderRadius: 5, }} inlineLabel>
-                                            <Input
-                                                onChangeText={e => this.email = e}
-                                                autoCapitalize={'none'}
-                                                defaultValue={userData && userData.email}
-                                                style={{ fontFamily: fonts.medium, fontSize: 14, height: 40, color: '#3E4958', }}
-                                                placeholder='Email' />
-                                        </Item>
+                                    <View>
+                                        <View style={{ paddingVertical: 5, }}>
+                                            <Item style={{ marginTop: 10, borderRadius: 5, }} inlineLabel>
+                                                <Input
+                                                    onChangeText={e => this.email = e}
+                                                    autoCapitalize={'none'}
+                                                    defaultValue={userData && userData.email}
+                                                    style={{ fontFamily: fonts.medium, fontSize: 14, height: 40, color: '#3E4958', }}
+                                                    placeholder='Email' />
+                                            </Item>
+                                        </View>
+                                        {/* <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View> */}
                                     </View>
-                                    {/* <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View> */}
-                                </View>
-                                <View>
-                                    <View style={{ paddingVertical: 5, marginBottom: 10, }}>
-                                        <Item style={{ marginTop: 10, borderRadius: 5, }} inlineLabel>
-                                            <Input
-                                                onChangeText={e => this.phoneNumber = e}
-                                                autoCapitalize={'none'}
-                                                defaultValue={userData && userData.phoneNumber}
-                                                style={{ fontFamily: fonts.medium, fontSize: 14, height: 40, color: '#3E4958' }}
-                                                placeholder='Phone' />
-                                        </Item>
+                                    <View>
+                                        <View style={{ paddingVertical: 5, marginBottom: 10, }}>
+                                            <Item style={{ marginTop: 10, borderRadius: 5, }} inlineLabel>
+                                                <Input
+                                                    onChangeText={e => this.phoneNumber = e}
+                                                    autoCapitalize={'none'}
+                                                    defaultValue={userData && userData.phoneNumber}
+                                                    style={{ fontFamily: fonts.medium, fontSize: 14, height: 40, color: '#3E4958' }}
+                                                    placeholder='Phone' />
+                                            </Item>
+                                        </View>
+                                    </View>
+                                    <View style={{ marginTop: 20 }}>
+                                        <Button
+                                            onPress={this.updateProfile}
+                                            size={"lg"}
+                                            loading={this.state.isProcessing}
+                                            btnTxt={"Save"}
+                                            styles={{ backgroundColor: colors.google }}
+                                            btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
+                                        />
                                     </View>
                                 </View>
-                                <View style={{ marginTop: 20 }}>
-                                    <Button
-                                        onPress={this.updateProfile}
-                                        size={"lg"}
-                                        loading={this.state.isProcessing}
-                                        btnTxt={"Save"}
-                                        styles={{ backgroundColor: colors.google }}
-                                        btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                                    />
-                                </View>
-                            </View>
-                        </Card>
+                            </Card>
                         </View>
-                        
+
                         {/* <View style={{ flex: 1, }}>
                             <Spinner color={colors.pink} style={{ fontSize: 80, }} />
                         </View> */}

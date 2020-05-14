@@ -76,6 +76,7 @@ const MapSearch = ({
                             <View style={{ marginTop: 0 }}>
                                 <Item style={[{ backgroundColor: "#F7F7F7", height: 40, }, styles.cardShadow]} rounded>
                                     <Input
+                                        autoCorrect={false}
                                         style={styles.input}
                                         onChangeText={handleSearch.bind(this)}
                                         placeholder={'Select Location'}

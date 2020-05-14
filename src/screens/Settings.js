@@ -60,7 +60,7 @@ class Settings extends React.Component {
                         <View style={{ paddingHorizontal: 20, }}>
                             <Text style={{ fontFamily: fonts.bold, marginTop: 30, fontSize: 16, }}>Account</Text>
                             <View style={{ marginTop: 20, }}>
-                                {role == roles.styler && <TouchableOpacity
+                                 <TouchableOpacity
                                     activeOpacity={0.7}
                                     onPress={() => this.props.navigation.navigate('EditProfile')}
                                 >
@@ -69,7 +69,7 @@ class Settings extends React.Component {
                                         <Icon style={{ fontSize: 20, }} name='ios-arrow-forward' />
                                     </View>
                                     <View style={{ height: 0.5, backgroundColor: '#ccc', opacity: 0.5, }}></View>
-                                </TouchableOpacity>}
+                                </TouchableOpacity>
                                 {role == roles.styler && <TouchableOpacity
                                     onPress={() => this.props.navigation.navigate('MyServices')}
                                     activeOpacity={0.7}

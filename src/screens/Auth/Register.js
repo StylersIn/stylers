@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import {
     Item,
     Input,
+    Icon,
 } from 'native-base';
 import Button from '../../components/Button';
 import { fonts, colors, toastType } from '../../constants/DefaultProps';
@@ -23,18 +24,49 @@ import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
 import NavigationService from '../../navigation/NavigationService';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 // import { TouchableOpacity } from 'react-native-gesture-handler';
+import CountryPicker, { getAllCountries } from 'react-native-country-picker-modal';
 
 const { width, height } = Dimensions.get('screen');
+const COUNTRY = ['NG'];
 
 class Register extends React.Component {
     constructor(props) {
         super(props);
+        let userLocaleCountryCode = 'NG';
+        let cca2 = userLocaleCountryCode;
+        let callingCode = null;
+        getAllCountries()
+            .then((country) => country.filter(e => COUNTRY.includes(e.cca2)))
+            .then((country) => {
+                if (!cca2 || !country) {
+                    this.setState({ callingCode: '234', countryCode: 'NG' })
+                } else {
+                    this.setState({ callingCode: country[0].callingCode[0] })
+                }
+            });
+
         this.state = {
             isProcessing: false,
             validationErr: false,
+            mainErr: undefined,
             pwMatchErr: false,
             mainErr: undefined,
             social_user: {},
+            verify: false,
+            social_user: {},
+            country: '',
+            region: '',
+            cca2,
+            callingCode,
+            visible: false,
+            countryCode: 'NG',
+            withFilter: true,
+            withFlag: true,
+            withCountryNameButton: true,
+            withAlphaFilter: true,
+            withCallingCode: true,
+            withEmoji: true,
+            editable: true,
         }
     }
 
@@ -61,6 +93,7 @@ class Register extends React.Component {
     }
 
     doRegister = () => {
+        const { callingCode, countryCode, } = this.state;
         this.setState({ isProcessing: true });
         let email = this.email;
         let name = this.name;
@@ -79,6 +112,8 @@ class Register extends React.Component {
                 phoneNumber,
                 gender: 'M',
                 password,
+                callingCode,
+                countryCode,
             })
         }
     }
@@ -129,7 +164,27 @@ class Register extends React.Component {
         )
     }
 
+    openModal = () => {
+        this.setState({ visible: true });
+    }
+
     render() {
+        const onSelect = value => {
+            this.setState({ cca2: value.cca2, callingCode: value.callingCode, countryCode: value.cca2, visible: true, });
+        }
+        const onClose = _ => this.setState({ visible: false, });
+        const {
+            visible,
+            callingCode,
+            countryCode,
+            withFilter,
+            withFlag,
+            withCountryNameButton,
+            withAlphaFilter,
+            withCallingCode,
+            withEmoji,
+            editable,
+        } = this.state;
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView contentContainerStyle={styles.container}>
@@ -143,6 +198,7 @@ class Register extends React.Component {
                         error={(this.name === undefined || this.name === '') && this.state.validationErr}
                         regular>
                         <Input
+                            autoCorrect={false}
                             onChangeText={e => this.name = e}
                             style={{
                                 fontFamily: fonts.medium
@@ -154,25 +210,43 @@ class Register extends React.Component {
                         error={(this.email === undefined || this.email === '') && this.state.validationErr}
                         regular>
                         <Input
+                            autoCorrect={false}
                             onChangeText={e => this.email = e}
                             autoCapitalize={'none'}
                             style={{
-                                fontFamily: fonts.medium
-                                , fontSize: 13
+                                fontFamily: fonts.medium,
+                                fontSize: 13,
                             }}
                             placeholder='Email' />
                     </Item>
-                    <Item style={{ marginTop: 10, borderRadius: 5, }}
+                    <Item style={{ marginTop: 10, borderRadius: 5, height: 50, }}
                         error={(this.phone === undefined || this.phone === '') && this.state.validationErr}
                         regular>
+                        <TouchableOpacity
+                            style={styles.inputAddon}
+                            onPress={this.openModal}
+                        >
+                            <CountryPicker
+                                {...{
+                                    countryCode,
+                                    withFilter,
+                                    withFlag,
+                                    withAlphaFilter,
+                                    withCallingCode,
+                                    withEmoji,
+                                    onSelect,
+                                    onClose,
+                                }}
+                                visible={visible}
+                            />
+                            <Text style={styles.addonTxt}>{callingCode}</Text>
+                            <Icon style={styles.addonTxt} name="ios-arrow-down" />
+                        </TouchableOpacity>
                         <Input
+                            keyboardType={"numeric"}
                             onChangeText={e => this.phone = e}
-                            keyboardType={'numeric'}
-                            style={{
-                                fontFamily: fonts.medium
-                                , fontSize: 13
-                            }}
-                            placeholder='Phone' />
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
+                            placeholder='Phone Number' />
                     </Item>
                     <View style={{ marginVertical: 8 }}>
                         <RadioGroup
@@ -274,7 +348,33 @@ const styles = StyleSheet.create({
         padding: 20,
         // marginTop: 100,
         // justifyContent: "center",
-    }
+    },
+    inputAddon: {
+        height: '100%',
+        width: 95,
+        backgroundColor: colors.pink,
+        // borderTopLeftRadius: 50 / 2,
+        // borderBottomLeftRadius: 50 / 2,
+        justifyContent: 'space-evenly',
+        paddingHorizontal: 15,
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    addonTxt: {
+        color: colors.white,
+        fontSize: 12,
+        fontFamily: fonts.medium,
+    },
+    primaryText: {
+        fontFamily: fonts.bold,
+        color: '#222B2F',
+        fontSize: 13,
+        marginBottom: 3
+    },
+    secondaryText: {
+        color: '#9BABB4',
+        fontSize: 11,
+    },
 })
 
 const mapStateToProps = state => ({

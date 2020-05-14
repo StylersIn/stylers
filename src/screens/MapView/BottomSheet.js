@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, } from 'react-native';
+import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, ScrollView, } from 'react-native';
 import {
     CoordinatorLayout,
     BottomSheetBehavior,
@@ -9,7 +9,7 @@ import SwipeButton from 'rn-swipe-button';
 import { BottomSheet } from '../../components/BottomSheet';
 import { Spinner, Thumbnail, Form, Card, CardItem } from 'native-base';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
-import { colors, fonts, } from '../../constants/DefaultProps';
+import { colors, fonts, roles, } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { CloseIcon, CallIcon, ChatIcon, ArrowDown, SwiperIcon } from './MapAssets';
 import { WhatsAppIcon } from '../Appointments/AppointmentAssets';
@@ -20,18 +20,29 @@ const swiperIcon = () => {
         <SwiperIcon />
     )
 }
+const call = (props) => {
+    Linking.openURL(`tel:${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}`)
+}
+
+const sms = (props) => {
+    Linking.openURL(`sms:${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}&body=hello`)
+}
+
+const whatsapp = (props) => {
+    Linking.openURL(`whatsapp://send?text=hello&phone=+${props.appointment.userId.callingCode}${props.appointment.phoneNumber}`)
+}
 export default function (props) {
     return (
         <>
             {Platform.OS === 'ios' && <BottomSheet>
-                {props.currentAddress && props.appointment ? <View style={{ paddingHorizontal: 30, }}>
+                {props.currentAddress && props.appointment ? <ScrollView contentContainerStyle={{ paddingHorizontal: 30, }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', }}>
-                            <View>
+                            {props.role == roles.user && <View>
                                 <Thumbnail
                                     style={{ width: 35, height: 35 }}
                                     source={service__1} />
-                            </View>
+                            </View>}
                             <View style={{ position: 'relative', left: 10 }}>
                                 <Text style={{ fontFamily: fonts.bold }}>{props.appointment.userId && props.appointment.userId.name}</Text>
                                 <View style={{ padding: 2, paddingHorizontal: 4, borderRadius: 3, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
@@ -49,7 +60,7 @@ export default function (props) {
                                 <View style={{ marginTop: 10, marginRight: 1, }}>
                                     <TouchableOpacity
                                         activeOpacity={0.7}
-                                        onPress={() => Linking.openURL(`tel:${props.appointment.userId.phoneNumber}`)}
+                                        onPress={() => call(props)}
                                     >
                                         <CallIcon />
                                     </TouchableOpacity>
@@ -62,7 +73,7 @@ export default function (props) {
                                 <View style={{ marginTop: 6, }}>
                                     <TouchableOpacity
                                         activeOpacity={0.7}
-                                        onPress={() => Linking.openURL(`whatsapp://send?text=hello&phone=${props.appointment.userId.phoneNumber}`)}
+                                        onPress={() => sms(props)}
                                     >
                                         <ChatIcon />
                                     </TouchableOpacity>
@@ -71,9 +82,14 @@ export default function (props) {
                         </Card>
 
                         <Card style={styles.map_btn}>
-                            <CardItem style={styles.map_btn_icon}>
-                                <WhatsAppIcon color={colors.whatsapp} size={22} />
-                            </CardItem>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={() => whatsapp(props)}
+                            >
+                                <CardItem style={styles.map_btn_icon}>
+                                    <WhatsAppIcon color={colors.whatsapp} size={22} />
+                                </CardItem>
+                            </TouchableOpacity>
                         </Card>
                     </View>
                     <View style={{ marginTop: 30, }}>
@@ -92,7 +108,7 @@ export default function (props) {
                             </View>
                         </View>
                     </View>
-                    {props.role !== 'USER' && <View style={{ marginVertical: 20, }}>
+                    {props.role !== roles.user && <View style={{ marginTop: 20, }}>
                         <SwipeButton
                             // thumbIconImageSource={service__1}
                             // onSwipeStart={() => this.showToastMessage('Swipe started!')}
@@ -111,7 +127,7 @@ export default function (props) {
                         // thumbIconBackgroundColor={colors.pink}
                         />
                     </View>}
-                </View> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                </ScrollView> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                         <Spinner color={colors.pink} />
                     </View>}
             </BottomSheet>}
@@ -136,7 +152,7 @@ export default function (props) {
                                             source={service__1} />
                                     </View>
                                     <View style={{ position: 'relative', left: 10 }}>
-                                        <Text style={{ fontFamily: fonts.bold }}>{props.appointment.userId && props.appointment.userId.name}</Text>
+                                        <Text style={{ fontFamily: fonts.bold }}>{props.appointment.userId && props.appointment.name}</Text>
                                         <View style={{ padding: 2, paddingHorizontal: 4, borderRadius: 3, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
                                             <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.bold, position: 'relative', bottom: 1, }}>Card Payment</Text>
                                         </View>
@@ -152,7 +168,7 @@ export default function (props) {
                                         <View style={{ marginTop: 10, marginRight: 1, }}>
                                             <TouchableOpacity
                                                 activeOpacity={0.7}
-                                                onPress={() => Linking.openURL(`tel:${props.appointment.userId.phoneNumber}`)}
+                                                onPress={() => Linking.openURL(`tel:${props.appointment.phoneNumber}`)}
                                             >
                                                 <CallIcon />
                                             </TouchableOpacity>
@@ -165,7 +181,7 @@ export default function (props) {
                                         <View style={{ marginTop: 6, }}>
                                             <TouchableOpacity
                                                 activeOpacity={0.7}
-                                                onPress={() => Linking.openURL(`whatsapp://send?text=hello&phone=${props.appointment.userId.phoneNumber}`)}
+                                                onPress={() => Linking.openURL(`whatsapp://send?text=hello&phone=${props.appointment.phoneNumber}`)}
                                             >
                                                 <ChatIcon />
                                             </TouchableOpacity>

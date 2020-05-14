@@ -48,7 +48,7 @@ class Payment extends React.Component {
         if (prevProps.booked && prevProps.booked !== this.props.booked) {
             notify('Payment Successful', 'You have successfully made payment and your request is being processed.');
             this.setState({ isVisible: true });
-            this.props.socket.emit('appointmentBooked', styler.userId.publicId)
+            this.props.socket.emit('appointmentBooked', styler.publicId)
         }
     }
 
@@ -72,7 +72,7 @@ class Payment extends React.Component {
 
                     var req = {
                         stylerId: styler._id,
-                        stylerUserId: styler.userId._id,
+                        stylerUserId: styler._id,
                         services: this.props.services,
                         scheduledDate: this.props.date,
                         totalAmount: styler.totalAmt,
@@ -235,7 +235,7 @@ class Payment extends React.Component {
                 >
                     <View style={{ alignItems: "center", paddingVertical: 20, }}>
                         <Image
-                            source={styler.userId.imageUrl ? { uri: styler.userId.imageUrl } : avatar}
+                            source={styler.imageUrl ? { uri: styler.imageUrl } : avatar}
                             style={{ width: 110, height: 110, borderRadius: 5, }}
                         />
                         <Text style={{ fontFamily: fonts.bold, fontSize: 20, textAlign: "center", padding: 24, }}>{styler.name}</Text>
@@ -244,7 +244,7 @@ class Payment extends React.Component {
                             <View style={{ alignSelf: "center" }}>
                                 <LocationIcon />
                             </View>
-                            <Text style={{ fontFamily: fonts.medium, fontSize: 14, textAlign: 'center', }}>{styler.address}</Text>
+                            <Text style={{ fontFamily: fonts.medium, fontSize: 14, textAlign: 'center', }}>{styler.location.name}</Text>
                         </View>
 
                         <View style={{ paddingVertical: 10 }}>

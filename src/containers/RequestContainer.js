@@ -55,6 +55,8 @@ const mapStateToProps = state => ({
     role: state.user.current && state.user.current.role,
     username: state.user.current && state.user.current.name.split(' '),
     publicId: state.user.current && state.user.current.publicId,
+    isActive: state.styler.stylerDetails && state.styler.stylerDetails.isActive,
+    updatedStyler: state.styler.stylerDetails && state.styler.stylerDetails.updatedStyler,
     updated: state.appointment.updated,
     stats: state.styler.stats,
     socket: state.socket,

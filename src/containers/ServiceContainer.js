@@ -11,9 +11,9 @@ class Services extends React.Component {
         // serviceId: '',
     }
     componentDidMount() {
-        const { navigation } = this.props;
+        const { navigation, location, } = this.props;
         const service = navigation.getParam('service', '');
-        this.props.getServiceStylers(service._id);
+        this.props.getServiceStylers(service._id, JSON.stringify([location.longitude, location.latitude]));
     }
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.stylers && nextProps.stylers !== this.props.stylers) {
@@ -34,6 +34,8 @@ const mapStateToProps = state => ({
     service: state.service,
     stylers: state.styler.service__stylers,
     processing: state.styler.isProcessing,
+    location: state.user.location,
+    message: state.styler.message,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

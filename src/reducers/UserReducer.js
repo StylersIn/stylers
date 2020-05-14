@@ -29,6 +29,11 @@ export default function userReducer(state = initialState, action) {
                 error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
                 auth__failed: true
             }
+        case constants.USER_LOCATION:
+            return {
+                ...state,
+                location: action.payload,
+            }
         case constants.AUTH_USER:
             return Object.assign({}, state, {
                 authenticated: false,
@@ -139,17 +144,6 @@ export default function userReducer(state = initialState, action) {
                 profileUpdated: undefined,
                 profileUpdateError: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             })
-        case constants.LOGOUT:
-            if (action.payload && action.payload.meta === 'loggedOut') {
-                return {
-                    state: {},
-                    loggedOut: true,
-                    oneSignalId: action.payload.oneSignalId,
-                }
-            }
-            return {
-                loggingOut: true,
-            }
 
         case constants.FETCH_CARDS:
             return Object.assign({}, state, {
@@ -215,6 +209,19 @@ export default function userReducer(state = initialState, action) {
                 passwordChanged: undefined,
                 error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             })
+
+        case constants.LOGOUT:
+            if (action.payload && action.payload.meta === 'loggedOut') {
+                return {
+                    state: {},
+                    loggedOut: true,
+                    oneSignalId: action.payload.oneSignalId,
+                    location: action.payload.location,
+                }
+            }
+            return {
+                loggingOut: true,
+            }
         default:
             return state;
     }

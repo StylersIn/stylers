@@ -12,6 +12,7 @@ import { colors, fonts } from "../../constants/DefaultProps";
 import Text from '../../config/AppText';
 import * as constants from '../../constants/ActionTypes';
 import Button from '../../components/Button';
+import Geolocation from "@react-native-community/geolocation";
 
 class Splash extends Component {
     constructor(props) {
@@ -26,6 +27,37 @@ class Splash extends Component {
         }
     }
 
+    getCurrentPosition() {
+        try {
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    this.props.userLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+                },
+                (error) => {
+                    //TODO: better design
+                    switch (error.code) {
+                        case 1:
+                            if (Platform.OS === "ios") {
+                                Alert.alert("", error.code);
+                            } else {
+                                Alert.alert("", error.code);
+                            }
+                            break;
+                        default:
+                            Alert.alert("", error.code);
+                    }
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                    distanceFilter: 10
+                }
+            );
+        } catch (e) {
+            alert(e.message || "");
+        }
+    };
+
     init = () => {
         setTimeout(() => {
             AsyncStorage.getItem(constants.TOKEN)
@@ -38,6 +70,7 @@ class Splash extends Component {
 
     componentDidMount() {
         this.init();
+        this.getCurrentPosition();
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -45,6 +78,7 @@ class Splash extends Component {
             this.props.socket.emit('auth', nextProps.user.current.publicId)
             if (nextProps.user.current.role === 'styler') {
                 this.props.checkStylerRegStatus();
+                this.props.getStylerDetails();
             } else {
                 this.props.navigation.dispatch(NavigationService.resetAction('Home'))
             }

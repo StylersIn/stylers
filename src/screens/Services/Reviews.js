@@ -23,7 +23,7 @@ export default function (props) {
                     <CardItem>
                         <Body>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{ fontFamily: fonts.bold, fontSize: 15 }}>{review.userId.name}</Text>
+                                <Text style={{ fontFamily: fonts.bold, fontSize: 15 }}>{review.name}</Text>
                                 <Text style={{ paddingLeft: 10, fontSize: 8, color: "#979797", marginTop: 6, fontStyle: 'italic', }}>{moment(review.CreatedAt).fromNow()}</Text>
                             </View>
                             <View style={{ marginVertical: 7, flexDirection: "row", }}>

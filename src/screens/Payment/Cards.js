@@ -64,7 +64,7 @@ class NoDebit extends React.Component {
             let styler = stylerData;
             // notify('Payment Successful', 'You have successfully made payment and your request is being processed.');
             this.setState({ isVisible: true });
-            this.props.socket.emit('appointmentBooked', styler.userId.publicId)
+            this.props.socket.emit('appointmentBooked', styler.publicId)
         }
         if (prevProps.error && prevProps.error != this.props.error) {
             alert(prevProps.error);
@@ -76,7 +76,7 @@ class NoDebit extends React.Component {
         let styler = stylerData;
         var req = {
             stylerId: styler._id,
-            stylerUserId: styler.userId._id,
+            stylerUserId: styler._id,
             services: this.props.services,
             scheduledDate: this.props.date,
             totalAmount: styler.totalAmt,
@@ -197,7 +197,7 @@ class NoDebit extends React.Component {
                 >
                     <View style={{ alignItems: "center", paddingVertical: 20, }}>
                         <Image
-                            source={styler.userId.imageUrl ? { uri: styler.userId.imageUrl } : avatar}
+                            source={styler.imageUrl ? { uri: styler.imageUrl } : avatar}
                             style={{ width: 110, height: 110, borderRadius: 5, }}
                         />
                         <Text style={{ fontFamily: fonts.bold, fontSize: 20, textAlign: "center", padding: 24, }}>{styler.name}</Text>

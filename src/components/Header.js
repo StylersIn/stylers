@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
 import { HamburgerIcon } from '../navigation/assets';
-import { View, Item, Icon, Input, Card, CardItem, Body, Left, Radio, CheckBox } from 'native-base';
+import { View, Item, Icon, Input, Card, CardItem, Body, Left, Radio, CheckBox, Switch } from 'native-base';
 import { ListIcon } from './assets';
 import Text from '../config/AppText';
 import PropTypes from 'prop-types';
@@ -28,6 +28,7 @@ const propTypes = {
     hamburger: PropTypes.bool,
     search: PropTypes.bool,
     action: PropTypes.object,
+    visible: PropTypes.bool,
 }
 
 const { width, height } = Dimensions.get('screen');
@@ -55,66 +56,59 @@ class Header extends React.Component {
         }
     }
     render() {
+        const {
+            hamburger,
+            close,
+            statusBtn,
+            isActive,
+            setStatus,
+            title,
+            action,
+            list,
+            search,
+            visible,
+        } = this.props;
         return (
             <View style={{ marginTop: Platform.OS === 'ios' ? 30 : 40 }}>
-                {this.props.hamburger ? <TouchableOpacity
+                {hamburger ? <TouchableOpacity
                     onPress={() => NavigationService.toggleDrawer()}
                     activeOpacity={0.7}
-                    style={{ paddingHorizontal: 20, width: '18%', }}
+                    style={{ paddingHorizontal: 20, width: '18%', paddingBottom: 20, }}
                 >
                     <HamburgerIcon />
                 </TouchableOpacity> : null}
-                <View style={{ marginTop: 15, paddingBottom: 20, paddingHorizontal: 20, }}>
+                {/* 15 */}
+                <View style={{ marginTop: 0, paddingBottom: 20, paddingHorizontal: 20, }}>
                     <View style={{ alignSelf: 'flex-end' }}>
-                        {this.props.close && <TouchableOpacity
+                        {close && <TouchableOpacity
                             onPress={() => NavigationService.goBack()}
                             activeOpacity={0.7}>
                             <Icon
-                                style={{ fontSize: 60, color: "#000000", position: 'relative', bottom: 16, }}
+                                style={{ fontSize: 60, color: visible ? "transparent" : "#000000", position: 'relative', bottom: 16, }}
                                 type="Ionicons"
                                 name="ios-close" />
                         </TouchableOpacity>}
                     </View>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", }}>
                         <View>
-                            <Text style={{ fontFamily: fonts.bold, fontSize: 24, }}>{this.props.title}</Text>
+                            <Text style={{ fontFamily: fonts.bold, fontSize: 24, }}>{title}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                            {/* {this.props.hasLogout === false ? null : <View style={{ marginRight: 15, marginTop: 0, }}>
-                                <TouchableOpacity
-                                    onPress={this.signOut}
-                                    activeOpacity={0.5}>
-                                    <Icon name='ios-log-out' />
-                                </TouchableOpacity>
-                            </View>} */}
-                            {this.props.action}
-                            {this.props.list ? <TouchableOpacity
+                            {action}
+                            {list ? <TouchableOpacity
                                 onPress={() => this.props.onChange()}
                                 activeOpacity={0.5}>
                                 <ListIcon />
                             </TouchableOpacity> : null}
+                            {statusBtn && isActive != undefined && <Switch
+                                ios_backgroundColor={colors.danger}
+                                value={isActive}
+                                onValueChange={setStatus}
+                            />}
+                            {statusBtn && isActive == undefined && <Text>Loading...</Text>}
                         </View>
-                        {/* {this.props.showList ? <View style={{ position: "absolute", right: -20, top: 25, zIndex: 1000, elevation: 1000, }}>
-                        <Card style={styles.cardStyle}>
-                            <RadioGroup
-                                size={15}
-                                thickness={2}
-                                color='#606060'
-                                // selectedIndex={1}
-                                onSelect={(index, value) => this.props.selectListItem(index, value)}
-                            >
-                                {options.map((option, i) =>
-                                    <RadioButton
-                                        key={i}
-                                        style={{ margin: 3, padding: 1, paddingHorizontal: 5, }}
-                                        value={'item1'} >
-                                        <Text style={{ fontSize: 12, fontFamily: fonts.bold }}>{option}</Text>
-                                    </RadioButton>)}
-                            </RadioGroup>
-                        </Card>
-                    </View> : null} */}
                     </View>
-                    {this.props.search ? <View style={{ zIndex: -1 }}>
+                    {search ? <View style={{ zIndex: -1 }}>
                         <Item style={[{ marginTop: 20, borderRadius: 5, backgroundColor: colors.white, }, styles.cardStyle]} regular>
                             <Icon type="Ionicons" name="ios-search" />
                             <Input

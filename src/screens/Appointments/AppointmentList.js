@@ -8,6 +8,7 @@ import {
 import {
     Card,
     CardItem,
+    Icon,
 } from 'native-base';
 import { fonts, colors, roles } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
@@ -17,6 +18,17 @@ import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
 import { getDate, getDay, formatTime } from '../../utils/stylersUtils';
 import * as constants from '../../constants/ActionTypes';
+import { ErrorIcon } from '../Assets';
+
+const hasDatePassed = (selectedDate) => {
+    var past = new Date(selectedDate);
+    var now = new Date();
+    if (past < now) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 export default function (props) {
     return (
@@ -34,9 +46,10 @@ export default function (props) {
                         onPress={() => props.showDetails(appointment)}
                         activeOpacity={0.7}
                     >
-                        <Card style={[styles.Input___shadow, appointment.status == constants.CANCELLED ? { borderColor: colors.danger } :
-                            appointment.status == constants.COMPLETED ? { borderColor: colors.success } :
-                                appointment.status == constants.ACCEPTED ? { borderColor: colors.pink } : { borderColor: '#000000' }]}>
+                        <Card style={[styles.Input___shadow, appointment.status == constants.CANCELLED ? { borderLeftColor: colors.danger } :
+                            appointment.status == constants.COMPLETED ? { borderLeftColor: colors.success } :
+                                appointment.status == constants.STARTED ? { borderLeftColor: colors.pink } :
+                                    appointment.status == constants.ACCEPTED ? { borderLeftColor: colors.pink } : { borderLeftColor: '#000000' }]}>
                             <CardItem style={{ borderRadius: 4 }}>
                                 <View style={{ borderRightWidth: 0.5, borderColor: "#979797", alignItems: "center", paddingRight: 10, }}>
                                     <Text style={{ fontFamily: fonts.bold, fontSize: 18, paddingVertical: 2, }}>{getDate(appointment.scheduledDate)}</Text>
@@ -52,6 +65,12 @@ export default function (props) {
                                 <View style={{ position: "absolute", top: 10, right: 10, }}>
                                     <BarberIcon />
                                 </View>
+                                {appointment.status == constants.EXPIRED && <View style={{ position: "absolute", bottom: 10, right: 10, }}>
+                                    <ErrorIcon color={colors.danger} />
+                                </View>}
+                                {appointment.status == constants.STARTED && props.role === roles.user && <View style={{ position: "absolute", bottom: 10, right: 10, }}>
+                                    <Text style={{ fontSize: 11, color: colors.success, fontFamily: fonts.medium, }}>In Progress</Text>
+                                </View>}
                             </CardItem>
                         </Card>
                     </TouchableWithoutFeedback>)}

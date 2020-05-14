@@ -128,8 +128,9 @@ class ServiceDetails extends React.Component {
         ShowToast(text, type);
     }
 
-    openWhatsApp = () => {
-        Linking.openURL('whatsapp://send?text=hello&phone=08163237965')
+    openWhatsApp = _ => {
+        const { stylerData } = this.props;
+        Linking.openURL(`whatsapp://send?text=hello ${stylerData.name}, I would be needing your service&phone=${stylerData.user.callingCode}${stylerData.phone}`)
     }
 
     viewReviews = () => this.props.navigation.navigate('AllReviews', { styler: this.props.stylerData, });
@@ -152,21 +153,34 @@ class ServiceDetails extends React.Component {
                                 name="ios-close" />
                         </TouchableOpacity>
                     </View>
-                    <View style={[styles.imgCover, stylerData.userId.imageUrl ? { opacity: 1 } : { opacity: 0.5 }]}>
-                        {stylerData.userId.imageUrl ? <Image
+                    <View style={[styles.imgCover, stylerData.imageUrl ? { opacity: 1 } : { opacity: 0.5 }]}>
+                        {stylerData.imageUrl ? <Image
                             style={{ height: 300, width: "100%", resizeMode: 'cover', borderRadius: 5, }}
-                            source={stylerData.userId.imageUrl ? { uri: stylerData.userId.imageUrl } : service__1}
+                            source={stylerData.imageUrl ? { uri: stylerData.imageUrl } : service__1}
                         /> : null}
 
-                        {!stylerData.userId.imageUrl && <Image
+                        {!stylerData.imageUrl && <Image
                             style={[{ height: 100, width: 100, borderRadius: 5, }, Platform.OS == 'ios' ? { marginTop: 20 } : null]}
-                            source={stylerData.userId.imageUrl ? { uri: stylerData.userId.imageUrl } : avatar}
+                            source={stylerData.imageUrl ? { uri: stylerData.imageUrl } : avatar}
                         />}
                     </View>
                     <ScrollView style={styles.container}>
                         <View style={{ paddingBottom: 50 }}>
-                            <Text style={{ fontFamily: fonts.bold, fontSize: 24, paddingBottom: 5, }}>{stylerData.name}</Text>
-                            <Text>{stylerData.address}</Text>
+                            <View style={{ flexDirection: "row", }}>
+                                <Text style={{ fontFamily: fonts.bold, fontSize: 24, paddingBottom: 5, }}>{stylerData.name}</Text>
+                                {stylerData.isActive && <View style={{
+                                    width: 15,
+                                    height: 15,
+                                    backgroundColor: colors.success,
+                                    alignSelf: "center",
+                                    borderRadius: 10,
+                                    marginLeft: 5,
+                                    borderWidth: 2,
+                                    borderColor: "#F6F6F6",
+                                }}>
+                                </View>}
+                            </View>
+                            <Text>{stylerData.location.name}</Text>
                             <Text style={{ fontSize: 18 }}>Starts at <Text style={{ fontSize: 18, color: "#0E5B02", fontFamily: fonts.bold, }}>{`NGN${stylerData.startingPrice}`}</Text></Text>
                             <View style={{ marginVertical: 7, flexDirection: "row", paddingBottom: 5, }}>
                                 {/* <Rating

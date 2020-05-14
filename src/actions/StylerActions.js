@@ -37,6 +37,37 @@ export const addStyler = credentials => ({
     }
 });
 
+export const getStylerDetails = payload => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/getStylerDetails`,
+        method: 'GET',
+        types: [
+            constants.STYLER_DETAILS,
+            {
+                type: constants.STYLER_DETAILS_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.STYLER_DETAILS_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        error: res
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(payload),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
 export const checkStylerRegStatus = payload => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/register/status`,
@@ -98,20 +129,20 @@ export const listStylers = (pageSize = 10, pageNumber = 1) => ({
     }
 });
 
-export const getServiceStylers = (service, pageSize = 10, pageNumber = 1) => ({
+export const getServiceStylers = (service, coordinates, pageSize = 10, pageNumber = 1) => ({
     [RSAA]: {
-        endpoint: `${BASE_URL()}/${service}/${pageSize}/${pageNumber}`,
+        endpoint: `${BASE_URL()}/${service}/${pageSize}/${pageNumber}?coordinates=${coordinates}`,
         method: 'GET',
         types: [
             constants.LIST_SERVICE_STYLER,
             {
-                type: constants.LIST_SERVICE_STYLER,
+                type: constants.LIST_SERVICE_STYLER_SUCCESS,
                 payload: (action, state, response) => response.json().then(response => {
                     return { response }
                 })
             },
             {
-                type: constants.LIST_SERVICE_STYLER,
+                type: constants.LIST_SERVICE_STYLER_FAILURE,
                 meta: (action, state, res) => {
                     return {
                         status: res.status
@@ -124,6 +155,7 @@ export const getServiceStylers = (service, pageSize = 10, pageNumber = 1) => ({
             Accept: "application/json",
             "Content-Type": "application/json"
         },
+        // body:JSON.stringify(coordinates),
         credentials: "same-origin"
     }
 });
@@ -191,7 +223,7 @@ export const removeStylerService = (subServiceId) => {
     }
 }
 
-export const updateStyler = payload => ({
+export const updateStylerPrice = payload => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/update/services`,
         method: 'PUT',
@@ -222,9 +254,9 @@ export const updateStyler = payload => ({
     }
 });
 
-export const sortStylersService = (queryString, serviceId) => ({
+export const sortStylersService = (queryString, serviceId, coordinates) => ({
     [RSAA]: {
-        endpoint: `${BASE_URL()}/stylers/sort/${queryString}/${serviceId}`,
+        endpoint: `${BASE_URL()}/sort/${queryString}/${serviceId}?coordinates=${coordinates}`,
         method: 'GET',
         types: [
             constants.SORT_STYLER_SERVICE,
@@ -323,7 +355,7 @@ export const servicePrice = (servicePrice) => {
 
 export const updateAvatar = data => ({
     [RSAA]: {
-        endpoint: `${BASE_URL()}/update/avatar`,
+        endpoint: `${BASE_URL()}/update`,
         method: 'PUT',
         types: [
             constants.UPDATE_AVATAR,
@@ -335,6 +367,37 @@ export const updateAvatar = data => ({
             },
             {
                 type: constants.UPDATE_AVATAR_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(data),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const updateStyler = data => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/update`,
+        method: 'PUT',
+        types: [
+            constants.UPDATE_STYLER,
+            {
+                type: constants.UPDATE_STYLER_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.UPDATE_STYLER_FAILURE,
                 meta: (action, state, res) => {
                     return {
                         status: res.status

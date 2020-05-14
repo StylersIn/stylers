@@ -36,7 +36,7 @@ export function getCurrentLocation() {
                 }, 0);
             },
             (error) => console.log(error.message),
-            { enableHighAccuracy: true, timeout: 50000, maximumAge: 1000 }
+            { enableHighAccuracy: true, timeout: 20000, distanceFilter: 2 }
         );
     }
 }

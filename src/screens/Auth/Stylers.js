@@ -56,7 +56,6 @@ class Register extends React.Component {
             social_user: {},
             country: '',
             region: '',
-            validationErr: false,
             cca2,
             callingCode,
             visible: false,
@@ -136,8 +135,8 @@ class Register extends React.Component {
             // address = this.address,
             description = this.description,
             password = this.password,
-            confirmPassword = this.confirmPassword,
-            startingPrice = this.startingPrice;
+            confirmPassword = this.confirmPassword;
+            // startingPrice = this.startingPrice;
 
         if (!name || !email || !phone || !password || !startingPrice || !gender) {
             this.showToast('Invalid login credentials!', toastType.danger);
@@ -150,13 +149,12 @@ class Register extends React.Component {
                 email: email,
                 phoneNumber: phone,
                 gender,
-                address: 'Enugu',
                 description: description,
                 password: password,
-                startingPrice: startingPrice,
+                // startingPrice: startingPrice,
                 callingCode,
                 countryCode,
-                city:{
+                location:{
                     name: selectedAddress.name,
                     coordinates: [selectedAddress.location.longitude, selectedAddress.location.latitude],
                 },
@@ -235,7 +233,7 @@ class Register extends React.Component {
                             onChangeText={e => this.name = e}
                             style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             autoCorrect={false}
-                            placeholder='Business name' />
+                            placeholder='Fullname' />
                     </Item>
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
@@ -293,7 +291,7 @@ class Register extends React.Component {
                             <Icon style={{ fontSize: 30 }} name="ios-close" />
                         </TouchableOpacity>}
                     </Item>
-                    {predictions && <ScrollView contentContainerStyle={{ width: '100%', height: 200, position: 'relative', backgroundColor: "#FCFCFC", borderRadius: 5, }}>
+                    {predictions && <View style={{ width: '100%', height: 200, position: 'relative', backgroundColor: "#FCFCFC", borderRadius: 5, }}>
                         {error && !searching && <View style={{ width: "90%", marginTop: 30, alignItems: "center", padding: 20, flexDirection: "row" }}>
                             <Icon type='Ionicons' name='ios-information-circle-outline' />
                             <Text style={{ paddingLeft: 20 }}>{error}</Text>
@@ -319,7 +317,7 @@ class Register extends React.Component {
                                 }
                             />
                         </View>
-                    </ScrollView>}
+                    </View>}
                     
                     <View style={{ marginVertical: 8 }}>
                         <RadioGroup
@@ -348,14 +346,14 @@ class Register extends React.Component {
                             rowSpan={5}
                             style={{ fontFamily: fonts.medium, fontSize: 13, borderRadius: 5, }}
                             bordered
-                            placeholder="Please tell us about your business (Optional)" />
+                            placeholder="Please tell us about the service you render (Optional)" />
                     </Form>
-                    <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
+                    {/* <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
                             onChangeText={e => this.startingPrice = e}
                             style={{ fontFamily: fonts.medium, fontSize: 13 }}
                             placeholder='Starting Price' />
-                    </Item>
+                    </Item> */}
                     <Item style={{ marginTop: 10, borderRadius: 5, }} regular>
                         <Input
                             onChangeText={e => this.password = e}

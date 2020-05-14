@@ -93,7 +93,7 @@ class Appointment extends React.Component {
 
     navigateToMap = () => {
         if (this.props.role === roles.styler) {
-            if (this.state.appointment.userId.publicId === this.props.current.publicId) {
+            if (this.state.appointment.publicId === this.props.current.publicId) {
                 notify('Service Started', 'Hi there! Styler just started this service.');
             }
             this.props.navigation.navigate('StylerMap', { appointment: this.state.appointment })
@@ -105,6 +105,7 @@ class Appointment extends React.Component {
     }
 
     beginService = () => {
+        const { appointment: { _id, }, } = this.state;
         this.navigateToMap();
         // if (this.props.location) {
         //     return this.navigateToMap();
@@ -112,6 +113,12 @@ class Appointment extends React.Component {
         // else {
         //     this.props.getCurrentLocation();
         // }
+        this.updateAppointmentStatus(_id, constants.STARTED)
+        this.setState({ isProcessing: true, })
+    }
+
+    continueService = () => {
+        this.navigateToMap();
         this.setState({ isProcessing: true, })
     }
 
@@ -280,8 +287,17 @@ class Appointment extends React.Component {
                                     styles={{ height: 40, backgroundColor: colors.black, }}
                                     btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                 />
-                                </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user &&
-                                    appointment.status == constants.ACCEPTED ? <View style={{ marginTop: 10, width: '100%' }}>
+                                </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.styler &&
+                                    appointment.status == constants.STARTED ? <View style={{ marginTop: 10, width: '100%' }}>
+                                <Button
+                                    onPress={this.continueService}
+                                    btnTxt={"View Map"}
+                                    size={"lg"}
+                                    styles={{ height: 40, backgroundColor: colors.black, }}
+                                    btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
+                                />
+                            </View>: this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user &&
+                                        appointment.status == constants.STARTED || appointment.status == constants.ACCEPTED ? <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
                                     onPress={this.trackStyler}
                                     btnTxt={"Track Styler"}

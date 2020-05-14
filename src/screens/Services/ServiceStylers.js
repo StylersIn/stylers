@@ -27,37 +27,53 @@ export default ServiceStylers = (props) => {
     const {
         stylers,
         isProcessing,
+        message,
     } = props;
     return (
         <View style={{ flex: 1, }}>
             <View style={{ flex: 1, }}>
-                {!props.isProcessing && stylers.length === 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                {!isProcessing && stylers.length === 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                     <EmptyAppointment />
-                    <Text style={{ fontSize: 20, paddingVertical: 40, fontFamily: fonts.medium, }}>No stylers found</Text>
+                    <Text style={{ fontSize: 20, paddingVertical: 40, fontFamily: fonts.medium, textAlign: "center", width: "90%", }}>{message}</Text>
                 </View>}
-                {!isProcessing ? <ScrollView>
+                {isProcessing && Loader()}
+                {!isProcessing && stylers.length > 0 && <ScrollView>
                     {stylers.length ? <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text> : null}
                     {stylers && stylers.map((item, i) => <TouchableWithoutFeedback key={i} onPress={() => props.navigation.navigate('ServiceDetails', { styler: item })}>
                         <Card>
-                            <CardItem>
+                            <CardItem style={{ marginRight: 10 }}>
                                 <Left>
-                                    {item.userId.imageUrl ? <Image
+                                    {item.imageUrl ? <Image
                                         style={{ width: 80, height: 80, borderRadius: 5, }}
-                                        source={item.userId.imageUrl ? { uri: item.userId.imageUrl } : service__1}
+                                        source={item.imageUrl ? { uri: item.imageUrl } : service__1}
                                     /> : null}
-                                    {!item.userId.imageUrl && <View style={styles.no_avatar}>
+                                    {!item.imageUrl && <View style={styles.no_avatar}>
                                         <Text style={{ fontFamily: fonts.bold, fontSize: 25 }}>{item.name[0]}</Text>
                                     </View>}
                                 </Left>
                                 <Body style={{ position: "relative", right: 0, flexDirection: 'column', justifyContent: 'space-evenly', }}>
-                                    <View>
+                                    <View style={{ flexDirection: "row" }}>
                                         <Text style={{ fontFamily: fonts.bold }}>{item.name}</Text>
+                                        {item.isActive && <View style={{
+                                            width: 15,
+                                            height: 15,
+                                            backgroundColor: colors.success,
+                                            alignSelf: "center",
+                                            borderRadius: 10,
+                                            marginLeft: 5,
+                                            borderWidth: 2,
+                                            borderColor: "#F6F6F6",
+                                        }}>
+                                        </View>}
                                     </View>
                                     <View>
-                                        <Text style={{ fontSize: 10, marginTop: 5, }}>{item.address}</Text>
+                                        <Text style={{ fontSize: 10, marginTop: 5, }}>{item.location.name}</Text>
                                         <Text style={{ fontSize: 10, }}>Starts at {`NGN${item.startingPrice}`} </Text>
                                     </View>
-                                    <View style={{ marginTop: 12, flexDirection: "row" }}>
+                                    {/* <View style={{ width: 50, backgroundColor: colors.success, alignItems: "center", borderRadius: 10, marginTop: 5, }}>
+                                        <Text style={{ fontSize: 10, color: colors.white, }}>Active</Text>
+                                        </View> */}
+                                    <View style={{  flexDirection: "row" }}>
                                         {/* {[0, 1, 2, 3, 4].map((e, n) => <Icon key={n} name='ios-star' style={{ color: colors.warning, fontSize: 13, }} />)} */}
                                         <AirbnbRating
                                             count={getRating(item.ratings)}
@@ -99,7 +115,7 @@ export default ServiceStylers = (props) => {
                             </CardItem>
                         </Card>
                     </TouchableWithoutFeedback>)}
-                </ScrollView> : Loader()}
+                </ScrollView>}
             </View>
         </View>
     )

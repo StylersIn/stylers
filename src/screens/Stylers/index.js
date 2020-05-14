@@ -66,9 +66,9 @@ class Stylers extends React.Component {
         this.setState({ isVisible: false, });
     }
 
-    updateStyler = () => {
+    updateStylerPrice = () => {
         this.setState({ isProcessing: true });
-        this.props.updateStyler({ services: this.props.price || [] });
+        this.props.updateStylerPrice({ services: this.props.price || [] });
     }
 
     reload = () => {
@@ -102,7 +102,7 @@ class Stylers extends React.Component {
                             fetching={this.state.fetching}
                             error={this.props.error}
                             reload={this.reload}
-                            updateStyler={this.updateStyler}
+                            updateStyler={this.updateStylerPrice}
                             processing={this.state.isProcessing}
                             price={this.props.price}
                             subService={this.props.subService}

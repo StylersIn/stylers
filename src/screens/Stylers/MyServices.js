@@ -42,7 +42,7 @@ class MyServices extends React.Component {
         if (nextProps.service__list && nextProps.service__list != this.props.service__list) {
             this.setState({ fetching: false, });
         }
-        if (nextProps.updated && nextProps.updated != this.props.updated) {
+        if (nextProps.updatedStyler && nextProps.updatedStyler != this.props.updatedStyler) {
             this.setState({ fetching: false });
             this.props.navigation.dispatch(NavigationService.resetAction('Requests'));
         }
@@ -199,7 +199,7 @@ const mapStateToProps = state => ({
     service__list: state.service.services,
     stylerServices: state.styler.stylerServices,
     price: state.styler.servicePrice,
-    updated: state.styler.updated,
+    updatedStyler: state.styler.updatedStyler,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

@@ -285,7 +285,7 @@ class StylerMap extends React.Component {
                     {appointment && <Marker
                         title={'Destination'}
                         // image={styler_location}
-                        key={appointment.userId.publicId}
+                        key={appointment.publicId}
                         coordinate={{
                             longitude: parseFloat(appointment.pickUp.longitude),
                             latitude: parseFloat(appointment.pickUp.latitude),

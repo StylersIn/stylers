@@ -28,6 +28,11 @@ const ServiceList = (props) => {
     return (
         <View style={styles.child__container}>
             <Text style={{ fontFamily: fonts.bold, fontSize: 18, }}>By Service</Text>
+            <View>
+                <Text style={styles.basic__1}>Select a service and</Text>
+                <Text style={styles.basic__2}>proceed to the styler page</Text>
+                <Text style={styles.basic__2}>for booking</Text>
+            </View>
             {filterErr && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                 <EmptyAppointment />
                 <Text style={{ fontSize: 18, paddingVertical: 40, fontFamily: fonts.medium, textAlign: 'center', }}>{filterErr}</Text>
@@ -68,7 +73,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
     },
     grid__main: {
-        marginTop: 10,
+        marginTop: 20,
     },
     grid__child: {
         // flexDirection: "row",
@@ -108,6 +113,13 @@ const styles = StyleSheet.create({
         borderLeftWidth: 12,
         borderLeftColor: "#000000",
         borderTopColor: 'transparent',
+    },
+    basic__1: {
+        color: "#979797",
+        marginTop: 10,
+    },
+    basic__2: {
+        color: "#979797",
     },
 })
 

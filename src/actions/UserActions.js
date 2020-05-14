@@ -393,15 +393,28 @@ export const confirmPasswordChange = data => ({
     }
 });
 
-export const logout = data => {
+export function userLocation(location) {
     return (dispatch) => {
+        dispatch({
+            type: constants.USER_LOCATION,
+            payload: location
+        });
+    }
+}
+
+export const logout = data => {
+    return (dispatch, store) => {
+        var location = store().user.location || {};
         dispatch({ type: constants.LOGOUT })
         AsyncStorage.clear((err) => {
             if (!err) {
-                dispatch({ type: constants.LOGOUT, payload: {
-                    meta:'loggedOut',
-                    oneSignalId: data,
-                } })
+                dispatch({
+                    type: constants.LOGOUT, payload: {
+                        meta: 'loggedOut',
+                        oneSignalId: data,
+                        location,
+                    }
+                })
             }
         })
     }

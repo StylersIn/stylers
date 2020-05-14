@@ -38,6 +38,7 @@ class Requests extends React.Component {
             isProcessing: false,
             accept: false,
             key: '',
+            isActive: undefined,
         }
         // this.props.socket.on('appointmentBooked.send', () => {
         //     notify('New Appointment!!!', 'Hi there! You have a new appointment.');
@@ -51,7 +52,7 @@ class Requests extends React.Component {
     }
 
     componentDidMount() {
-        const { user: { oneSignalId }, } = this.props;
+        const { user: { oneSignalId }, isActive, } = this.props;
         if (!oneSignalId) {
             AsyncStorage.getItem('oneSignalUserId', (err, Id) => {
                 if (Id) {
@@ -59,7 +60,14 @@ class Requests extends React.Component {
                 }
             })
         }
-        return this.props.updateOneSignal({ oneSignalUserId: oneSignalId });
+        this.props.updateOneSignal({ oneSignalUserId: oneSignalId });
+    }
+    
+    componentDidUpdate(prevProps) {
+        const { isActive, } = this.state;
+        if (prevProps.isActive !== undefined && isActive === undefined) {
+            this.setState({ isActive: prevProps.isActive, });
+        }
     }
 
     UNSAFE_componentWillReceiveProps(prevProps) {
@@ -69,12 +77,9 @@ class Requests extends React.Component {
             // notify('Appointment Status', 'Hi there! Styler has accepted your appointment.');
             this.props.listStylerRequests();
             this.setState({ accept: false, })
-            // this.props.socket.emit('accept.appointment', appointment.userId && appointment.userId.publicId);
-            // if (this.props.role === roles.user) {
-
-            // } else if (this.props.role === roles.styler) {
-            //     this.props.listStylerAppointments();
-            // } else { }
+            // if (prevProps.updatedStyler && prevProps.updatedStyler != this.props.updatedStyler) {
+            //     alert('updated')
+            // }
         }
     }
 
@@ -113,13 +118,19 @@ class Requests extends React.Component {
         this.props.getStats();
     }
 
+    setStatus = () => {
+        const { isActive, } = this.state;
+        this.setState({ isActive: !isActive, });
+        this.props.updateStyler({ isActive: !isActive });
+    }
+
     // declineAppointment = () => {
     //     this.setState({ isProcessing: true })
     //     // this.props.acceptAppointment(appointment._id);
     // }
 
     render() {
-        const { appointment, isVisible, } = this.state;
+        const { appointment, isVisible, isActive, } = this.state;
         return (
             <>
                 <StatusBar barStyle="light-content" backgroundColor={colors.pink} />
@@ -139,7 +150,10 @@ class Requests extends React.Component {
                         <View>
                             <Header
                                 hamburger={this.props.role === roles.styler ? true : false}
+                                statusBtn
+                                isActive={isActive}
                                 title={`Hi ${this.props.username[0]},`}
+                                setStatus={() => this.setStatus()}
                             />
                         </View>
 
@@ -183,7 +197,7 @@ class Requests extends React.Component {
                                     source={service__1} />
                             </View> */}
                             <View>
-                                <Text style={{ fontFamily: fonts.bold }}>{appointment.userId && appointment.userId.name}</Text>
+                                <Text style={{ fontFamily: fonts.bold }}>{appointment.userId && appointment.name}</Text>
                                 <View style={{ padding: 2, borderRadius: 6, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
                                     <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.medium, position: 'relative', bottom: 1, }}>Card Payment</Text>
                                 </View>

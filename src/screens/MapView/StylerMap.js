@@ -100,13 +100,13 @@ class StylerMap extends React.Component {
             })
         }
 
-        if (prevProps.updated && prevProps.updated !== this.props.updated) {
+        if (prevProps.updated && prevProps.updated !== this.props.updated && this.state.completeService) {
             alert('Successfully completed')
-            if (this.state.appointment.userId.publicId === this.props.current.publicId) {
+            if (this.state.appointment.publicId === this.props.current.publicId) {
                 notify('Service Completed', 'Hi there! You just completed this service.');
             }
             this.props.navigation.dispatch(NavigationService.resetAction('Requests'))
-            this.props.socket.emit('serviceCompleted', this.state.appointment.userId.publicId);
+            this.props.socket.emit('serviceCompleted', this.state.appointment.publicId);
             // this.props.listStylerRequests();
         }
     }
@@ -208,7 +208,7 @@ class StylerMap extends React.Component {
                 }
                 var credentials = {
                     Id: appointment._id,
-                    userKey: appointment.userId.publicId,
+                    userKey: appointment.publicId,
                 }
                 this.props.socket.emit('stylerLocation', region, credentials);
             },
@@ -299,7 +299,7 @@ class StylerMap extends React.Component {
                     {appointment && <Marker
                         title={'Destination'}
                         // image={styler_location}
-                        key={appointment.userId.publicId}
+                        key={appointment.publicId}
                         coordinate={{
                             longitude: parseFloat(appointment.pickUp.longitude),
                             latitude: parseFloat(appointment.pickUp.latitude),

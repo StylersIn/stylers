@@ -97,7 +97,40 @@ export default function stylerReducer(state = initialState, action) {
             return {
                 ...state,
                 isProcessing: true,
+                service__stylers: undefined,
+            }
+        case constants.LIST_SERVICE_STYLER_SUCCESS:
+            return {
+                ...state,
+                isProcessing: undefined,
+                message: action.payload && action.payload.response.message,
                 service__stylers: action.payload && action.payload.response.data,
+            }
+        case constants.LIST_SERVICE_STYLER_FAILURE:
+            return {
+                ...state,
+                isProcessing: undefined,
+                service__stylers: undefined,
+                error: `${action.meta.error}`
+            }
+        case constants.STYLER_DETAILS:
+            return {
+                ...state,
+                isProcessing: true,
+                stylerDetails: undefined,
+            }
+        case constants.STYLER_DETAILS_SUCCESS:
+            return {
+                ...state,
+                isProcessing: undefined,
+                stylerDetails: action.payload && action.payload.response.data,
+            }
+        case constants.STYLER_DETAILS_FAILURE:
+            return {
+                ...state,
+                isProcessing: undefined,
+                stylerDetails: undefined,
+                error: `${action.meta.error}`
             }
         case constants.GET_STYLER_SERVICES:
             return {
@@ -148,6 +181,23 @@ export default function stylerReducer(state = initialState, action) {
             return {
                 ...state,
                 stylerService: action.payload
+            }
+        case constants.UPDATE_STYLER:
+            return {
+                ...state,
+                error: undefined,
+                updatedStyler: undefined,
+            }
+        case constants.UPDATE_STYLER_SUCCESS:
+            return {
+                ...state,
+                updatedStyler: action.payload && action.payload.response.data,
+            }
+        case constants.UPDATE_STYLER_FAILURE:
+            return {
+                ...state,
+                error: action.payload.error,
+                updatedStyler: undefined,
             }
         case constants.UPDATE_STYLER_PRICE:
             return {
