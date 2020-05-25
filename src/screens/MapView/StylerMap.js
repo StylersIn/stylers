@@ -253,10 +253,6 @@ class StylerMap extends React.Component {
         this.props.updateAppointmentStatus(this.state.appointment._id, constants.COMPLETED);
     }
 
-    rate = () => {
-
-    }
-
     render() {
         const { region, appointment } = this.state;
         return (

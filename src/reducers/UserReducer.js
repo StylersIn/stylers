@@ -1,6 +1,7 @@
 import * as constants from '../constants/ActionTypes';
 import AsyncStorage from '@react-native-community/async-storage';
 import store from '../store/createStore';
+import { roles } from '../constants/DefaultProps';
 
 let initialState = {
     authenticated: false,
@@ -36,34 +37,39 @@ export default function userReducer(state = initialState, action) {
             }
         case constants.AUTH_USER:
             return Object.assign({}, state, {
-                authenticated: false,
+                authenticated: undefined,
                 error: undefined,
                 status: undefined,
                 message: undefined,
+                role: undefined,
             })
         case constants.AUTH_USER_SUCCESS:
-            if (action.payload.response.status == false) {
+            const {
+                response,
+            } = action.payload;
+            if (response.status == false) {
                 return {
                     ...state,
                     status: false,
-                    message: action.payload.response.message,
+                    message: response.message,
+                    role: response.role,
                 }
             }
-            if (action.payload.response.success == false) {
+            if (response.success == false) {
                 return {
                     ...state,
-                    message: action.payload.response.message,
+                    message: response.message,
                     authenticated: false,
                 }
             }
-            if (action.payload.response.data && action.payload.response.data.token) {
-                AsyncStorage.setItem(constants.TOKEN, action.payload.response.data.token);
-                // store.getState().socket.emit('Authorized', action.payload.response.data.user);
+            if (response.data && response.data.token) {
+                AsyncStorage.setItem(constants.TOKEN, response.data.token);
+                // store.getState().socket.emit('Authorized', response.data.user);
                 return {
                     ...state,
                     authenticated: true,
                     error: undefined,
-                    current: action.payload.response.data.user
+                    current: response.data.user,
                 };
             }
         case constants.AUTH_USER_FAILURE:
@@ -159,6 +165,20 @@ export default function userReducer(state = initialState, action) {
                 cards: undefined,
                 error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             })
+        case constants.GET_BALANCE:
+            return Object.assign({}, state, {
+                balance: undefined,
+            })
+        case constants.GET_BALANCE_SUCCESS:
+            return {
+                ...state,
+                balance: action.payload.response && action.payload.response.data
+            }
+        case constants.GET_BALANCE_FAILURE:
+            return Object.assign({}, state, {
+                balance: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            })
         case constants.CHANGE_PASSWORD:
             return Object.assign({}, state, {
                 changingPassword: true,
@@ -207,6 +227,20 @@ export default function userReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 cards: undefined,
                 passwordChanged: undefined,
+                error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            })
+        case constants.REMOVE_CARDS:
+            return Object.assign({}, state, {
+                deleted: undefined,
+            })
+        case constants.REMOVE_CARDS_SUCCESS:
+            return {
+                ...state,
+                deleted: action.payload.response && action.payload.response.success
+            }
+        case constants.REMOVE_CARDS_FAILURE:
+            return Object.assign({}, state, {
+                deleted: undefined,
                 error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
             })
 

@@ -23,7 +23,7 @@ class Payment extends React.Component {
         // let totalAmount = navigation.getParam('totalAmt', '');
         this.setState({ totalAmount: stylerData.totalAmt, })
         this.props.initTransaction({
-            amount: stylerData.totalAmt
+            amount: stylerData.totalDue,
         });
     }
     UNSAFE_componentWillReceiveProps(nextProps) {

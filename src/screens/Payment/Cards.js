@@ -31,6 +31,9 @@ import { DateIcon, LocationIcon, TimeIcon } from '../Services/ServiceAssets';
 import NavigationService from '../../navigation/NavigationService';
 import avatar from '../../../assets/imgs/user.png';
 import { notify } from '../../services';
+import PayWithCardView from './PayWithCardView';
+import PayDirectView from './PayDirectView';
+import DeleteCardModal from './DeleteCardModal';
 
 const { width, height } = Dimensions.get('window');
 
@@ -41,6 +44,8 @@ class NoDebit extends React.Component {
         selectedCard: undefined,
         isVisible: false,
         isProcessing: false,
+        isDeleteCardVisible: false,
+        cardId: undefined,
     }
     static navigationOptions = {
         drawerIcon: ({ tintColor }) => (
@@ -50,6 +55,7 @@ class NoDebit extends React.Component {
 
     componentDidMount() {
         this.props.fetchCards();
+        this.props.getBalance();
     }
 
     UNSAFE_componentWillReceiveProps(prevProps) {
@@ -68,22 +74,30 @@ class NoDebit extends React.Component {
         }
         if (prevProps.error && prevProps.error != this.props.error) {
             alert(prevProps.error);
+            this.setState({ isProcessing: false });
+        }
+        if (prevProps.deleted && prevProps.deleted != this.props.deleted) {
+            this.setState({ fetching: true, isDeleteCardVisible: false, isProcessing: false, });
+            this.props.fetchCards();
         }
     }
 
     completeTransaction = () => {
+        this.setState({ isProcessing: true, });
         const { stylerData, } = this.props;
         let styler = stylerData;
         var req = {
             stylerId: styler._id,
-            stylerUserId: styler._id,
             services: this.props.services,
             scheduledDate: this.props.date,
-            totalAmount: styler.totalAmt,
+            // totalAmount: styler.totalAmt,
+            totalAmount: styler.totalDue,
+            sumTotal: stylerData.totalAmt,
             streetName: this.props.streetName,
             pickUp: this.props.pickUp,
             transactionReference: null,
         }
+        // console.log(req)
         setTimeout(() => {
             this.props.saveAppointment(req);
         }, 500);
@@ -93,14 +107,22 @@ class NoDebit extends React.Component {
         this.setState({ selectedCard: card, });
     }
 
-    async chargeCard() {
+    chargeCard = async () => {
         // const { navigation } = this.props;
         // let styler = navigation.getParam('styler', '');
         // let totalAmount = navigation.getParam('totalAmt', '');
+        const {
+            selectedCard,
+        } = this.state;
+        const {
+            stylerData,
+        } = this.props;
         this.setState({ isProcessing: true });
         this.props.chargeAuthorization({
-            authorizationCode: this.state.selectedCard.authorizationCode,
-            amount: this.props.stylerData.totalAmt,
+            authorizationCode: selectedCard.authorizationCode,
+            amount: stylerData.totalDue,
+            sumTotal: stylerData.totalAmt,
+            email: selectedCard.email,
         });
     }
 
@@ -112,9 +134,26 @@ class NoDebit extends React.Component {
         this.setState({ isVisible: false });
     }
 
+    toggleDeleteModal = (id) => this.setState({ isDeleteCardVisible: !this.state.isDeleteCardVisible, cardId: id, });
+
+    removeCard = () => {
+        this.setState({ isProcessing: true, });
+        const { cardId, } = this.state;
+        this.props.removeCard(cardId);
+    }
+
     render() {
-        const { selectedCard, fetching, } = this.state;
-        const { cards, stylerData, } = this.props;
+        const {
+            selectedCard,
+            fetching,
+            isProcessing,
+            isDeleteCardVisible,
+        } = this.state;
+        const {
+            cards,
+            stylerData,
+            balance,
+        } = this.props;
         let styler = stylerData;
         return (
             <View style={{ flex: 1 }}>
@@ -123,73 +162,33 @@ class NoDebit extends React.Component {
                         {fetching ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
                             <Spinner color={colors.pink} />
                         </View> : <>
-                                {cards && cards.length > 0 ? <>
-                                    <ScrollView contentContainerStyle={{ flexGrow: 1, }}>
-                                        <Header
-                                            close={true}
-                                            title={'My Cards'}
-                                        />
-                                        <TouchableOpacity onPress={() => this.addCard()} activeOpacity={0.8}>
-                                            <Text style={{ fontFamily: fonts.medium, color: colors.pink, }}>Add new payment method</Text>
-                                        </TouchableOpacity>
-                                        {cards.map((card, i) => <TouchableOpacity activeOpacity={0.7} onPress={() => this.selectCard(card)} key={i} style={styles.cardDetails}>
-                                            <Radio
-                                                color={"#f0ad4e"}
-                                                selectedColor={"#5cb85c"}
-                                                onPress={() => this.selectCard(card)}
-                                                selected={selectedCard && selectedCard._id == card._id ? true : false}
-                                            />
-                                            <View style={{ paddingHorizontal: 10, }}>
-                                                <Image source={require('../../../assets/imgs/visa.png')} />
-                                            </View>
-
-                                            <View style={{ paddingHorizontal: 10, }}>
-                                                <Text style={{ fontSize: 18, fontFamily: fonts.bold, marginLeft: 15, alignSelf: 'center', }}>{`**** **** **** ${card.cardNumber}`}</Text>
-                                            </View>
-                                        </TouchableOpacity>)}
-
-                                        <View style={{ flex: 1, marginTop: 50, }}>
-                                            <Button
-                                                onPress={() => this.chargeCard()}
-                                                btnTxt={"Pay"}
-                                                loading={this.state.isProcessing}
-                                                disabled={!this.state.selectedCard ? true : false}
-                                                size={"lg"}
-                                                btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                                            />
-                                        </View>
-                                    </ScrollView>
-                                </> : <>
-                                        <View style={{ position: "absolute", right: 0, padding: 20, zIndex: 1, }}>
-                                            <TouchableOpacity
-                                                onPress={() => this.props.navigation.goBack()}
-                                            >
-                                                <Icon
-                                                    style={{ fontSize: 60, color: "#000000", alignSelf: "flex-end", }}
-                                                    type="Ionicons"
-                                                    name="ios-close" />
-                                            </TouchableOpacity>
-                                        </View>
-
-                                        <View style={{ height, justifyContent: "center", }}>
-                                            <View style={{ alignItems: "center" }}>
-                                                <PaymentIcon />
-                                                <Text style={{ fontFamily: fonts.medium, fontSize: 24, paddingVertical: 20, }}>No debit card</Text>
-                                                <Text style={{ textAlign: "center", fontSize: 16, paddingVertical: 20, }}>You don’t have any debit card associated with your account</Text>
-                                            </View>
-                                            <View style={{ paddingVertical: 20, marginTop: 20, }}>
-                                                <Button
-                                                    onPress={() => this.addCard()}
-                                                    btnTxt={"Add Debit Card"}
-                                                    size={"lg"}
-                                                    btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                                                />
-                                            </View>
-                                        </View>
-                                    </>}
+                                {styler.totalDue > 0 ? <PayWithCardView
+                                    cards={cards}
+                                    totalDue={styler.totalDue}
+                                    selectCard={this.selectCard}
+                                    selectedCard={selectedCard}
+                                    chargeCard={this.chargeCard}
+                                    isProcessing={isProcessing}
+                                    navigation={this.props.navigation}
+                                    addCard={this.addCard}
+                                    toggleDeleteModal={this.toggleDeleteModal}
+                                /> : <PayDirectView
+                                        totalDue={styler.totalDue}
+                                        totalAmt={styler.totalAmt}
+                                        balance={balance}
+                                        isProcessing={isProcessing}
+                                        completeFromWallet={this.completeTransaction}
+                                    />}
                             </>}
                     </View>
                 </SafeAreaView>
+                <DeleteCardModal
+                    isProcessing={isProcessing}
+                    removeCard={this.removeCard}
+                    isDeleteCardVisible={isDeleteCardVisible}
+                    deleteCardVisible={this.deleteCardVisible}
+                    close={this.toggleDeleteModal}
+                />
                 <Modal
                     closeModal={this.closeModal}
                     isVisible={this.state.isVisible}
@@ -241,7 +240,7 @@ class NoDebit extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
     },
     input__main: {
         borderRadius: 5,
@@ -268,6 +267,8 @@ const mapStateToProps = state => ({
     booked: state.appointment.booked,
     error: state.appointment.error,
     socket: state.socket,
+    balance: state.user.balance,
+    deleted: state.user.deleted,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

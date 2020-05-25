@@ -28,11 +28,7 @@ class EditProfile extends React.Component {
             toastMsg: '',
             toastType: '',
             userData: undefined,
-            avatar: {
-                uri: undefined,
-                type: undefined,
-                name: undefined,
-            },
+            avatar: {},
         }
     }
 
@@ -80,11 +76,33 @@ class EditProfile extends React.Component {
             return;
         }
         this.setState({ isProcessing: true })
-        if (this.state.avatar) {
-            this.updateWithAvatar();
-        } else {
-            this.updateWithoutAvatar();
+        if (this.props.role == roles.styler) {
+            return this.updateStyer();
         }
+        return this.update();
+        // if (this.state.avatar) {
+        //     this.updateWithAvatar();
+        // } else {
+        //     this.updateWithoutAvatar();
+        // }
+    }
+
+    update = () => {
+        this.props.updateProfile({
+            name: this.name,
+            email: this.email,
+            phoneNumber: this.phoneNumber,
+            image: this.state.avatar,
+        })
+    }
+
+    updateStyer = () => {
+        this.props.updateStylerProfile({
+            name: this.name,
+            email: this.email,
+            phoneNumber: this.phoneNumber,
+            image: this.state.avatar,
+        })
     }
 
     updateWithAvatar = () => {
@@ -139,7 +157,7 @@ class EditProfile extends React.Component {
                                     }}>
                                     <Icon style={{ fontSize: 25, textAlign: 'center', color: colors.pink }} name="ios-add" />
                                 </TouchableOpacity>
-                                <Text style={{ fontFamily: fonts.bold, marginTop: 10, }}>{userData && userData.name}</Text>
+                                {/* <Text style={{ fontFamily: fonts.bold, marginTop: 10, }}>{userData && userData.name}</Text> */}
                             </View>}
                             <Card style={styles.card_shadow}>
                                 <View style={{ marginVertical: 10, marginHorizontal: 20, }}>
@@ -235,6 +253,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     user: state.user,
     styler: state.styler,
+    role: state.user.current && state.user.current.role,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

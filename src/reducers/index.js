@@ -10,6 +10,7 @@ import appointment from './AppointmentReducer';
 import map from './MapReducer';
 import contact from './ContactReducer';
 import socket from './SocketReducer';
+import transaction from './TransactionReducer';
 
 const rootReducers = combineReducers({
     login,
@@ -21,6 +22,7 @@ const rootReducers = combineReducers({
     map,
     contact,
     socket,
+    transaction,
 })
 
 export default rootReducers;

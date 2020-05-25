@@ -6,11 +6,16 @@ import {
     ScrollView,
     StatusBar,
     RefreshControl,
+    Animated,
+    Easing,
+    Vibration,
 } from 'react-native';
 import {
     Icon,
     Thumbnail,
     Spinner,
+    Card,
+    CardItem,
 } from 'native-base';
 import { fonts, colors, roles } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
@@ -23,6 +28,8 @@ import Stats from '../Appointments/Stats';
 import { notify } from '../../services';
 import * as constants from '../../constants/ActionTypes';
 import AsyncStorage from '@react-native-community/async-storage';
+import CancelPopup from './CancelPopup';
+import Notify from '../../components/Notify';
 
 const options = { year: 'numeric', month: 'long', day: 'numeric' };
 // weekday: 'long', 
@@ -39,6 +46,20 @@ class Requests extends React.Component {
             accept: false,
             key: '',
             isActive: undefined,
+            refreshing: false,
+            notify: false,
+            notifyCount: 0,
+            isCancelVisible: false,
+            selectedAppointment: undefined,
+            selectedReason: undefined,
+            pageNumber: 1,
+            pageSize: 10,
+            isFinished: false,
+            hasScrolled: false,
+            requests: [],
+            loading: true,
+            notSeen: 0,
+            opacity: new Animated.Value(0),
         }
         // this.props.socket.on('appointmentBooked.send', () => {
         //     notify('New Appointment!!!', 'Hi there! You have a new appointment.');
@@ -52,17 +73,28 @@ class Requests extends React.Component {
     }
 
     componentDidMount() {
-        const { user: { oneSignalId }, isActive, } = this.props;
-        if (!oneSignalId) {
-            AsyncStorage.getItem('oneSignalUserId', (err, Id) => {
-                if (Id) {
-                    this.props.updateOneSignal({ oneSignalUserId: Id });
-                }
-            })
-        }
-        this.props.updateOneSignal({ oneSignalUserId: oneSignalId });
+        // this.setState({ notify: true, })
+        // const { user: { oneSignalId }, isActive, } = this.props;
+        // if (!oneSignalId) {
+        //     AsyncStorage.getItem('oneSignalUserId', (err, Id) => {
+        //         if (Id) {
+        //             this.props.updateOneSignal({ oneSignalUserId: Id });
+        //         }
+        //     })
+        // }
+        // this.props.updateOneSignal({ oneSignalUserId: oneSignalId });
+        this.props.listStylerRequests();
+        this.props.getStats();
+        this.props.navigation.setParams({
+            requests: this.props.requests
+        })
+        AsyncStorage.getItem('oneSignalUserId', (err, Id) => {
+            if (Id) {
+                this.props.updateOneSignal({ oneSignalUserId: Id });
+            }
+        })
     }
-    
+
     componentDidUpdate(prevProps) {
         const { isActive, } = this.state;
         if (prevProps.isActive !== undefined && isActive === undefined) {
@@ -72,19 +104,51 @@ class Requests extends React.Component {
 
     UNSAFE_componentWillReceiveProps(prevProps) {
         const { appointment } = this.state;
+        if (prevProps.requests && prevProps.requests !== this.props.requests) {
+            if (prevProps.notSeen && prevProps.notSeen > 0) {
+                this.setState({ notSeen: prevProps.notSeen, notify: true, });
+                Vibration.vibrate();
+                this.props.seenNotification({ seen: true, });
+            }
+            // this.setState({ loading: false });
+            if (!prevProps.requests.length) {
+                this.setState({ isFinished: true, });
+            }
+            this.setState((prevState) => ({
+                loading: false,
+                pageNumber: prevState.pageNumber + 1,
+                // pageSize: prevState.pageSize + 10,
+                requests: prevState.requests.concat(prevProps.requests),
+            }))
+        }
         if (prevProps.updated && prevProps.updated !== this.props.updated) {
-            alert('Successfully accepted')
+            this.setState({ isProcessing: false, });
+            if (prevProps.status === constants.ACCEPTED) {
+                alert('Successfully accepted')
+                notify('Service Accepted', 'Hi there! You just accepted this service.');
+                this.setState({ accept: false, })
+            } else if (prevProps.status === constants.CANCELLED) {
+                this.setState({ isCancelVisible: false, });
+                notify('Service Cancelled', 'Hi there! You just cancelled this service.');
+                alert('Successfully declined');
+            }
             // notify('Appointment Status', 'Hi there! Styler has accepted your appointment.');
             this.props.listStylerRequests();
-            this.setState({ accept: false, })
+
             // if (prevProps.updatedStyler && prevProps.updatedStyler != this.props.updatedStyler) {
             //     alert('updated')
             // }
         }
     }
 
+    filterDoc = () => {
+        this.setState({ isFinished: false, });
+        const { pageNumber, pageSize, } = this.state;
+        this.props.listStylerRequests(pageNumber, pageSize);
+    }
+
     showDetails = (appointment) => this.setState({ isVisible: true, appointment, });
-    closeModal = () => this.setState({ isVisible: false });
+    closeModal = () => this.setState({ isVisible: false, isCancelVisible: false, selectedReason: undefined, });
 
     formatDate = (d) => {
         var date = new Date(d);
@@ -102,6 +166,7 @@ class Requests extends React.Component {
     }
 
     updateAppointmentStatus(Id, status) {
+        this.setState({ isProcessing: true, });
         if (status == constants.ACCEPTED) {
             this.setState({ accept: true, key: 'accept' })
         }
@@ -129,12 +194,37 @@ class Requests extends React.Component {
     //     // this.props.acceptAppointment(appointment._id);
     // }
 
+    selectReason = selectedReason => this.setState({ selectedReason, });
+
     render() {
-        const { appointment, isVisible, isActive, } = this.state;
+        const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+            const paddingToBottom = 20;
+            return layoutMeasurement.height + contentOffset.y >=
+                contentSize.height - paddingToBottom;
+        };
+        const {
+            appointment,
+            isVisible,
+            isActive,
+            notify,
+            isCancelVisible,
+            selectedAppointment,
+            selectedReason,
+            isProcessing,
+            loading,
+            requests,
+            accept,
+            isFinished,
+            hasScrolled,
+            notSeen,
+        } = this.state;
+        // const {
+        //     requests,
+        // } = this.props;
         return (
             <>
                 <StatusBar barStyle="light-content" backgroundColor={colors.pink} />
-                {this.state.accept && <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, elevation: 5, zIndex: 1000, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)', }}>
+                {accept && <View style={styles.accept}>
                     <Spinner style={{ alignItems: "center" }} isVisible={true} size={80} color={colors.pink} />
                 </View>}
                 <SafeAreaView style={{ flex: 1 }}>
@@ -146,7 +236,19 @@ class Requests extends React.Component {
                                 onRefresh={this._onRefresh}
                             />
                         }
+                        onScroll={({ nativeEvent }) => {
+                            this.setState({ hasScrolled: true, })
+                            if (isCloseToBottom(nativeEvent)) {
+                                this.filterDoc();
+                            }
+                        }}
                     >
+                        {notify && <Notify
+                            title="New Appointments"
+                            message={`You have ${notSeen} new appointment(s)`}
+                        />}
+                        {/* {!notify && requests.length > 0 && this.showNotification(requests || [])} */}
+                        {/* {this.notification()} */}
                         <View>
                             <Header
                                 hamburger={this.props.role === roles.styler ? true : false}
@@ -176,18 +278,36 @@ class Requests extends React.Component {
                                 role={this.props.role}
                                 showDetails={this.showDetails}
                                 closeModal={this.closeModal}
-                                isProcessing={this.props.isProcessing}
+                                loading={loading}
                                 isVisible={this.state.isVisible}
-                                requests={this.props.requests}
+                                requests={requests}
                                 accept={(id) => this.updateAppointmentStatus(id, constants.ACCEPTED)}
-                                decline={(id) => this.updateAppointmentStatus(id, constants.CANCELLED)}
+                                // decline={(id) => this.updateAppointmentStatus(id, constants.CANCELLED)}
+                                openCancelModal={(id) => this.setState({ isCancelVisible: true, selectedAppointment: id, })}
                                 requestKey={this.state.key}
-                                loading={this.state.isProcessing}
                             />
                         </View>
 
+                        <View style={{ padding: 20, }}>
+                            {!isFinished && !loading && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                                <Spinner
+                                    color={colors.default}
+                                />
+                            </View>}
+                            {isFinished && requests.length > 0 && <View>
+                                <Text style={styles.finishedTxt}>No new requests found</Text>
+                            </View>}
+                        </View>
                     </ScrollView>
                 </SafeAreaView>
+                <CancelPopup
+                    isVisible={isCancelVisible}
+                    closeModal={this.closeModal}
+                    selectReason={this.selectReason}
+                    selectedReason={selectedReason}
+                    isProcessing={isProcessing}
+                    declineAppointment={() => this.updateAppointmentStatus({ appointmentId: selectedAppointment, reason: selectedReason }, constants.CANCELLED)}
+                />
                 <Modal
                     header={<View style={{ height: '100%', padding: 20, paddingHorizontal: 40, flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', }}>
@@ -279,23 +399,41 @@ class Requests extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        // padding: 20,
     },
-    cardStyle: {
+    Input___shadow: {
+        position: "absolute",
+        left: 20,
+        right: 20,
+        zIndex: 1000,
+        paddingRight: 30,
+        marginTop: 10,
         borderWidth: 1,
-        borderRadius: 4,
+        borderColor: colors.pink,
+        borderRadius: 5,
         borderBottomWidth: 0,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        elevation: 1,
-        borderLeftWidth: 12,
-        borderLeftColor: "#000000",
-        // paddingRight: 12,
-        marginLeft: 5,
-        marginRight: 5,
-        marginTop: 10,
+        shadowOpacity: 0.4,
+        shadowRadius: 2,
+        elevation: 5,
+        backgroundColor: colors.pink,
+    },
+    accept: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        elevation: 5,
+        zIndex: 1000,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.9)',
+    },
+    finishedTxt: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: colors.gray,
     },
 });
 

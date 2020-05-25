@@ -82,7 +82,7 @@ class Register extends React.Component {
             this.showToast(nextProps.user.message, toastType.danger);
         }
         if (nextProps.styler.created == false && nextProps.styler.created != this.props.styler.created) {
-            alert(nextProps.styler.message);
+            // alert(nextProps.styler.message);
             this.setState({ isProcessing: false, });
         }
         if (nextProps.styler.error && nextProps.styler.error != this.props.styler.error) {
@@ -138,7 +138,7 @@ class Register extends React.Component {
             confirmPassword = this.confirmPassword;
             // startingPrice = this.startingPrice;
 
-        if (!name || !email || !phone || !password || !startingPrice || !gender) {
+        if (!name || !email || !phone || !password || !gender) {
             this.showToast('Invalid login credentials!', toastType.danger);
         } else if (password !== confirmPassword) {
             this.showToast('Password and Confirm Password does not match', toastType.danger);

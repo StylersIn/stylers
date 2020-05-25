@@ -97,20 +97,20 @@ export default function stylerReducer(state = initialState, action) {
             return {
                 ...state,
                 isProcessing: true,
-                service__stylers: undefined,
+                serviceStylers: undefined,
             }
         case constants.LIST_SERVICE_STYLER_SUCCESS:
             return {
                 ...state,
                 isProcessing: undefined,
                 message: action.payload && action.payload.response.message,
-                service__stylers: action.payload && action.payload.response.data,
+                serviceStylers: action.payload && action.payload.response.data,
             }
         case constants.LIST_SERVICE_STYLER_FAILURE:
             return {
                 ...state,
                 isProcessing: undefined,
-                service__stylers: undefined,
+                serviceStylers: undefined,
                 error: `${action.meta.error}`
             }
         case constants.STYLER_DETAILS:
@@ -218,14 +218,14 @@ export default function stylerReducer(state = initialState, action) {
             return {
                 ...state,
                 isProcessing: true,
-                service__stylers: undefined,
+                serviceStylers: undefined,
                 error: undefined,
             }
         case constants.SORT_STYLER_SERVICE_SUCCESS:
             return {
                 ...state,
                 isProcessing: false,
-                service__stylers: action.payload.response.data,
+                serviceStylers: action.payload.response.data,
             }
         case constants.SORT_STYLER_SERVICE_FAILURE:
             return {
@@ -254,6 +254,16 @@ export default function stylerReducer(state = initialState, action) {
             return {
                 ...state,
                 servicePrice: filterServicePrice(state, action),
+            }
+        case constants.TOTAL_DUE:
+            return {
+                ...state,
+                totalDue: undefined,
+            }
+        case constants.TOTAL_DUE_SUCCESS:
+            return {
+                ...state,
+                totalDue: action.payload,
             }
         default:
             return state;

@@ -28,12 +28,20 @@ export default function appointmentReducer(state = initialState, action) {
                 isProcessing: true,
             }
         case constants.LIST_APPOINTMENT_SUCCESS:
+            // let appointments = action.payload
+            //     && action.payload.response
+            //     && action.payload.response.data;
+            // if (appointments.length > 0) {
+            //     appointments.sort(function (a, b) {
+            //         return b.totalAmount - a.totalAmount;
+            //     })
+            // }
             return {
                 ...state,
                 isProcessing: false,
                 appointments: action.payload
                     && action.payload.response
-                    && action.payload.response.data.sort().reverse(),
+                    && action.payload.response.data,
             }
         case constants.LIST_APPOINTMENT_ERROR:
             return {
@@ -52,7 +60,10 @@ export default function appointmentReducer(state = initialState, action) {
                 isProcessing: false,
                 requests: action.payload
                     && action.payload.response
-                    && action.payload.response.data.sort().reverse(),
+                    && action.payload.response.data,
+                notSeen: action.payload
+                    && action.payload.response
+                    && action.payload.response.notSeen,
             }
         case constants.LIST_REQUESTS_FAILURE:
             return {
@@ -86,6 +97,7 @@ export default function appointmentReducer(state = initialState, action) {
             return {
                 ...state,
                 updated: action.payload.response.success,
+                status: action.payload.status,
             }
         case constants.UPDATE_APPOINTMENT_STATUS_FAILURE:
             return {
@@ -158,7 +170,7 @@ export default function appointmentReducer(state = initialState, action) {
             return {
                 ...state,
                 tranx: undefined,
-                error: action.payload
+                error: action.payload.response && action.payload.response.message,
             }
         case constants.STYLER_DATA:
             return {
@@ -181,6 +193,24 @@ export default function appointmentReducer(state = initialState, action) {
             return {
                 ...state,
                 rating: undefined,
+                error: action.payload.message
+            }
+        case constants.UPDATE_USER_APPOINTMENT:
+            return {
+                ...state,
+                seenUpdated: undefined,
+                error: undefined,
+            }
+        case constants.UPDATE_USER_APPOINTMENT_SUCCESS:
+            return {
+                ...state,
+                seenUpdated: true,
+                error: undefined,
+            }
+        case constants.UPDATE_USER_APPOINTMENT_FAILURE:
+            return {
+                ...state,
+                seenUpdated: undefined,
                 error: action.payload.message
             }
         default:

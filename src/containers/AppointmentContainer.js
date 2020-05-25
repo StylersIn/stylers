@@ -7,9 +7,9 @@ import { AppointmentIcon } from '../navigation/assets';
 import { roles } from '../constants/DefaultProps';
 
 class Appointments extends React.Component {
-    state = {
-        isProcessing: true
-    }
+    // state = {
+    //     isProcessing: true
+    // }
     componentDidMount() {
         if (this.props.role === roles.user) {
             this.props.listAppointments();
@@ -17,11 +17,11 @@ class Appointments extends React.Component {
             this.props.listStylerAppointments();
         } else { }
     }
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.appointments && nextProps.appointments !== this.props.appointments) {
-            this.setState({ isProcessing: false });
-        }
-    }
+    // UNSAFE_componentWillReceiveProps(nextProps) {
+    //     if (nextProps.appointments && nextProps.appointments !== this.props.appointments) {
+    //         this.setState({ isProcessing: false });
+    //     }
+    // }
     static navigationOptions = {
         drawerIcon: ({ tintColor }) => (
             <AppointmentIcon tintColor={"none"} />
@@ -29,7 +29,7 @@ class Appointments extends React.Component {
     }
     render() {
         return (
-            <Component {...this.props} {...this.state} />
+            <Component {...this.props} />
         )
     }
 }

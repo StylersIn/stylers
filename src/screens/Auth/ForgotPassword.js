@@ -71,6 +71,7 @@ class ForgotPassword extends React.Component {
                         // error={(this.phone === undefined || this.phone === '') && this.state.validationErr}
                         regular>
                         <Input
+                            autoCapitalize={"none"}
                             onChangeText={e => this.email = e}
                             style={{
                                 fontFamily: fonts.medium

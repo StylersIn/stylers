@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import {
     Item,
     Input,
+    Icon,
 } from 'native-base';
 import Button from '../../components/Button';
 import { fonts, colors, toastType } from '../../constants/DefaultProps';
@@ -21,6 +22,9 @@ import { FacebookIcon, GoogleIcon } from './AuthAssets';
 import ShowToast from '../../components/ShowToast';
 import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
 import NavigationService from '../../navigation/NavigationService';
+import CountryPicker, { getAllCountries } from 'react-native-country-picker-modal';
+
+const COUNTRY = ['NG'];
 
 class FbRegister extends React.Component {
     constructor(props) {
@@ -29,7 +33,33 @@ class FbRegister extends React.Component {
             isProcessing: false,
             validationErr: false,
             pwMatchErr: false,
+            country: '',
+            region: '',
+            cca2,
+            callingCode,
+            visible: false,
+            countryCode: 'NG',
+            withFilter: true,
+            withFlag: true,
+            withCountryNameButton: true,
+            withAlphaFilter: true,
+            withCallingCode: true,
+            withEmoji: true,
+            editable: true,
         }
+
+        let userLocaleCountryCode = 'NG';
+        let cca2 = userLocaleCountryCode;
+        let callingCode = null;
+        getAllCountries()
+            .then((country) => country.filter(e => COUNTRY.includes(e.cca2)))
+            .then((country) => {
+                if (!cca2 || !country) {
+                    this.setState({ callingCode: '234', countryCode: 'NG' })
+                } else {
+                    this.setState({ callingCode: country[0].callingCode[0] })
+                }
+            });
     }
 
     componentDidMount() {
@@ -87,9 +117,29 @@ class FbRegister extends React.Component {
         this.props.navigation.navigate('Home')
     }
 
+    openModal = () => {
+        this.setState({ visible: true });
+    }
+
     render() {
         const { navigation } = this.props;
         const user = navigation.getParam('user', '');
+        const onSelect = value => {
+            this.setState({ cca2: value.cca2, callingCode: value.callingCode, countryCode: value.cca2, visible: true, });
+        }
+        const onClose = _ => this.setState({ visible: false, });
+        const {
+            visible,
+            callingCode,
+            countryCode,
+            withFilter,
+            withFlag,
+            withCountryNameButton,
+            withAlphaFilter,
+            withCallingCode,
+            withEmoji,
+            editable,
+        } = this.state;
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView contentContainerStyle={styles.container}>
@@ -110,7 +160,7 @@ class FbRegister extends React.Component {
                             autoCapitalize={'none'}
                             placeholder='Email address' />
                     </Item>}
-                    <Item style={{ marginTop: 10, borderRadius: 5, }}
+                    {/* <Item style={{ marginTop: 10, borderRadius: 5, }}
                         error={(this.phone === undefined) && this.state.validationErr}
                         regular>
                         <Input
@@ -121,6 +171,35 @@ class FbRegister extends React.Component {
                                 , fontSize: 13
                             }}
                             placeholder='Phone' />
+                    </Item> */}
+                    <Item style={{ marginTop: 10, borderRadius: 5, height: 50, }}
+                        error={(this.phone === undefined || this.phone === '') && this.state.validationErr}
+                        regular>
+                        <TouchableOpacity
+                            style={styles.inputAddon}
+                            onPress={this.openModal}
+                        >
+                            <CountryPicker
+                                {...{
+                                    countryCode,
+                                    withFilter,
+                                    withFlag,
+                                    withAlphaFilter,
+                                    withCallingCode,
+                                    withEmoji,
+                                    onSelect,
+                                    onClose,
+                                }}
+                                visible={visible}
+                            />
+                            <Text style={styles.addonTxt}>{callingCode}</Text>
+                            <Icon style={styles.addonTxt} name="ios-arrow-down" />
+                        </TouchableOpacity>
+                        <Input
+                            keyboardType={"numeric"}
+                            onChangeText={e => this.phone = e}
+                            style={{ fontFamily: fonts.medium, fontSize: 13 }}
+                            placeholder='Phone Number' />
                     </Item>
                     <View style={{ marginVertical: 8 }}>
                         <RadioGroup
@@ -165,7 +244,31 @@ const styles = StyleSheet.create({
         padding: 20,
         // marginTop: 100,
         justifyContent: "center",
-    }
+    },
+    inputAddon: {
+        height: '100%',
+        width: 95,
+        backgroundColor: colors.pink,
+        justifyContent: 'space-evenly',
+        paddingHorizontal: 15,
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    addonTxt: {
+        color: colors.white,
+        fontSize: 12,
+        fontFamily: fonts.medium,
+    },
+    primaryText: {
+        fontFamily: fonts.bold,
+        color: '#222B2F',
+        fontSize: 13,
+        marginBottom: 3
+    },
+    secondaryText: {
+        color: '#9BABB4',
+        fontSize: 11,
+    },
 })
 
 const mapStateToProps = state => ({

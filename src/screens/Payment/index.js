@@ -61,7 +61,7 @@ class Payment extends React.Component {
             expiryMonth: this.expiryMonth,
             expiryYear: this.expiryYear,
             cvc: this.cvc,
-            accessCode: this.props.transactionDetails.access_code
+            accessCode: this.props.transactionDetails.access_code,
             // email: this.props.email,
             // amountInKobo: totalAmount * 100,
         })
@@ -72,10 +72,10 @@ class Payment extends React.Component {
 
                     var req = {
                         stylerId: styler._id,
-                        stylerUserId: styler._id,
                         services: this.props.services,
                         scheduledDate: this.props.date,
-                        totalAmount: styler.totalAmt,
+                        totalAmount: styler.totalDue,
+                        sumTotal: styler.totalAmt,
                         streetName: this.props.streetName,
                         pickUp: this.props.pickUp,
                         transactionReference: response.reference,
@@ -121,6 +121,7 @@ class Payment extends React.Component {
                                 name="ios-close" />
                         </TouchableOpacity>
                         <Text style={{ fontSize: 24, fontFamily: fonts.bold, }}>Payment</Text>
+                        <Text style={{ fontFamily: fonts.bold, color: colors.gray, paddingTop: 20, }}>{`Amount Due: NGN${styler.totalDue}`}</Text>
 
                         <View style={{ marginVertical: 20 }}>
                             <View style={{ marginTop: 10, }}>

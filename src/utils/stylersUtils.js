@@ -49,3 +49,19 @@ export const getRating = (ratings = []) => {
     }
     return 0;
 }
+
+export const getStartingPrice = (services = []) => {
+    if (services.length > 0) {
+        let e = services.reduce((p, c) => p < (c.adult < c.child ? c.adult : c.child) ? p : (c.adult < c.child ? c.adult : c.child));
+        return e;
+    }
+    return 0;
+}
+
+export const getTotalAmt = (balance, totalDue) => {
+    var e = balance - totalDue;
+    if (e.toString().startsWith("-")) {
+        return parseInt(e.toString().replace("-", ""));
+    }
+    return 0;
+}

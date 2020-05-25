@@ -12,15 +12,14 @@ export default function serviceReducer(state = initialState, action) {
                 location: action.payload,
             }
         case constants.GET_CURRENT_ADDRESS:
-            return {
-                ...state,
-                currentAddress: null,
-            }
+            return Object.assign({}, state, {
+                currentAddress: true,
+            })
         case constants.GET_CURRENT_ADDRESS_SUCCESS:
-            return {
-                ...state,
-                currentAddress: action.payload,
-            }
+            return Object.assign({}, state, {
+                currentAddress: undefined,
+                selectedAddress: action.payload || undefined,
+            })
         case constants.GET_INPUT:
             return Object.assign({}, state, {
                 searching: true,

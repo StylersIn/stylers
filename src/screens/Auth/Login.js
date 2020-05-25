@@ -14,7 +14,7 @@ import {
     Spinner,
 } from 'native-base';
 import Button from '../../components/Button';
-import { fonts, colors, toastType } from '../../constants/DefaultProps';
+import { fonts, colors, toastType, roles } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { FacebookIcon, GoogleIcon } from './AuthAssets';
 import ShowToast from '../../components/ShowToast';
@@ -43,11 +43,18 @@ class Login extends React.Component {
                 this.props.navigation.dispatch(NavigationService.resetAction('Home'))
             }
         }
+        if (nextProps.user.authenticated === false && nextProps.user.authenticated !== this.props.user.authenticated) {
+            this.setState({ isProcessing: false });
+            alert(nextProps.user.message);
+        }
         if (nextProps.user.status == false && nextProps.user.status != this.props.user.status) {
-            // this.showToast(`Error: ${nextProps.user.message}`, toastType.danger);
             this.setState({ isProcessing: false, });
-            return this.props.navigation.navigate('Verify', { 
-                email: this.email || this.state.social_user.id ,
+            if (nextProps.role == roles.styler) {
+                alert("Sorry, this account has not been verified. If this error persists 48hours after regsitration, kindly contact the administrator.");
+                return;
+            }
+            return this.props.navigation.navigate('Verify', {
+                email: this.email || this.state.social_user.id,
                 key: this.email ? 'email' : 'socialId'
             })
         }
@@ -197,6 +204,7 @@ class Login extends React.Component {
                             onPress={this.fbLogin.bind(this)}
                             size={"lg"}
                             Icon={<FacebookIcon />}
+                            btnTxt={"(Client)"}
                             styles={{ backgroundColor: colors.facebook }}
                             btnTxtStyles={{ color: "white", fontFamily: fonts.medium }}
                         />
@@ -263,7 +271,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     user: state.user,
+    role: state.user.role,
     styler: state.styler,
+    verified: state.user.verified,
     socialAccount: state.login.socialAccount,
     error: state.login.error,
 })

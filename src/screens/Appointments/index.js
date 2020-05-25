@@ -13,6 +13,7 @@ import {
     Card,
     CardItem,
     Thumbnail,
+    Spinner,
 } from 'native-base';
 import { fonts, colors, roles } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
@@ -44,6 +45,13 @@ class Appointment extends React.Component {
             isProcessing: false,
             refreshing: false,
             setRefreshing: false,
+            notify: false,
+            pageNumber: 1,
+            pageSize: 10,
+            isFinished: false,
+            hasScrolled: false,
+            appointments: [],
+            loading: true,
         }
     }
 
@@ -53,14 +61,29 @@ class Appointment extends React.Component {
         )
     }
 
+    componentDidMount() {
+        // this.setState({ notify: true, });
+    }
+
     UNSAFE_componentWillReceiveProps(prevProps) {
         if (prevProps.location && prevProps.location != this.props.location) {
             this.navigateToMap();
         }
         if (prevProps.appointments && prevProps.appointments !== this.props.appointments) {
+            // this.setState({ isProcessing: false });
             if (this.state.refreshing) {
                 this.setState({ refreshing: false });
             }
+            if (!prevProps.appointments.length) {
+                this.setState({ isFinished: true, });
+            }
+            this.setState((prevState) => ({
+                loading: false,
+                pageNumber: prevState.pageNumber + 1,
+                // pageSize: prevState.pageSize + 10,
+                appointments: prevState.appointments.concat(prevProps.appointments),
+            }))
+            // this.showNotification(prevProps.appointments);
         }
         if (prevProps.updated && prevProps.updated !== this.props.updated) {
             alert('Appointment has been cancelled successfully');
@@ -70,6 +93,42 @@ class Appointment extends React.Component {
             } else if (this.props.role === roles.styler) {
                 this.props.listStylerAppointments();
             } else { }
+        }
+    }
+
+    filterDoc = () => {
+        this.setState({ isFinished: false, });
+        const { pageNumber, pageSize, } = this.state;
+        if (this.props.role === roles.user) {
+            this.props.listAppointments(pageNumber, pageSize);
+        } else if (this.props.role === roles.styler) {
+            this.props.listStylerAppointments(pageNumber, pageSize);
+        } else { }
+    }
+
+    showNotification = (appointments) => {
+        const {
+            current: { publicId, }
+        } = this.props;
+        let expired = appointments.filter(e => e.status == (constants.EXPIRED || constants.CANCELLED) && e.userId.publicId == publicId).length;
+        if (expired > 0) {
+            setTimeout(() => {
+                this.setState({ notify: undefined, notification: {} })
+            }, 5000);
+            const { notification } = this.state;
+            return (
+                <Card style={styles.Input___shadow}>
+                    <CardItem style={{ borderRadius: 4, backgroundColor: colors.pink, flexDirection: 'row', }}>
+                        <View>
+                            <Icon style={{ color: colors.white, }} name='ios-add' />
+                        </View>
+                        <View>
+                            <Text style={{ color: colors.white, fontFamily: fonts.bold, fontSize: 18, }}>{`Expired Appointments`}</Text>
+                            <Text style={{ color: colors.white, fontFamily: fonts.medium, }}>{`You have ${expired} expired appointment(s), please kindly reschedule with a different styler`}</Text>
+                        </View>
+                    </CardItem>
+                </Card>
+            )
         }
     }
 
@@ -107,12 +166,6 @@ class Appointment extends React.Component {
     beginService = () => {
         const { appointment: { _id, }, } = this.state;
         this.navigateToMap();
-        // if (this.props.location) {
-        //     return this.navigateToMap();
-        // }
-        // else {
-        //     this.props.getCurrentLocation();
-        // }
         this.updateAppointmentStatus(_id, constants.STARTED)
         this.setState({ isProcessing: true, })
     }
@@ -123,7 +176,6 @@ class Appointment extends React.Component {
     }
 
     trackStyler = () => {
-        // this.props.getCurrentLocation();
         this.setState({ isProcessing: true, })
         setTimeout(() => {
             this.navigateToMap();
@@ -145,7 +197,23 @@ class Appointment extends React.Component {
     }
 
     render() {
-        const { appointment, isVisible, } = this.state;
+        const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+            const paddingToBottom = 20;
+            return layoutMeasurement.height + contentOffset.y >=
+                contentSize.height - paddingToBottom;
+        };
+        const {
+            appointment,
+            isVisible,
+            notify,
+            appointments,
+            isFinished,
+            loading,
+            hasScrolled,
+        } = this.state;
+        // const {
+        //     appointments,
+        // } = this.props;
         return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
@@ -157,16 +225,14 @@ class Appointment extends React.Component {
                                 onRefresh={this._onRefresh}
                             />
                         }
+                        onScroll={({ nativeEvent }) => {
+                            this.setState({ hasScrolled: true, })
+                            if (isCloseToBottom(nativeEvent)) {
+                                this.filterDoc();
+                            }
+                        }}
                     >
-                        {/* <TouchableOpacity
-                            onPress={() => this.props.navigation.goBack()}
-                            activeOpacity={0.7}>
-                            <Icon
-                                style={{ fontSize: 60, color: !this.state.isVisible ? "#000000" : "#ffffff", alignSelf: "flex-end", }}
-                                type="Ionicons"
-                                name="ios-close" />
-                        </TouchableOpacity> */}
-
+                        {notify && appointments && this.showNotification(appointments || {})}
                         <View>
                             <Header
                                 // hamburger={this.props.role === roles.styler ? true : false}
@@ -210,10 +276,21 @@ class Appointment extends React.Component {
                                 closeModal={this.closeModal}
                                 isProcessing={this.props.isProcessing}
                                 isVisible={this.state.isVisible}
-                                appointments={this.props.appointments}
+                                appointments={appointments}
+                                loading={loading}
                             />
                         </View>
 
+                        <View style={{ padding: 20, }}>
+                            {!isFinished && !loading && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                                <Spinner
+                                    color={colors.default}
+                                />
+                            </View>}
+                            {isFinished && appointments.length > 0 && <View>
+                                <Text style={styles.finishedTxt}>No new appointments found</Text>
+                            </View>}
+                        </View>
                     </ScrollView>
                 </SafeAreaView>
                 <Modal
@@ -232,7 +309,7 @@ class Appointment extends React.Component {
                             </View>
                         </View>
                         <View>
-                            <Text style={{ fontFamily: fonts.bold }}>{`NGN${appointment.totalAmount}`}</Text>
+                            <Text style={{ fontFamily: fonts.bold }}>{`NGN${appointment.sumTotal}`}</Text>
                         </View>
                     </View>}
                     closeModal={this.closeModal}
@@ -279,34 +356,46 @@ class Appointment extends React.Component {
                             </View>}
                             {this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.styler &&
                                 appointment.status == constants.ACCEPTED ? <View style={{ marginTop: 10, width: '100%' }}>
-                                <Button
-                                    onPress={this.beginService}
-                                    btnTxt={"Begin Service"}
-                                    size={"lg"}
-                                    loading={this.state.isProcessing}
-                                    styles={{ height: 40, backgroundColor: colors.black, }}
-                                    btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
-                                />
+                                    <Button
+                                        onPress={this.beginService}
+                                        btnTxt={"Begin Service"}
+                                        size={"lg"}
+                                        loading={this.state.isProcessing}
+                                        styles={{ height: 40, backgroundColor: colors.black, }}
+                                        btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
+                                    />
                                 </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.styler &&
                                     appointment.status == constants.STARTED ? <View style={{ marginTop: 10, width: '100%' }}>
-                                <Button
-                                    onPress={this.continueService}
-                                    btnTxt={"View Map"}
-                                    size={"lg"}
-                                    styles={{ height: 40, backgroundColor: colors.black, }}
-                                    btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
-                                />
-                            </View>: this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user &&
+                                        <Button
+                                            onPress={this.continueService}
+                                            btnTxt={"View Map"}
+                                            size={"lg"}
+                                            styles={{ height: 40, backgroundColor: colors.black, }}
+                                            btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
+                                        />
+                                    </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user &&
                                         appointment.status == constants.STARTED || appointment.status == constants.ACCEPTED ? <View style={{ marginTop: 10, width: '100%' }}>
-                                <Button
-                                    onPress={this.trackStyler}
-                                    btnTxt={"Track Styler"}
-                                    size={"lg"}
-                                    loading={this.state.isProcessing}
-                                    styles={{ height: 40, backgroundColor: colors.black, }}
-                                    btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
-                                />
-                            </View> : !this.IsDateInPast(appointment.scheduledDate) ? null : null}
+                                            <Button
+                                                onPress={this.trackStyler}
+                                                btnTxt={"Track Styler"}
+                                                size={"lg"}
+                                                loading={this.state.isProcessing}
+                                                styles={{ height: 40, backgroundColor: colors.black, }}
+                                                btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
+                                            />
+                                        </View> : this.props.role === roles.user && appointment.status == (constants.EXPIRED || constants.CANCELLED) ?
+                                            <View style={{ marginTop: 10, width: '100%' }}>
+                                                <Button
+                                                    onPress={() => this.props.navigation.navigate("Reschedule",
+                                                        {
+                                                            param: { service: appointment.stylerId.services[0].serviceId, styler: appointment.stylerId._id, }
+                                                        })}
+                                                    btnTxt={"Reschedule with different styler"}
+                                                    size={"lg"}
+                                                    styles={{ height: 40, backgroundColor: colors.black, }}
+                                                    btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
+                                                />
+                                            </View> : !this.IsDateInPast(appointment.scheduledDate) ? null : null}
                             {/* <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
                                     onPress={() => alert('module disabled...')}
@@ -337,23 +426,29 @@ class Appointment extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        // padding: 20,
     },
-    cardStyle: {
+    Input___shadow: {
+        position: "absolute",
+        left: 20,
+        right: 20,
+        zIndex: 1000,
+        paddingRight: 30,
+        marginTop: 10,
         borderWidth: 1,
-        borderRadius: 4,
+        borderColor: colors.pink,
+        borderRadius: 5,
         borderBottomWidth: 0,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        elevation: 1,
-        borderLeftWidth: 12,
-        borderLeftColor: "#000000",
-        // paddingRight: 12,
-        marginLeft: 5,
-        marginRight: 5,
-        marginTop: 10,
+        shadowOpacity: 0.4,
+        shadowRadius: 2,
+        elevation: 5,
+        backgroundColor: colors.pink,
+    },
+    finishedTxt: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: colors.gray,
     },
 });
 

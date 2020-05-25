@@ -15,6 +15,7 @@ export const colors = {
     facebook: '#4064AD',
     google: '#DD4B39',
     whatsapp: '#25D366',
+    gray: "#979797",
 }
 
 export const fonts = {

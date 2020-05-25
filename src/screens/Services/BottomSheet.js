@@ -38,6 +38,7 @@ function services(props) {
                     onPress={props.scheduleAppointment}
                     btnTxt={"Schedule Appointment"}
                     size={"lg"}
+                    loading={props.isProcessing}
                     btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                 />
             </View>

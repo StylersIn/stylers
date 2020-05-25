@@ -16,24 +16,29 @@ import { EmptyAppointment } from '../Appointments/AppointmentAssets';
 import Loader from '../../components/Loader';
 import Button from '../../components/Button';
 import { getDay, getDate, formatTime } from '../../utils/stylersUtils';
+import * as constants from '../../constants/ActionTypes';
+import { ErrorIcon } from '../Assets';
 
 export default function (props) {
     return (
         <View style={{ flex: 1, }}>
             <View style={{ flex: 1, marginTop: 20, }}>
-                {!props.isProcessing && props.requests.length === 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                {!props.loading && props.requests.length === 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                     <EmptyAppointment />
                     <Text style={{ fontSize: 20, paddingVertical: 40, fontFamily: fonts.medium, }}>No scheduled requests</Text>
                 </View>}
-                {!props.isProcessing ? <View>
+                {!props.loading ? <View>
                     {props.requests.length && props.role === roles.user ? <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text> : null}
                     {props.requests.length && props.role === roles.styler ? <Text style={{ fontSize: 18, fontFamily: fonts.bold }}>Requests</Text> : null}
                     {props.requests.map((request, i) => <TouchableWithoutFeedback
                         key={i}
-                        onPress={() => props.showDetails(request)}
+                        // onPress={() => props.showDetails(request)}
                         activeOpacity={0.7}
                     >
-                        <Card style={styles.Input___shadow}>
+                         <Card style={[styles.Input___shadow, request.status == constants.CANCELLED ? { borderLeftColor: colors.danger } :
+                            request.status == constants.COMPLETED ? { borderLeftColor: colors.success } :
+                                request.status == constants.STARTED ? { borderLeftColor: colors.pink } :
+                                    request.status == constants.ACCEPTED ? { borderLeftColor: colors.pink } : { borderLeftColor: '#000000' }]}>
                             <CardItem style={{ borderRadius: 4 }}>
                                 <View style={{ borderRightWidth: 0.5, borderColor: "#979797", alignItems: "center", paddingRight: 10, }}>
                                     <Text style={{ fontFamily: fonts.bold, fontSize: 18, paddingVertical: 2, }}>{getDate(request.CreatedAt)}</Text>
@@ -50,7 +55,9 @@ export default function (props) {
                                     <BarberIcon />
                                 </View> */}
                             </CardItem>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 10, marginBottom: 10, }}>
+                            {request.status == constants.EXPIRED ? <View style={{ position: "absolute", bottom: 10, right: 10, }}>
+                                <ErrorIcon color={colors.danger} />
+                            </View> : request.status != constants.CANCELLED ? <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 10, marginBottom: 10, }}>
                                 <View style={{ marginTop: 10, width: '48%' }}>
                                     <Button
                                         onPress={() => props.accept(request._id)}
@@ -64,7 +71,7 @@ export default function (props) {
 
                                 <View style={{ marginTop: 10, width: '48%' }}>
                                     <Button
-                                        onPress={() => props.decline(request._id)}
+                                        onPress={() => props.openCancelModal(request._id)}
                                         btnTxt={"Decline"}
                                         size={"lg"}
                                         loading={props.requestKey === 'decline' && props.loading}
@@ -72,7 +79,8 @@ export default function (props) {
                                         btnTxtStyles={{ color: colors.black, fontSize: 12, fontFamily: fonts.bold }}
                                     />
                                 </View>
-                            </View>
+                            </View> : undefined}
+
                         </Card>
                     </TouchableWithoutFeedback>)}
                 </View> : Loader()}
@@ -106,7 +114,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         borderWidth: 1,
         borderRadius: 5,
-        borderColor: '#000000',
         borderBottomWidth: 0,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },

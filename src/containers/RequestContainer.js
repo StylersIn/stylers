@@ -11,25 +11,31 @@ import Text from '../config/AppText';
 
 class Requests extends React.Component {
     state = {
-        isProcessing: true
+        isProcessing: true,
+        // pageNumber: 1,
+        // pageSize: 10,
+        // isFinished: false,
+        // hasScrolled: false,
+        // requests: [],
+        // loading: true,
     }
     componentDidMount() {
-        this.props.listStylerRequests();
-        this.props.getStats();
-        this.props.navigation.setParams({
-            requests: this.props.requests
-        })
+        // this.props.listStylerRequests();
+        // this.props.getStats();
+        // this.props.navigation.setParams({
+        //     requests: this.props.requests
+        // })
         // if (this.props.role === roles.user) {
         //     this.props.listAppointments();
         // } else if (this.props.role === roles.styler) {
         //     this.props.listStylerAppointments();
         // } else { }
     }
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.requests && nextProps.requests !== this.props.requests) {
-            this.setState({ isProcessing: false });
-        }
-    }
+    // UNSAFE_componentWillReceiveProps(nextProps) {
+    //     if (nextProps.requests && nextProps.requests !== this.props.requests) {
+    //         this.setState({ isProcessing: false });
+    //     }
+    // }
     static navigationOptions = {
         drawerIcon: ({ tintColor }) => (
             <AppointmentIcon tintColor={"none"} />
@@ -52,12 +58,14 @@ class Requests extends React.Component {
 
 const mapStateToProps = state => ({
     requests: state.appointment.requests,
+    notSeen: state.appointment.notSeen,
     role: state.user.current && state.user.current.role,
     username: state.user.current && state.user.current.name.split(' '),
     publicId: state.user.current && state.user.current.publicId,
     isActive: state.styler.stylerDetails && state.styler.stylerDetails.isActive,
     updatedStyler: state.styler.stylerDetails && state.styler.stylerDetails.updatedStyler,
     updated: state.appointment.updated,
+    status: state.appointment.status,
     stats: state.styler.stats,
     socket: state.socket,
     user: state.user,

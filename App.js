@@ -13,83 +13,82 @@ import { colors, fonts } from './src/constants/DefaultProps';
 class App extends React.Component {
   constructor(properties) {
     super(properties);
-    OneSignal.init(config.one_signal_app_id, {
-      kOSSettingsKeyAutoPrompt: true,
-    }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
+    // OneSignal.init(config.one_signal_app_id, {
+    //   kOSSettingsKeyAutoPrompt: true,
+    // }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
 
-    OneSignal.inFocusDisplaying(0);
-    // OneSignal.enableSound(true);
-    // OneSignal.enableVibrate(true);
-    OneSignal.setSubscription(true);
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('opened', this.onOpened);
-    OneSignal.addEventListener('ids', this.onIds);
+    // OneSignal.inFocusDisplaying(0);
+    // // OneSignal.enableSound(true);
+    // // OneSignal.enableVibrate(true);
+    // OneSignal.setSubscription(true);
+    // OneSignal.addEventListener('received', this.onReceived);
+    // OneSignal.addEventListener('opened', this.onOpened);
+    // OneSignal.addEventListener('ids', this.onIds);
 
-    this.state = {
-      notify: undefined,
-      notification: {
-        payload: { body: undefined, }
-      },
-    }
-  }
-
-  componentWillUnmount() {
-    OneSignal.removeEventListener('received', this.onReceived);
-    OneSignal.removeEventListener('opened', this.onOpened);
-    OneSignal.removeEventListener('ids', this.onIds);
-  }
-
-  onReceived = (notification) => {
-    // alert('Notification received: ', notification)
-    this.setState({ notify: true, notification, });
-    Vibration.vibrate();
-    console.log('Notification received: ', notification);
-  }
-
-  onOpened(openResult) {
-    console.log('Message: ', openResult.notification.payload.body);
-    console.log('Data: ', openResult.notification.payload.additionalData);
-    console.log('isActive: ', openResult.notification.isAppInFocus);
-    console.log('openResult: ', openResult);
-  }
-
-  onIds(device) {
-    AsyncStorage.setItem('oneSignalUserId', device.userId);
-    // if (store.getState().user.authenticated) {
-    //   store.dispatch(updateProfile(device));
+    // this.state = {
+    //   notify: undefined,
+    //   notification: {
+    //     payload: { body: undefined, }
+    //   },
     // }
-    // console.log('Device info: ', device);
   }
 
-  showNotification = () => {
-    setTimeout(() => {
-      this.setState({ notify: undefined, notification: {} })
-    }, 5000);
-    const { notification } = this.state;
-    return (
-      <Card style={styles.Input___shadow}>
-        <CardItem style={{ borderRadius: 4, backgroundColor: colors.pink, flexDirection: 'row', }}>
-          <View>
-            <Icon style={{ color: colors.white, }} name='ios-add' />
-          </View>
-          <View>
-            <Text style={{ color: colors.white, fontFamily: fonts.bold, fontSize: 18, }}>{notification.payload.title}</Text>
-            <Text style={{ color: colors.white, fontFamily: fonts.medium, }}>{notification.payload.body}</Text>
-          </View>
-        </CardItem>
-      </Card>
-    )
-  }
+  // componentWillUnmount() {
+  //   OneSignal.removeEventListener('received', this.onReceived);
+  //   OneSignal.removeEventListener('opened', this.onOpened);
+  //   OneSignal.removeEventListener('ids', this.onIds);
+  // }
+
+  // onReceived = (notification) => {
+  //   // alert('Notification received: ', notification)
+  //   this.setState({ notify: true, notification, });
+  //   Vibration.vibrate();
+  //   console.log('Notification received: ', notification);
+  // }
+
+  // onOpened(openResult) {
+  //   console.log('Message: ', openResult.notification.payload.body);
+  //   console.log('Data: ', openResult.notification.payload.additionalData);
+  //   console.log('isActive: ', openResult.notification.isAppInFocus);
+  //   console.log('openResult: ', openResult);
+  // }
+
+  // onIds(device) {
+  //   AsyncStorage.setItem('oneSignalUserId', device.userId);
+  //   // if (store.getState().user.authenticated) {
+  //   //   store.dispatch(updateProfile(device));
+  //   // }
+  //   // console.log('Device info: ', device);
+  // }
+
+  // showNotification = () => {
+  //   setTimeout(() => {
+  //     this.setState({ notify: undefined, notification: {} })
+  //   }, 5000);
+  //   const { notification } = this.state;
+  //   return (
+  //     <Card style={styles.Input___shadow}>
+  //       <CardItem style={{ borderRadius: 4, backgroundColor: colors.pink, flexDirection: 'row', }}>
+  //         <View>
+  //           <Icon style={{ color: colors.white, }} name='ios-add' />
+  //         </View>
+  //         <View>
+  //           <Text style={{ color: colors.white, fontFamily: fonts.bold, fontSize: 18, }}>{notification.payload.title}</Text>
+  //           <Text style={{ color: colors.white, fontFamily: fonts.medium, }}>{notification.payload.body}</Text>
+  //         </View>
+  //       </CardItem>
+  //     </Card>
+  //   )
+  // }
 
   render() {
-    const { notify } = this.state;
     return (
       <>
         <Provider store={store}>
           <View style={styles.container}>
-            <View style={{ position: 'absolute', width: '100%', top: '5%', paddingHorizontal: 20, }}>
+            {/* <View style={{ position: 'absolute', width: '100%', top: '5%', paddingHorizontal: 20, }}>
               {notify ? this.showNotification() : undefined}
-            </View>
+            </View> */}
             <RootContainer />
           </View>
         </Provider>

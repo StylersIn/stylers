@@ -9,6 +9,7 @@ export default function registerReducer(state = {}, action) {
                 created: undefined,
             })
         case constants.REGISTER_SUCCESS:
+            console.log(action.payload.response)
             if (action.payload.response.success == false) {
                 return {
                     ...state,

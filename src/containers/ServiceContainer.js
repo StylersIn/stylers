@@ -32,7 +32,7 @@ class Services extends React.Component {
 
 const mapStateToProps = state => ({
     service: state.service,
-    stylers: state.styler.service__stylers,
+    stylers: state.styler.serviceStylers,
     processing: state.styler.isProcessing,
     location: state.user.location,
     message: state.styler.message,

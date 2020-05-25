@@ -37,6 +37,37 @@ export const addStyler = credentials => ({
     }
 });
 
+export const updateStylerProfile = data => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/update`,
+        method: 'PUT',
+        types: [
+            constants.UPDATE_PROFILE,
+            {
+                type: constants.UPDATE_PROFILE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.UPDATE_PROFILE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(data),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
 export const getStylerDetails = payload => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/getStylerDetails`,
@@ -155,7 +186,36 @@ export const getServiceStylers = (service, coordinates, pageSize = 10, pageNumbe
             Accept: "application/json",
             "Content-Type": "application/json"
         },
-        // body:JSON.stringify(coordinates),
+        credentials: "same-origin"
+    }
+});
+
+export const getStylerWithException = (service, styler, coordinates, pageSize = 10, pageNumber = 1) => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/${service}/exception/${styler}/${pageSize}/${pageNumber}?coordinates=${coordinates}`,
+        method: 'GET',
+        types: [
+            constants.LIST_SERVICE_STYLER,
+            {
+                type: constants.LIST_SERVICE_STYLER_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => {
+                    return { response }
+                })
+            },
+            {
+                type: constants.LIST_SERVICE_STYLER_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
         credentials: "same-origin"
     }
 });
@@ -220,6 +280,20 @@ export const removeStylerService = (subServiceId) => {
             type: constants.REMOVE_STYLER_SERVICE,
             payload: temp
         })
+    }
+}
+
+export const scheduleAppointment = (totalDue) => {
+    return (dispatch) => {
+        dispatch({
+            type: constants.TOTAL_DUE,
+        })
+        setTimeout(() => {
+            dispatch({
+                type: constants.TOTAL_DUE_SUCCESS,
+                payload: totalDue,
+            })
+        }, 0);
     }
 }
 

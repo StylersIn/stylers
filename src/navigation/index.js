@@ -35,6 +35,9 @@ import AddAvatarScreen from '../screens/Auth/AddAvatar';
 import ServicePriceScreen from '../screens/Stylers/ServicePrice';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
 import ConfirmForgotPasswordScreen from '../screens/Auth/ConfirmForgotPassword';
+import RescheduleScreen from '../screens/Appointments/Reschedule';
+import WalletScreen from '../screens/Wallet';
+import WithdrawScreen from '../screens/Withdraw';
 
 const drawerContentComponents = (props) => (
     <Container style={{ backgroundColor: colors.black }}>
@@ -81,6 +84,7 @@ const ClientDrawerNavigator = createDrawerNavigator({
     Home: {
         screen: HomeScreen,
     },
+    // Wallet: WalletScreen,
     Appointments: {
         screen: AppointmentScreen,
     },
@@ -115,6 +119,7 @@ const AppNavigator = createStackNavigator({
     StylerService: StylersCompleteRegScreen,
     ServicePrice: ServicePriceScreen,
     Appointments: AppointmentScreen,
+    Reschedule: RescheduleScreen,
     Requests: {
         screen: StylerDrawerNavigator
     },
@@ -138,6 +143,7 @@ const AppNavigator = createStackNavigator({
     ChangePassword: ChangePasswordScreen,
     ForgotPassword: ForgotPasswordScreen,
     ConfirmForgotPassword: ConfirmForgotPasswordScreen,
+    Withdraw: WithdrawScreen,
 },
     {
         initialRouteName: "Splash",

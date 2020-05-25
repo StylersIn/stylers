@@ -17,26 +17,39 @@ export function getCurrentLocation() {
         Geolocation.getCurrentPosition(
             (position) => {
                 dispatch({
-                    type: constants.CURRENT_LOCATION,
-                    payload: position
+                    type: constants.GET_CURRENT_ADDRESS,
                 });
-                setTimeout(() => {
-                    dispatch({
-                        type: constants.GET_CURRENT_ADDRESS,
-                    });
-                    Axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=${MAP_API_KEY}`)
-                        .then((response) => {
-                            const result = response.data.results[0];
-                            dispatch({
-                                type: constants.GET_CURRENT_ADDRESS_SUCCESS,
-                                payload: result.formatted_address
-                            });
-                        })
-                        .catch((err) => console.log(err))
-                }, 0);
+                const region = position.coords;
+                Axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${region.latitude},${region.longitude}&key=${MAP_API_KEY}`)
+                    .then((response) => {
+                        const result = response.data.results[0];
+                        const data = {
+                            priceLevel: 0,
+                            viewport: {
+                                longitudeSW: result.geometry.viewport.southwest.lng,
+                                latitudeSW: result.geometry.viewport.southwest.lat,
+                                longitudeNE: result.geometry.viewport.northeast.lng,
+                                latitudeNE: result.geometry.viewport.northeast.lat
+                            },
+                            address: result.formatted_address,
+                            location: {
+                                longitude: result.geometry.location.lng,
+                                latitude: result.geometry.location.lat
+                            },
+                            plusCode: result.plus_code,
+                            types: result.types,
+                            placeID: result.place_id,
+                            name: result.formatted_address,
+                        }
+                        dispatch({
+                            type: constants.GET_CURRENT_ADDRESS_SUCCESS,
+                            payload: data
+                        });
+                    })
+                    .catch((err) => console.log(err))
             },
             (error) => console.log(error.message),
-            { enableHighAccuracy: true, timeout: 20000, distanceFilter: 2 }
+            { enableHighAccuracy: false, timeout: 20000, }
         );
     }
 }

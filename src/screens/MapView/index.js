@@ -53,7 +53,7 @@ class ShowMap extends React.Component {
                 (error) => {
                     console.log(error.message);
                 },
-                { enableHighAccuracy: true, timeout: 20000, }
+                { enableHighAccuracy: false, timeout: 20000, }
             );
         } catch (e) {
             alert(e.message || "");

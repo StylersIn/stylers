@@ -29,6 +29,10 @@ class Settings extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.props.getBalance();
+    }
+
     static navigationOptions = {
         drawerIcon: ({ tintColor }) => (
             <AppointmentIcon tintColor={"none"} />
@@ -38,8 +42,8 @@ class Settings extends React.Component {
     signOut = async () => {
         const { user: { current: { publicId }, oneSignalId }, } = this.props;
         try {
-            await this.props.socket.emit('removeOneSignalID', { publicId, oneSignalUserId: oneSignalId });
-            await this.props.logout(oneSignalId);
+            // await this.props.socket.emit('removeOneSignalID', { publicId, oneSignalUserId: oneSignalId });
+            await this.props.logout();
             NavigationService.navigate('Auth');
         } catch (error) {
             console.log(error);
@@ -47,7 +51,7 @@ class Settings extends React.Component {
     }
 
     render() {
-        const { user: { current: { role } } } = this.props;
+        const { user: { current: { role }, balance, } } = this.props;
         return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
@@ -58,9 +62,21 @@ class Settings extends React.Component {
                         />
 
                         <View style={{ paddingHorizontal: 20, }}>
+                            <View style={{ flexDirection: "row", justifyContent:"space-between", }}>
+                                <View>
+                                    <Text style={{ fontFamily: fonts.bold, marginTop: 30, fontSize: 16, }}>Wallet Balance</Text>
+                                    <Text style={{ marginTop: 10, fontSize: 16, color: colors.gray, }}>{balance >= 0 ? `NGN${balance}` : 'Loading...'}</Text>
+                                </View>
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={() => this.props.navigation.navigate('Withdraw')}
+                                >
+                                    <Text style={{ fontFamily: fonts.medium, marginTop: 30, fontSize: 14, color: colors.danger, }}>Withdraw</Text>
+                                </TouchableOpacity>
+                            </View>
                             <Text style={{ fontFamily: fonts.bold, marginTop: 30, fontSize: 16, }}>Account</Text>
                             <View style={{ marginTop: 20, }}>
-                                 <TouchableOpacity
+                                <TouchableOpacity
                                     activeOpacity={0.7}
                                     onPress={() => this.props.navigation.navigate('EditProfile')}
                                 >
@@ -130,6 +146,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     user: state.user,
+    balance: state.user.balance,
     styler: state.styler,
     socket: state.socket,
 })

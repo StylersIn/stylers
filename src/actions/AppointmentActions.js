@@ -6,7 +6,7 @@ import {
 import config from '../config';
 const BASE_URL = () => `${config.api.host}/api/appointment`;
 
-export const listAppointments = (pageSize = 10, pageNumber = 1) => ({
+export const listAppointments = (pageNumber = 1, pageSize = 10) => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/user/${pageSize}/${pageNumber}`,
         method: 'GET',
@@ -36,7 +36,7 @@ export const listAppointments = (pageSize = 10, pageNumber = 1) => ({
     }
 });
 
-export const listStylerRequests = (pageSize = 10, pageNumber = 1) => ({
+export const listStylerRequests = (pageNumber = 1, pageSize = 10) => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/styler/requests/${pageSize}/${pageNumber}`,
         method: 'GET',
@@ -66,7 +66,7 @@ export const listStylerRequests = (pageSize = 10, pageNumber = 1) => ({
     }
 });
 
-export const listStylerAppointments = (pageSize = 10, pageNumber = 1) => ({
+export const listStylerAppointments = (pageNumber = 1, pageSize = 10) => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/styler/${pageSize}/${pageNumber}`,
         method: 'GET',
@@ -141,7 +141,7 @@ export const updateLocation = location => {
     }
 };
 
-export const updateAppointmentStatus = (appointmentId, status) => ({
+export const updateAppointmentStatus = (data, status) => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/appointment/status/${status}`,
         method: 'PUT',
@@ -151,6 +151,7 @@ export const updateAppointmentStatus = (appointmentId, status) => ({
                 type: constants.UPDATE_APPOINTMENT_STATUS_SUCCESS,
                 payload: (action, state, response) => response.json().then(response => ({
                     response,
+                    status,
                 }))
             },
             {
@@ -162,7 +163,38 @@ export const updateAppointmentStatus = (appointmentId, status) => ({
                 }
             }
         ],
-        body: JSON.stringify({ appointmentId }),
+        body: JSON.stringify(data),
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const seenNotification = (data) => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/appointment`,
+        method: 'PUT',
+        types: [
+            constants.UPDATE_USER_APPOINTMENT,
+            {
+                type: constants.UPDATE_USER_APPOINTMENT_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.UPDATE_USER_APPOINTMENT_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        body: JSON.stringify(data),
         options: { timeout: 10000 },
         headers: {
             Accept: "application/json",

@@ -63,6 +63,7 @@ class StylerMap extends React.Component {
         this.props.socket.on('reviews.send', () => {
             // console.log('show review');
             Vibration.vibrate();
+            notify('Service completed', 'Styler has successfully completed your service');
             this.setState({ showReview: true, })
         })
     }

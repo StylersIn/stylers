@@ -300,6 +300,36 @@ export const fetchCards = _ => ({
     }
 });
 
+export const getBalance = _ => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/balance`,
+        method: 'GET',
+        types: [
+            constants.GET_BALANCE,
+            {
+                type: constants.GET_BALANCE_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.GET_BALANCE_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
 export const changePassword = data => ({
     [RSAA]: {
         endpoint: `${BASE_URL()}/changePassword`,
@@ -385,6 +415,36 @@ export const confirmPasswordChange = data => ({
         ],
         options: { timeout: 10000 },
         body: JSON.stringify(data),
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    }
+});
+
+export const removeCard = id => ({
+    [RSAA]: {
+        endpoint: `${BASE_URL()}/card/remove?cardId=${id}`,
+        method: 'DELETE',
+        types: [
+            constants.REMOVE_CARDS,
+            {
+                type: constants.REMOVE_CARDS_SUCCESS,
+                payload: (action, state, response) => response.json().then(response => ({
+                    response,
+                }))
+            },
+            {
+                type: constants.REMOVE_CARDS_FAILURE,
+                meta: (action, state, res) => {
+                    return {
+                        status: res.status
+                    };
+                }
+            }
+        ],
+        options: { timeout: 10000 },
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json"

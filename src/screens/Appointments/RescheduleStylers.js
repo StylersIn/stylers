@@ -16,16 +16,16 @@ import {
 import Button from '../../components/Button';
 import { fonts, colors } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
-import { BarberIcon } from './ServiceAssets';
+import { BarberIcon } from '../Services/ServiceAssets';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import Loader from '../../components/Loader';
-import { EmptyAppointment } from '../Appointments/AppointmentAssets';
-import { getRating, getStartingPrice } from '../../utils/stylersUtils';
+import { EmptyAppointment } from './AppointmentAssets';
+import { getRating, getStartingPrice, } from '../../utils/stylersUtils';
 
 export default ServiceStylers = (props) => {
     const {
-        stylers,
+        data: { stylers, },
         isProcessing,
         message,
     } = props;
