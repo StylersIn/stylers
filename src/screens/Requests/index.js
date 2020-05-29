@@ -122,7 +122,8 @@ class Requests extends React.Component {
             }))
         }
         if (prevProps.updated && prevProps.updated !== this.props.updated) {
-            this.setState({ isProcessing: false, });
+            this.props.listStylerRequests();
+            this.setState({ isProcessing: false, loading: true, requests: [], });
             if (prevProps.status === constants.ACCEPTED) {
                 alert('Successfully accepted')
                 notify('Service Accepted', 'Hi there! You just accepted this service.');
@@ -133,7 +134,6 @@ class Requests extends React.Component {
                 alert('Successfully declined');
             }
             // notify('Appointment Status', 'Hi there! Styler has accepted your appointment.');
-            this.props.listStylerRequests();
 
             // if (prevProps.updatedStyler && prevProps.updatedStyler != this.props.updatedStyler) {
             //     alert('updated')
@@ -170,7 +170,7 @@ class Requests extends React.Component {
         if (status == constants.ACCEPTED) {
             this.setState({ accept: true, key: 'accept' })
         }
-        this.props.updateAppointmentStatus(Id, status);
+        this.props.updateAppointmentStatus({ appointmentId: Id, }, status);
     }
 
     updateState = () => {
@@ -306,7 +306,7 @@ class Requests extends React.Component {
                     selectReason={this.selectReason}
                     selectedReason={selectedReason}
                     isProcessing={isProcessing}
-                    declineAppointment={() => this.updateAppointmentStatus({ appointmentId: selectedAppointment, reason: selectedReason }, constants.CANCELLED)}
+                    declineAppointment={() => this.props.updateAppointmentStatus({ appointmentId: selectedAppointment, reason: selectedReason }, constants.CANCELLED)}
                 />
                 <Modal
                     header={<View style={{ height: '100%', padding: 20, paddingHorizontal: 40, flexDirection: 'row', justifyContent: 'space-between' }}>

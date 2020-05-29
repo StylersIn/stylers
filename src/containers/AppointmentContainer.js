@@ -11,11 +11,11 @@ class Appointments extends React.Component {
     //     isProcessing: true
     // }
     componentDidMount() {
-        if (this.props.role === roles.user) {
-            this.props.listAppointments();
-        } else if (this.props.role === roles.styler) {
-            this.props.listStylerAppointments();
-        } else { }
+        // if (this.props.role === roles.user) {
+        //     this.props.listAppointments();
+        // } else if (this.props.role === roles.styler) {
+        //     this.props.listStylerAppointments();
+        // } else { }
     }
     // UNSAFE_componentWillReceiveProps(nextProps) {
     //     if (nextProps.appointments && nextProps.appointments !== this.props.appointments) {
@@ -43,6 +43,7 @@ const mapStateToProps = state => ({
     current: state.user.current,
     socket: state.socket,
     updated: state.appointment.updated,
+    status: state.appointment.status,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

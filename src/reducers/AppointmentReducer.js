@@ -26,6 +26,7 @@ export default function appointmentReducer(state = initialState, action) {
             return {
                 ...state,
                 isProcessing: true,
+                appointments: undefined,
             }
         case constants.LIST_APPOINTMENT_SUCCESS:
             // let appointments = action.payload
@@ -47,12 +48,14 @@ export default function appointmentReducer(state = initialState, action) {
             return {
                 ...state,
                 isProcessing: false,
+                appointments: undefined,
                 error: action.payload.meta
             }
         case constants.LIST_REQUESTS:
             return {
                 ...state,
                 isProcessing: true,
+                requests: undefined,
             }
         case constants.LIST_REQUESTS_SUCCESS:
             return {
@@ -69,6 +72,7 @@ export default function appointmentReducer(state = initialState, action) {
             return {
                 ...state,
                 isProcessing: false,
+                requests: undefined,
                 error: action.payload.meta
             }
         // case constants.LIST_APPOINTMENT_STYLER:

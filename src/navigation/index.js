@@ -38,6 +38,7 @@ import ConfirmForgotPasswordScreen from '../screens/Auth/ConfirmForgotPassword';
 import RescheduleScreen from '../screens/Appointments/Reschedule';
 import WalletScreen from '../screens/Wallet';
 import WithdrawScreen from '../screens/Withdraw';
+import AllReviewsScreen from '../screens/AllReviews';
 
 const drawerContentComponents = (props) => (
     <Container style={{ backgroundColor: colors.black }}>
@@ -144,6 +145,7 @@ const AppNavigator = createStackNavigator({
     ForgotPassword: ForgotPasswordScreen,
     ConfirmForgotPassword: ConfirmForgotPasswordScreen,
     Withdraw: WithdrawScreen,
+    AllReviews: AllReviewsScreen,
 },
     {
         initialRouteName: "Splash",

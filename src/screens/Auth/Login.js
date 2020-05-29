@@ -36,7 +36,7 @@ class Login extends React.Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.user.authenticated && nextProps.user.current && nextProps.user.current != this.props.user.current) {
-            this.setState({ isProcessing: false });
+            // this.setState({ isProcessing: false });
             if (nextProps.user.current.role === 'styler') {
                 this.props.checkStylerRegStatus();
             } else {

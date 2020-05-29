@@ -205,7 +205,7 @@ class NoDebit extends React.Component {
                             <View style={{ alignSelf: "center" }}>
                                 <LocationIcon />
                             </View>
-                            <Text style={{ fontFamily: fonts.medium, fontSize: 14, textAlign: 'center', }}>{styler.address}</Text>
+                            <Text style={{ fontFamily: fonts.medium, fontSize: 14, textAlign: 'center', }}>{this.props.streetName}</Text>
                         </View>
 
                         <View style={{ paddingVertical: 10 }}>

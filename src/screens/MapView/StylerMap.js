@@ -7,7 +7,7 @@ import MapView, { ProviderPropType, Marker, AnimatedRegion } from 'react-native-
 import Text from '../../config/AppText';
 import { Thumbnail, Card, CardItem, Icon, Spinner, Textarea } from 'native-base';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
-import { fonts, colors, MAP_API_KEY } from '../../constants/DefaultProps';
+import { fonts, colors, MAP_API_KEY, roles } from '../../constants/DefaultProps';
 import { CallIcon, ChatIcon, CloseIcon, ArrowDown, SwiperIcon, PickUpIcon, } from './MapAssets';
 import MapViewDirections from 'react-native-maps-directions';
 import styler_location from '../../../assets/imgs/styler-location.jpg';
@@ -105,8 +105,8 @@ class StylerMap extends React.Component {
             if (this.state.appointment.publicId === this.props.current.publicId) {
                 notify('Service Completed', 'Hi there! You just completed this service.');
             }
-            this.props.navigation.dispatch(NavigationService.resetAction('Requests'))
-            this.props.socket.emit('serviceCompleted', this.state.appointment.publicId);
+            this.props.navigation.dispatch(NavigationService.resetAction('Appointments'))
+            this.props.socket.emit('serviceCompleted', this.state.appointment.userId.publicId);
             // this.props.listStylerRequests();
         }
     }
@@ -127,7 +127,15 @@ class StylerMap extends React.Component {
                 latitude: region.latitude,
                 longitude: region.longitude,
             })
-            this.fitAllMarkers();
+            this.setState({
+                region: {
+                    latitude: region.latitude,
+                    longitude: region.longitude,
+                    latitudeDelta: LATITUDE_DELTA,
+                    longitudeDelta: LONGITUDE_DELTA
+                }
+            }, () => this.fitAllMarkers())
+            
             // setTimeout(() => this.map.animateToRegion(region), 10);
         }
     }
@@ -250,7 +258,7 @@ class StylerMap extends React.Component {
 
     endService = (status) => {
         this.setState({ completeService: true, })
-        this.props.updateAppointmentStatus(this.state.appointment._id, constants.COMPLETED);
+        this.props.updateAppointmentStatus({ appointmentId: this.state.appointment._id }, constants.COMPLETED);
     }
 
     render() {
@@ -274,7 +282,7 @@ class StylerMap extends React.Component {
                     zoomEnabled={true}
                     loadingEnabled={true}
                 >
-                    {appointment && this.state.hasRegion && <MapViewDirections
+                    {appointment && <MapViewDirections
                         origin={this.state.region}
                         destination={appointment.pickUp.latitude + "," + appointment.pickUp.longitude}
                         apikey={GOOGLE_MAPS_APIKEY}
@@ -328,6 +336,7 @@ class StylerMap extends React.Component {
                     {...this.props}
                     {...this.state}
                     endService={this.endService}
+                    role={roles.styler}
                 />
             </View>
         );

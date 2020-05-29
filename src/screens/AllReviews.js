@@ -3,15 +3,20 @@ import {
     View,
     StyleSheet,
 } from 'react-native';
+import { bindActionCreators } from 'redux';
+import * as actionAcreators from '../actions';
+import { connect } from 'react-redux';
 import {
     Card,
     CardItem,
     Body,
 } from 'native-base';
-import { fonts, colors } from '../../constants/DefaultProps';
-import Text from '../../config/AppText';
+import { fonts, colors } from '../constants/DefaultProps';
+import Text from '../config/AppText';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import moment from 'moment';
+import { SafeAreaView, ScrollView } from 'react-navigation';
+import Header from '../components/Header';
 
 class EditProfile extends React.Component {
     constructor(props) {
@@ -34,7 +39,7 @@ class EditProfile extends React.Component {
     }
 
     render() {
-        const { styler } = this.props;
+        let styler = this.props.navigation.getParam('styler', '');
         return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
@@ -43,14 +48,14 @@ class EditProfile extends React.Component {
                             close={true}
                             title={'All Reviews'}
                         />
-                        <View style={{ alignItems: 'center', padding: 30, }}>
-                            {!styler.review.length ?
+                        <View style={{ paddingHorizontal: 20, }}>
+                            {styler && !styler.review.length ?
                                 <Text style={{ fontSize: 12, color: '#bbb' }}>No Reviews yet!</Text> : styler.review.map((review, i) => <Card key={i} style={styles.cardStyle}>
                                     <CardItem>
                                         <Body>
                                             <View style={{ flexDirection: "row" }}>
-                                                <Text style={{ fontFamily: fonts.bold, fontSize: 15 }}>{review.name}</Text>
-                                                <Text style={{ paddingLeft: 10, fontSize: 8, color: "#979797", marginTop: 6, fontStyle: 'italic', }}>{moment(review.CreatedAt).fromNow()}</Text>
+                                                <Text style={{ fontFamily: fonts.bold, fontSize: 15 }}>{review.userId.name}</Text>
+                                                <Text style={{ paddingLeft: 10, fontSize: 8, color: "#979797", marginTop: 7, fontStyle: 'italic', }}>{moment(review.CreatedAt).fromNow()}</Text>
                                             </View>
                                             <View style={{ marginVertical: 7, flexDirection: "row", }}>
                                                 <AirbnbRating
@@ -75,7 +80,7 @@ class EditProfile extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        // padding: 20,
         // justifyContent: "center",
     },
     card_shadow: {
@@ -101,7 +106,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     user: state.user,
-    styler: state.styler,
+    // styler: state.styler,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);

@@ -17,7 +17,7 @@ export default function (props) {
                 </Text>
                 {props.balance ? <View>
                     <Text style={styles.walletBalTxt}>{`Wallet Balance: NGN${props.balance}`}</Text>
-                </View> : <Text>Loading...</Text>}
+                </View> : <Text style={{ textAlign: "center", }}>Loading...</Text>}
                 <View style={styles.btnContainer}>
                     <Button
                         onPress={() => props.completeFromWallet()}

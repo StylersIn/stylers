@@ -77,9 +77,9 @@ class Home extends React.Component {
                         title={"Browse Services"}
                     />
                     {/* <GenderList {...this.props} /> */}
-                    <View style={{ flex: 1, padding: 20, }}>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20, }}>
                         <ServiceList {...this.props} />
-                    </View>
+                    </ScrollView>
                 </View>
             </SafeAreaView>
         )

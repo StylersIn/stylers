@@ -63,6 +63,11 @@ class Appointment extends React.Component {
 
     componentDidMount() {
         // this.setState({ notify: true, });
+        if (this.props.role === roles.user) {
+            this.props.listAppointments();
+        } else if (this.props.role === roles.styler) {
+            this.props.listStylerAppointments();
+        } else { }
     }
 
     UNSAFE_componentWillReceiveProps(prevProps) {
@@ -85,7 +90,7 @@ class Appointment extends React.Component {
             }))
             // this.showNotification(prevProps.appointments);
         }
-        if (prevProps.updated && prevProps.updated !== this.props.updated) {
+        if (prevProps.updated && prevProps.updated !== this.props.updated && prevProps.status == constants.CANCELLED) {
             alert('Appointment has been cancelled successfully');
             this.setState({ isVisible: false, isProcessing: false, });
             if (this.props.role === roles.user) {
@@ -163,10 +168,9 @@ class Appointment extends React.Component {
         this.setState({ isProcessing: false, isVisible: false, })
     }
 
-    beginService = () => {
-        const { appointment: { _id, }, } = this.state;
+    beginService = (id) => {
         this.navigateToMap();
-        this.updateAppointmentStatus(_id, constants.STARTED)
+        this.updateAppointmentStatus(id, constants.STARTED)
         this.setState({ isProcessing: true, })
     }
 
@@ -193,7 +197,14 @@ class Appointment extends React.Component {
     }
 
     updateAppointmentStatus(Id, status) {
-        this.props.updateAppointmentStatus(Id, status);
+        this.props.updateAppointmentStatus({ appointmentId: Id, }, status);
+    }
+
+    getName = (appointment) => {
+        const {
+            role,
+        } = this.props;
+        return role == roles.styler ? appointment.userId && appointment.userId.name : appointment.stylerId && appointment.stylerId.name
     }
 
     render() {
@@ -282,12 +293,12 @@ class Appointment extends React.Component {
                         </View>
 
                         <View style={{ padding: 20, }}>
-                            {!isFinished && !loading && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                            {!isFinished && !loading && appointments.length >= 10 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                                 <Spinner
                                     color={colors.default}
                                 />
                             </View>}
-                            {isFinished && appointments.length > 0 && <View>
+                            {isFinished && appointments.length > 0 && appointments.length >= 10 && <View>
                                 <Text style={styles.finishedTxt}>No new appointments found</Text>
                             </View>}
                         </View>
@@ -297,12 +308,21 @@ class Appointment extends React.Component {
                     header={<View style={{ height: '100%', padding: 20, paddingHorizontal: 40, flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', }}>
                             {this.props.role == roles.user && <View>
-                                <Thumbnail
+                                {/* <Thumbnail
                                     style={{ width: 35, height: 35 }}
-                                    source={service__1} />
+                                    source={service__1} /> */}
+                                {appointment.stylerId ? <Thumbnail
+                                    style={{ width: 35, height: 35 }}
+                                    source={appointment.stylerId.imageUrl ? { uri: appointment.stylerId.imageUrl } : service__1}
+                                /> : null}
+
+                                {/* {!stylerData.imageUrl && <Image
+                                    style={[{ height: 100, width: 100, borderRadius: 5, }, Platform.OS == 'ios' ? { marginTop: 20 } : null]}
+                                    source={stylerData.imageUrl ? { uri: stylerData.imageUrl } : avatar}
+                                />} */}
                             </View>}
                             <View style={{ position: 'relative', left: 10 }}>
-                                <Text style={{ fontFamily: fonts.bold }}>{appointment.userId && appointment.userId.name}</Text>
+                                <Text style={{ fontFamily: fonts.bold }}>{this.getName(appointment)}</Text>
                                 <View style={{ padding: 2, borderRadius: 6, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
                                     <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.medium, position: 'relative', bottom: 1, }}>Card Payment</Text>
                                 </View>
@@ -315,18 +335,18 @@ class Appointment extends React.Component {
                     closeModal={this.closeModal}
                     isVisible={isVisible}
                 >
-                    <View style={{ paddingVertical: 20, }}>
-                        <View style={{ marginTop: 5, }}>
+                    <View style={{ paddingVertical: 0, }}>
+                        <View style={{ marginTop: 5, flex: 1, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Location</Text>
-                            <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{appointment.streetName}</Text>
+                            <Text style={{ fontFamily: fonts.medium, fontSize: 14, flexWrap: "wrap", }}>{appointment.streetName}</Text>
                         </View>
                         <View style={{ marginTop: 5, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Date</Text>
-                            <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{formatDate(appointment.scheduledDate)}</Text>
+                            <Text style={{ fontFamily: fonts.medium, fontSize: 14, }}>{formatDate(appointment.scheduledDate)}</Text>
                         </View>
                         <View style={{ marginTop: 5, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Time</Text>
-                            <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{formatTime(appointment.scheduledDate)}</Text>
+                            <Text style={{ fontFamily: fonts.medium, fontSize: 14, }}>{formatTime(appointment.scheduledDate)}</Text>
                         </View>
                         <View style={{ marginTop: 15, }}>
                             <Text style={{ fontSize: 10, color: "#4F4F4F", fontFamily: fonts.bold, }}>Service Cost</Text>
@@ -338,8 +358,8 @@ class Appointment extends React.Component {
                                 let tot = (adult * filteredData.adult) + (child * filteredData.child);
                                 return (
                                     <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
-                                        <Text style={{ fontFamily: fonts.medium, fontSize: 16, }}>{r.subServiceId.name}</Text>
-                                        <Text style={{ fontFamily: fonts.bold, fontSize: 16, }}>{`NGN${tot}`}</Text>
+                                        <Text style={{ fontFamily: fonts.medium, fontSize: 14, }}>{r.subServiceId.name}</Text>
+                                        <Text style={{ fontFamily: fonts.bold, fontSize: 14, }}>{`NGN${tot}`}</Text>
                                     </View>
                                 )
                             })}
@@ -357,7 +377,7 @@ class Appointment extends React.Component {
                             {this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.styler &&
                                 appointment.status == constants.ACCEPTED ? <View style={{ marginTop: 10, width: '100%' }}>
                                     <Button
-                                        onPress={this.beginService}
+                                        onPress={() => this.beginService(appointment._id)}
                                         btnTxt={"Begin Service"}
                                         size={"lg"}
                                         loading={this.state.isProcessing}
@@ -374,7 +394,7 @@ class Appointment extends React.Component {
                                             btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                         />
                                     </View> : this.IsDateInPast(appointment.scheduledDate) && this.props.role === roles.user &&
-                                        appointment.status == constants.STARTED || appointment.status == constants.ACCEPTED ? <View style={{ marginTop: 10, width: '100%' }}>
+                                        (appointment.status == constants.STARTED || appointment.status == constants.ACCEPTED) ? <View style={{ marginTop: 10, width: '100%' }}>
                                             <Button
                                                 onPress={this.trackStyler}
                                                 btnTxt={"Track Styler"}

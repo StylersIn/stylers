@@ -6,7 +6,7 @@ import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, Vibr
 import MapView, { ProviderPropType, Marker, AnimatedRegion } from 'react-native-maps';
 import Text from '../../config/AppText';
 import { Thumbnail, Card, CardItem, Icon, Spinner, Textarea } from 'native-base';
-import { fonts, colors, MAP_API_KEY } from '../../constants/DefaultProps';
+import { fonts, colors, MAP_API_KEY, roles } from '../../constants/DefaultProps';
 import { ComingIcon, PickUpIcon, } from './MapAssets';
 import styler_img from '../../../assets/imgs/styler_img.png';
 import Geocoder from 'react-native-geocoding';
@@ -318,7 +318,7 @@ class StylerMap extends React.Component {
                     {...this.props}
                     {...this.state}
                     endService={this.endService}
-                    role={'USER'}
+                    role={roles.user}
                 />
 
                 {this.state.showReview && <View style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, elevation: 5, zIndex: -1000, }, this.state.showReview ? { zIndex: 1000 } : null]}>

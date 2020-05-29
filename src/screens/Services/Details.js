@@ -151,7 +151,7 @@ class ServiceDetails extends React.Component {
         Linking.openURL(`whatsapp://send?text=hello ${stylerData.name}, I would be needing your service&phone=${stylerData.user.callingCode}${stylerData.phone}`)
     }
 
-    viewReviews = () => this.props.navigation.navigate('AllReviews', { styler: this.props.stylerData, });
+    viewReviews = (styler) => this.props.navigation.navigate('AllReviews', { styler, });
 
     useCurrentLocation = () => this.props.getCurrentLocation();
 
@@ -237,20 +237,21 @@ class ServiceDetails extends React.Component {
                             </TouchableOpacity>
 
                             <Reviews
-                                styler__data={stylerData}
-                                viewReviews={this.viewReviews}
+                                styler={stylerData}
+                                viewReviews={() => this.viewReviews(stylerData)}
                             />
 
                         </View>
+
+                        <View style={{ marginVertical: 0, marginBottom: 20, paddingVertical: 20, }}>
+                            <Button
+                                onPress={this.toggleSheet}
+                                btnTxt={"Select Service"}
+                                size={"lg"}
+                                btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
+                            />
+                        </View>
                     </ScrollView>
-                    <View style={{ marginVertical: 0, marginBottom: 20, padding: 20, }}>
-                        <Button
-                            onPress={this.toggleSheet}
-                            btnTxt={"Select Service"}
-                            size={"lg"}
-                            btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
-                        />
-                    </View>
                     {this.state.bottomSheet && <BottomSheet
                         {...this.props}
                         {...this.state}

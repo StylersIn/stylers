@@ -7,6 +7,7 @@ import {
     Image,
     TouchableOpacity,
     SafeAreaView,
+    ScrollView,
 } from 'react-native';
 import {
     Item,
@@ -111,7 +112,7 @@ class Payment extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView>
-                    <View style={styles.container}>
+                    <ScrollView contentContainerStyle={styles.container}>
                         <TouchableOpacity
                             onPress={() => this.props.navigation.goBack()}
                             activeOpacity={0.7}>
@@ -227,7 +228,7 @@ class Payment extends React.Component {
                                 btnTxtStyles={{ color: "white", fontFamily: fonts.bold }}
                             />
                         </View>
-                    </View>
+                    </ScrollView>
                 </SafeAreaView>
                 <Modal
                     closeModal={this.closeModal}

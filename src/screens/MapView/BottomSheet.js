@@ -7,7 +7,7 @@ import {
 } from 'react-native-bottom-sheet-behavior';
 import SwipeButton from 'rn-swipe-button';
 import { BottomSheet } from '../../components/BottomSheet';
-import { Spinner, Thumbnail, Form, Card, CardItem } from 'native-base';
+import { Spinner, Thumbnail, Form, Card, CardItem, Icon } from 'native-base';
 import service__1 from '../../../assets/imgs/service__1.jpeg';
 import { colors, fonts, roles, } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
@@ -29,8 +29,13 @@ const sms = (props) => {
 }
 
 const whatsapp = (props) => {
-    Linking.openURL(`whatsapp://send?text=hello&phone=+${props.appointment.userId.callingCode}${props.appointment.phoneNumber}`)
+    Linking.openURL(`whatsapp://send?text=hello&phone=+${props.role == roles.styler ? props.appointment.userId.callingCode :
+        props.appointment.stylerId.callingCode}${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}`)
 }
+const getName = (appointment, role) => {
+    return role == roles.styler ? appointment.userId && appointment.userId.name : appointment.stylerId && appointment.stylerId.name
+}
+
 export default function (props) {
     return (
         <>
@@ -39,19 +44,20 @@ export default function (props) {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', }}>
                             {props.role == roles.user && <View>
-                                <Thumbnail
+                                {props.appointment.stylerId ? <Thumbnail
                                     style={{ width: 35, height: 35 }}
-                                    source={service__1} />
+                                    source={props.appointment.stylerId.imageUrl ? { uri: props.appointment.stylerId.imageUrl } : service__1}
+                                /> : null}
                             </View>}
                             <View style={{ position: 'relative', left: 10 }}>
-                                <Text style={{ fontFamily: fonts.bold }}>{props.appointment.userId && props.appointment.userId.name}</Text>
+                                <Text style={{ fontFamily: fonts.bold }}>{getName(props.appointment, props.role)}</Text>
                                 <View style={{ padding: 2, paddingHorizontal: 4, borderRadius: 3, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
                                     <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.bold, position: 'relative', bottom: 1, }}>Card Payment</Text>
                                 </View>
                             </View>
                         </View>
                         <View style={{ justifyContent: 'flex-end' }}>
-                            <Text style={{ fontFamily: fonts.bold }}>{`NGN${props.appointment.totalAmount}`}</Text>
+                            <Text style={{ fontFamily: fonts.bold }}>{`NGN${props.appointment.sumTotal}`}</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -94,17 +100,19 @@ export default function (props) {
                     </View>
                     <View style={{ marginTop: 30, }}>
                         <View style={{ borderColor: 'rgba(151, 173, 182, 0.2)', borderWidth: 0.5, borderRadius: 5, padding: 20, flexDirection: 'row', }}>
-                            <Text>11:24</Text>
-                            <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 5, marginLeft: 10, }}>
-                                <View style={{ width: 8, height: 8, borderRadius: 8 / 2, backgroundColor: colors.pink }}></View>
+                            {/* <Text>11:24</Text> */}
+                            {/* <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 5, marginLeft: 10, }}> */}
+                            <View style={{ flexDirection: 'column', marginTop: 0, marginLeft: 10, }}>
+                                <Icon name="ios-pin" style={{ fontSize: 20, color: colors.pink, }} />
+                                {/* <View style={{ width: 8, height: 8, borderRadius: 8 / 2, backgroundColor: colors.pink }}></View>
                                 <View style={{ width: 1, height: 40, marginTop: 5, backgroundColor: '#3E4958', }}></View>
                                 <View style={{ marginTop: 5, }}>
                                     <ArrowDown />
-                                </View>
+                                </View> */}
                             </View>
-                            <View style={{ marginLeft: 7, flex: 1, }}>
-                                <Text style={{ fontSize: 13, position: 'absolute', fontFamily: fonts.medium, }}>{props.currentAddress}</Text>
-                                <Text style={{ top: 55, fontSize: 13, position: 'absolute', fontFamily: fonts.medium, }}>{props.appointment.streetName}</Text>
+                            <View style={{ marginLeft: 15, flex: 1, marginTop: 2, }}>
+                                {/* <Text style={{ fontSize: 13, position: 'absolute', fontFamily: fonts.medium, }}>{props.currentAddress}</Text> */}
+                                <Text style={{ fontSize: 13, fontFamily: fonts.medium, }}>{props.appointment.streetName}</Text>
                             </View>
                         </View>
                     </View>
@@ -147,19 +155,22 @@ export default function (props) {
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-around', }}>
                                     <View>
-                                        <Thumbnail
-                                            style={{ width: 35, height: 35 }}
-                                            source={service__1} />
+                                        {props.role == roles.user && <View>
+                                            {props.appointment.stylerId ? <Thumbnail
+                                                style={{ width: 35, height: 35 }}
+                                                source={props.appointment.stylerId.imageUrl ? { uri: props.appointment.stylerId.imageUrl } : service__1}
+                                            /> : null}
+                                        </View>}
                                     </View>
                                     <View style={{ position: 'relative', left: 10 }}>
-                                        <Text style={{ fontFamily: fonts.bold }}>{props.appointment.userId && props.appointment.name}</Text>
+                                        <Text style={{ fontFamily: fonts.bold }}>{getName(props.appointment, props.role)}</Text>
                                         <View style={{ padding: 2, paddingHorizontal: 4, borderRadius: 3, backgroundColor: '#3A3A3A', height: 12, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
                                             <Text style={{ fontSize: 8, color: colors.white, fontFamily: fonts.bold, position: 'relative', bottom: 1, }}>Card Payment</Text>
                                         </View>
                                     </View>
                                 </View>
                                 <View style={{ justifyContent: 'flex-end' }}>
-                                    <Text style={{ fontFamily: fonts.bold }}>{`NGN${props.appointment.totalAmount}`}</Text>
+                                    <Text style={{ fontFamily: fonts.bold }}>{`NGN${props.appointment.sumTotal}`}</Text>
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -196,20 +207,22 @@ export default function (props) {
                                 </Card>
                             </View>
                             <View style={{ marginVertical: 30, }}>
-                                <View style={{ borderColor: 'rgba(151, 173, 182, 0.2)', borderWidth: 0.5, borderRadius: 5, padding: 20, flexDirection: 'row', }}>
-                                    <Text>11:24</Text>
-                                    <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 5, marginLeft: 10, }}>
-                                        <View style={{ width: 8, height: 8, borderRadius: 8 / 2, backgroundColor: colors.pink }}></View>
-                                        <View style={{ width: 1, height: 40, marginTop: 5, backgroundColor: '#3E4958', }}></View>
-                                        <View style={{ marginTop: 5, }}>
-                                            <ArrowDown />
-                                        </View>
-                                    </View>
-                                    <View style={{ marginLeft: 7, flex: 1, }}>
-                                        <Text style={{ fontSize: 13, position: 'absolute', fontFamily: fonts.medium, }}>{props.currentAddress}</Text>
-                                        <Text style={{ top: 55, fontSize: 13, position: 'absolute', fontFamily: fonts.medium, }}>{props.appointment.streetName}</Text>
-                                    </View>
-                                </View>
+                            <View style={{ borderColor: 'rgba(151, 173, 182, 0.2)', borderWidth: 0.5, borderRadius: 5, padding: 20, flexDirection: 'row', }}>
+                            {/* <Text>11:24</Text> */}
+                            {/* <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 5, marginLeft: 10, }}> */}
+                            <View style={{ flexDirection: 'column', marginTop: 0, marginLeft: 10, }}>
+                                <Icon name="ios-pin" style={{ fontSize: 20, color: colors.pink, }} />
+                                {/* <View style={{ width: 8, height: 8, borderRadius: 8 / 2, backgroundColor: colors.pink }}></View>
+                                <View style={{ width: 1, height: 40, marginTop: 5, backgroundColor: '#3E4958', }}></View>
+                                <View style={{ marginTop: 5, }}>
+                                    <ArrowDown />
+                                </View> */}
+                            </View>
+                            <View style={{ marginLeft: 15, flex: 1, marginTop: 2, }}>
+                                {/* <Text style={{ fontSize: 13, position: 'absolute', fontFamily: fonts.medium, }}>{props.currentAddress}</Text> */}
+                                <Text style={{ fontSize: 13, fontFamily: fonts.medium, }}>{props.appointment.streetName}</Text>
+                            </View>
+                        </View>
                             </View>
                             {props.role !== 'USER' && <View style={{ marginBottom: 20, }}>
                                 <SwipeButton
