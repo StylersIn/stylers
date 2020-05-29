@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../actions';
 import { connect } from 'react-redux';
 import AppNavigator from '../navigation';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, SafeAreaView } from 'react-navigation';
 import NavigationService from '../navigation/NavigationService';
 import { Card, CardItem, Icon } from 'native-base';
 import { View, StyleSheet, Vibration } from 'react-native';
@@ -13,6 +13,9 @@ import config from '../config';
 import store from '../../src/store/createStore';
 import { updateProfile, updateOneSignal } from '../actions/UserActions';
 import AsyncStorage from '@react-native-community/async-storage';
+import Text from '../config/AppText';
+import Notify from '../components/Notify';
+import { notify } from '../services';
 
 class Root extends React.Component {
     constructor(properties) {
@@ -36,6 +39,13 @@ class Root extends React.Component {
             },
             isProcessing: true,
         }
+
+        // this.props.socket.on('reviews.send', () => {
+        //     // console.log('show review');
+        //     Vibration.vibrate();
+        //     notify('Service completed', 'Styler has successfully completed your service');
+        //     this.setState({ showReview: true, })
+        // })
     }
     UNSAFE_componentWillUpdate(nextProps) {
         if (nextProps.user.loggingOut) {
@@ -56,8 +66,12 @@ class Root extends React.Component {
     }
 
     onReceived = (notification) => {
+        // console.log(notification)
         // alert('Notification received: ', notification)
         this.setState({ notify: true, notification, });
+        setTimeout(() => {
+            this.setState({ notify: undefined, notification: {} })
+        }, 5000);
         Vibration.vibrate();
         console.log('Notification received: ', notification);
     }
@@ -98,17 +112,20 @@ class Root extends React.Component {
     }
 
     render() {
-        const { notify } = this.state;
-        return <>
-            <View style={{ position: 'absolute', width: '100%', top: '5%', paddingHorizontal: 20, }}>
-                {notify ? this.showNotification() : undefined}
+        const { notify, notification, } = this.state;
+        return <View style={{ flex: 1, zIndex: 1 }}>
+            <View style={{ zIndex: 1000, position: "absolute", top: "5%", width: "100%", }}>
+                {notify && <Notify
+                    title={notification.payload.title}
+                    message={notification.payload.body}
+                />}
             </View>
             <AppNavigator
                 ref={navigatorRef => {
                     NavigationService.setTopLevelNavigator(navigatorRef);
                 }}
             />
-        </>
+        </View>
     }
 }
 
@@ -138,6 +155,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     user: state.user,
+    socket: state.socket,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionAcreators, dispatch);
