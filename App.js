@@ -9,6 +9,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { Card, CardItem, Icon } from 'native-base';
 import Text from './src/config/AppText';
 import { colors, fonts } from './src/constants/DefaultProps';
+import Screen1 from './src/screens/Ochoko/Screen1';
+import Screen2 from './src/screens/Ochoko/Screen2';
 
 class App extends React.Component {
   constructor(properties) {
