@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { Icon } from 'native-base';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
 class Modal extends React.Component {
@@ -28,7 +29,7 @@ class Modal extends React.Component {
         return (
             <>
                 {isVisible ? <View style={styles.container}>
-                    {!this.props.hideCloseBtn ? <View style={{ position: "absolute", top: 30, right: 0, padding: 30, }}>
+                    {!this.props.hideCloseBtn ? <View style={{ position: "absolute", top: "5%", right: 0, padding: 30, }}>
                         <TouchableOpacity
                             onPress={() => this.props.closeModal()}
                             activeOpacity={0.7}>
@@ -42,9 +43,11 @@ class Modal extends React.Component {
                         {this.props.header ? <View style={{ height: 70, backgroundColor: '#E9E5E5', }}>
                             {this.props.header}
                         </View> : null}
-                        <View style={{ paddingVertical: 15, paddingHorizontal: 30, }}>
-                            {this.props.children}
-                        </View>
+                        <ScrollView contentContainerStyle={{ flexGrow: 1, }}>
+                            <View style={{ paddingVertical: 15, paddingHorizontal: 30, }}>
+                                {this.props.children}
+                            </View>
+                        </ScrollView>
                     </View>
                 </View> : null}
             </>
@@ -68,8 +71,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.5)'
     },
     child___container: {
+        flexGrow: 1,
         backgroundColor: '#FFFFFF',
-        // height: 550,
+        maxHeight: "100%",
         width: "89%",
         zIndex: 500,
         borderRadius: 5,
