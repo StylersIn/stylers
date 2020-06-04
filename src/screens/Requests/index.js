@@ -84,6 +84,7 @@ class Requests extends React.Component {
         // }
         // this.props.updateOneSignal({ oneSignalUserId: oneSignalId });
         this.props.listStylerRequests();
+        this.props.getStylerDetails();
         this.props.getStats();
         this.props.navigation.setParams({
             requests: this.props.requests
