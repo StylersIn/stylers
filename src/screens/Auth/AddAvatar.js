@@ -48,7 +48,8 @@ class AddAvatar extends React.Component {
             // height: 400,
             // cropping: true,
             includeBase64: true,
-        }).then(image => {
+        })
+        .then(image => {
             let pathParts = image.path.split('/');
             this.setState({
                 // image: image.data,
@@ -64,7 +65,8 @@ class AddAvatar extends React.Component {
                 //     name: pathParts[pathParts.length - 1]
                 // }
             });
-        });
+        })
+            .catch(err => console.log(err))
     }
 
     updateAvatar = () => {
