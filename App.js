@@ -92,6 +92,7 @@ class App extends React.Component {
               {notify ? this.showNotification() : undefined}
             </View> */}
             <RootContainer />
+            {/* <Screen1 /> */}
           </View>
         </Provider>
       </>
