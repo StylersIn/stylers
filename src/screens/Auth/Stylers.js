@@ -4,6 +4,8 @@ import {
     StyleSheet,
     Dimensions,
     Platform,
+    TouchableOpacity,
+    ScrollView,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -21,7 +23,6 @@ import Button from '../../components/Button';
 import { fonts, colors, toastType } from '../../constants/DefaultProps';
 import Text from '../../config/AppText';
 import { FacebookIcon, GoogleIcon } from './AuthAssets';
-import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import { RadioGroup, RadioButton } from 'react-native-flexi-radio-button'
 import ShowToast from '../../components/ShowToast';
 import { SafeAreaView } from 'react-navigation';
@@ -144,6 +145,10 @@ class Register extends React.Component {
             this.showToast('Password and Confirm Password does not match', toastType.danger);
         } else {
             const { selectedAddress, } = this.props;
+            if (!selectedAddress) {
+                this.showToast('Please select a valid city', toastType.danger);
+                return;
+            }
             return this.props.addStyler({
                 name: name,
                 email: email,
@@ -225,6 +230,27 @@ class Register extends React.Component {
         return (
             <SafeAreaView style={{ flex: 1, }}>
                 <ScrollView contentContainerStyle={styles.container}>
+                    {/* <View style={{ flex: 1, }}>
+                        <List
+                            style={{ backgroundColor: "red" }}
+                            dataArray={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9,]}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderRow={(item) =>
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={() => alert("111")}
+                                    style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#ffffff', marginTop: 2, padding: 20, }}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <Icon style={{ fontSize: 20, color: colors.pink }} name='ios-pin' />
+                                        <View style={{ paddingLeft: 30, paddingRight: 10 }}>
+                                            <Text style={styles.primaryText}>{item}</Text>
+                                            <Text style={styles.secondaryText}>{item}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            }
+                        />
+                    </View> */}
                     <View style={{ paddingVertical: 20, }}>
                         <Text style={{ fontFamily: fonts.bold, fontSize: 24, lineHeight: 30 }} >Create {"\n"}Your Account</Text>
                     </View>
@@ -291,7 +317,7 @@ class Register extends React.Component {
                             <Icon style={{ fontSize: 30 }} name="ios-close" />
                         </TouchableOpacity>}
                     </Item>
-                    {predictions && <View style={{ width: '100%', height: 200, position: 'relative', backgroundColor: "#FCFCFC", borderRadius: 5, }}>
+                    {predictions && <View style={{ width: '100%',  backgroundColor: "#FCFCFC", borderRadius: 5, zIndex: 1000, elevation: 2, }}>
                         {error && !searching && <View style={{ width: "90%", marginTop: 30, alignItems: "center", padding: 20, flexDirection: "row" }}>
                             <Icon type='Ionicons' name='ios-information-circle-outline' />
                             <Text style={{ paddingLeft: 20 }}>{error}</Text>
@@ -479,6 +505,11 @@ const styles = StyleSheet.create({
         color: '#9BABB4',
         fontSize: 11,
     },
+    searchResultsWrapper:{
+        // elevation: 8,
+        // zIndex: 1000,
+        // position:"relative",
+    }
 })
 
 const mapStateToProps = state => ({
