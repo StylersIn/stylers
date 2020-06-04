@@ -71,7 +71,7 @@ class StylerMap extends React.Component {
         hasRegion: false,
     }
     componentDidMount() {
-        this.props.getCurrentLocation();
+        // this.props.getCurrentLocation();
         this.setState({ appointment: this.props.navigation.getParam('appointment', '') }, () => {
             this.watchLocation();
         })
@@ -250,6 +250,7 @@ class StylerMap extends React.Component {
             longitude: parseFloat(appointment.pickUp.longitude),
             latitude: parseFloat(appointment.pickUp.latitude),
         }]
+
         this.map.fitToCoordinates(MARKERS, {
             edgePadding: DEFAULT_PADDING,
             animated: true,
@@ -283,7 +284,7 @@ class StylerMap extends React.Component {
                     loadingEnabled={true}
                 >
                     {appointment && <MapViewDirections
-                        origin={this.state.region}
+                        origin={region}
                         destination={appointment.pickUp.latitude + "," + appointment.pickUp.longitude}
                         apikey={GOOGLE_MAPS_APIKEY}
                         strokeWidth={Platform.OS == 'ios' ? 2.5 : 4}
