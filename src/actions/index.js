@@ -10,6 +10,7 @@ import * as transactionActions from './TransactionAction';
 
 export const InitializeApp = userActions.InitializeApp;
 export const doLogin = loginActions.doLogin;
+export const resendToken = userActions.resendToken;
 export const logout = userActions.logout;
 export const doRegister = registerActions.doRegister;
 export const doSocialRegister = registerActions.doSocialRegister;

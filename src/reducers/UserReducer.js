@@ -77,6 +77,24 @@ export default function userReducer(state = initialState, action) {
                 error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
                 authenticated: false
             })
+        case constants.RESEND_TOKEN:
+            return {
+                ...state,
+                resent: undefined,
+                resendError: undefined,
+            }
+        case constants.RESEND_TOKEN_SUCCESS:
+            return {
+                ...state,
+                resendError: undefined,
+                resent: action.payload.response && action.payload.response.data && action.payload.response.data.resent,
+            }
+        case constants.RESEND_TOKEN_FAILURE:
+            return {
+                ...state,
+                resent: undefined,
+                resendError: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+            }
         case constants.VERIFY_ACCOUNT:
             return {
                 ...state,
