@@ -225,6 +225,7 @@ class Appointment extends React.Component {
         // const {
         //     appointments,
         // } = this.props;
+
         return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
