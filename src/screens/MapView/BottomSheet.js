@@ -20,17 +20,28 @@ const swiperIcon = () => {
         <SwiperIcon />
     )
 }
+
+const handleUrl = (url) => {
+    Linking.canOpenURL(url).then(supported => {
+        if (supported) {
+            Linking.openURL(url);
+        } else {
+            console.log("Don't know how to open URI: " + url);
+        }
+    });
+};
+
 const call = (props) => {
-    Linking.openURL(`tel:${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}`)
+    handleUrl(`tel:${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}`);
 }
 
 const sms = (props) => {
-    Linking.openURL(`sms:${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}&body=hello`)
+    handleUrl(`sms:${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}&body=hello`);
 }
 
 const whatsapp = (props) => {
-    Linking.openURL(`whatsapp://send?text=hello&phone=+${props.role == roles.styler ? props.appointment.userId.callingCode :
-        props.appointment.stylerId.callingCode}${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}`)
+    handleUrl(`whatsapp://send?text=hello&phone=+${props.role == roles.styler ? props.appointment.userId.callingCode :
+        props.appointment.stylerId.callingCode}${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}`);
 }
 const getName = (appointment, role) => {
     return role == roles.styler ? appointment.userId && appointment.userId.name : appointment.stylerId && appointment.stylerId.name
@@ -179,7 +190,7 @@ export default function (props) {
                                         <View style={{ marginTop: 10, marginRight: 1, }}>
                                             <TouchableOpacity
                                                 activeOpacity={0.7}
-                                                onPress={() => Linking.openURL(`tel:${props.appointment.phoneNumber}`)}
+                                                onPress={() => handleUrl(`tel:${props.appointment.phoneNumber}`)}
                                             >
                                                 <CallIcon />
                                             </TouchableOpacity>
@@ -192,7 +203,7 @@ export default function (props) {
                                         <View style={{ marginTop: 6, }}>
                                             <TouchableOpacity
                                                 activeOpacity={0.7}
-                                                onPress={() => Linking.openURL(`whatsapp://send?text=hello&phone=${props.appointment.phoneNumber}`)}
+                                                onPress={() => handleUrl(`whatsapp://send?text=hello&phone=${props.appointment.phoneNumber}`)}
                                             >
                                                 <ChatIcon />
                                             </TouchableOpacity>

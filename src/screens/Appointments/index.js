@@ -207,6 +207,16 @@ class Appointment extends React.Component {
         return role == roles.styler ? appointment.userId && appointment.userId.name : appointment.stylerId && appointment.stylerId.name
     }
 
+    handleUrl = (url) => {
+        Linking.canOpenURL(url).then(supported => {
+          if (supported) {
+            Linking.openURL(url);
+          } else {
+            console.log("Don't know how to open URI: " + url);
+          }
+        });
+      };
+
     render() {
         const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
             const paddingToBottom = 20;
@@ -428,7 +438,7 @@ class Appointment extends React.Component {
                             </View> */}
                             <View style={{ marginTop: 10, width: '100%' }}>
                                 <Button
-                                    onPress={() => Linking.openURL(`whatsapp://send?text=hello&phone=+234${appointment.stylerId.phoneNumber}`)}
+                                    onPress={() => this.handleUrl(`whatsapp://send?text=hello&phone=+234${appointment.stylerId.phoneNumber}`)}
                                     btnTxt={"Message"}
                                     size={"lg"}
                                     Icon={<WhatsAppIcon />}

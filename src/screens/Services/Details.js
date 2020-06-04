@@ -148,12 +148,22 @@ class ServiceDetails extends React.Component {
 
     openWhatsApp = _ => {
         const { stylerData } = this.props;
-        Linking.openURL(`whatsapp://send?text=hello ${stylerData.name}, I would be needing your service&phone=${stylerData.user.callingCode}${stylerData.phone}`)
+        this.handleUrl(`whatsapp://send?text=hello ${stylerData.name}, I would be needing your service&phone=${stylerData.user.callingCode}${stylerData.phone}`);
     }
 
     viewReviews = (styler) => this.props.navigation.navigate('AllReviews', { styler, });
 
     useCurrentLocation = () => this.props.getCurrentLocation();
+
+    handleUrl = (url) => {
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                Linking.openURL(url);
+            } else {
+                console.log("Don't know how to open URI: " + url);
+            }
+        });
+    };
 
     render() {
         const { show, date, mode, isProcessing, } = this.state;
