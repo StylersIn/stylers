@@ -6,6 +6,8 @@ import {
     Platform,
     TouchableOpacity,
     ScrollView,
+    PermissionsAndroid,
+    Permission,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
@@ -72,7 +74,7 @@ class Register extends React.Component {
     }
 
     componentDidMount() {
-
+        
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
