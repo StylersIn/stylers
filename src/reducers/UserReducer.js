@@ -42,6 +42,7 @@ export default function userReducer(state = initialState, action) {
                 status: undefined,
                 message: undefined,
                 role: undefined,
+                success: undefined,
             })
         case constants.AUTH_USER_SUCCESS:
             const {
@@ -59,7 +60,7 @@ export default function userReducer(state = initialState, action) {
                 return {
                     ...state,
                     message: response.message,
-                    authenticated: false,
+                    success: false,
                 }
             }
             if (response.data && response.data.token) {
@@ -75,6 +76,7 @@ export default function userReducer(state = initialState, action) {
         case constants.AUTH_USER_FAILURE:
             return Object.assign({}, state, {
                 error: `${(action.payload.response && action.payload.response.message) || (action.payload.message)}`,
+                success: undefined,
                 authenticated: false
             })
         case constants.RESEND_TOKEN:
