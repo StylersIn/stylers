@@ -95,11 +95,12 @@ class ServiceDetails extends React.Component {
     setDate = (event, date) => {
         if (date < new Date()) {
             alert("Date/time cannot be less than now");
+            this.setState({ show: false, });
             return;
         }
         date = date || this.state.date;
         this.setState({
-            show: Platform.OS === 'ios' ? true : false,
+            show: false,
             date,
         });
         this.props.updateDate(date);
@@ -148,7 +149,7 @@ class ServiceDetails extends React.Component {
 
     openWhatsApp = _ => {
         const { stylerData } = this.props;
-        this.handleUrl(`whatsapp://send?text=hello ${stylerData.name}, I would be needing your service&phone=${stylerData.user.callingCode}${stylerData.phone}`);
+        this.handleUrl(`whatsapp://send?text=hello ${stylerData.name}, I would be needing your service&phone=${stylerData.user.callingCode}${stylerData.phoneNumber}`);
     }
 
     viewReviews = (styler) => this.props.navigation.navigate('AllReviews', { styler, });
