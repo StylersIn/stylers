@@ -43,7 +43,7 @@ class Login extends React.Component {
                 this.props.navigation.dispatch(NavigationService.resetAction('Home'))
             }
         }
-        if (nextProps.user.authenticated === false && nextProps.user.authenticated !== this.props.user.authenticated) {
+        if (nextProps.user.success === false && nextProps.user.success !== this.props.user.success) {
             this.setState({ isProcessing: false });
             alert(nextProps.user.message);
         }
