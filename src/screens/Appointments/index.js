@@ -188,7 +188,7 @@ class Appointment extends React.Component {
     }
 
     _onRefresh = () => {
-        this.setState({ refreshing: true });
+        this.setState({ refreshing: true, loading: true, appointments: [], });
         if (this.props.role === roles.user) {
             this.props.listAppointments();
         } else if (this.props.role === roles.styler) {
