@@ -101,7 +101,7 @@ class Withdraw extends React.Component {
                         style={{ width: "100%" }}
                         onValueChange={(code) => this.setState({ code, })}
                         selectedValue={code}
-                        enabled={false}>
+                        enabled={true}>
                         <Picker.Item key={1} label={"-- Select bank --"} value={undefined} />
                         {banks && banks.map((item, index) => {
                             return (
