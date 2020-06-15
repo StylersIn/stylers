@@ -41,7 +41,7 @@ const sms = (props) => {
 
 const whatsapp = (props) => {
     handleUrl(`whatsapp://send?text=hello&phone=+${props.role == roles.styler ? props.appointment.userId.callingCode :
-        props.appointment.stylerId.callingCode}${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}`);
+        props.appointment.stylerId.callingCode || '234'}${props.role == roles.styler ? props.appointment.userId.phoneNumber : props.appointment.stylerId.phoneNumber}`);
 }
 const getName = (appointment, role) => {
     return role == roles.styler ? appointment.userId && appointment.userId.name : appointment.stylerId && appointment.stylerId.name
@@ -190,7 +190,7 @@ export default function (props) {
                                         <View style={{ marginTop: 10, marginRight: 1, }}>
                                             <TouchableOpacity
                                                 activeOpacity={0.7}
-                                                onPress={() => handleUrl(`tel:${props.appointment.phoneNumber}`)}
+                                                onPress={() => call(props)}
                                             >
                                                 <CallIcon />
                                             </TouchableOpacity>
@@ -203,7 +203,7 @@ export default function (props) {
                                         <View style={{ marginTop: 6, }}>
                                             <TouchableOpacity
                                                 activeOpacity={0.7}
-                                                onPress={() => handleUrl(`whatsapp://send?text=hello&phone=${props.appointment.phoneNumber}`)}
+                                                onPress={() => whatsapp(props)}
                                             >
                                                 <ChatIcon />
                                             </TouchableOpacity>
