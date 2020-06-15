@@ -249,7 +249,7 @@ class StylerMap extends React.Component {
             message: this.review,
             appointmentId: this.state.appointment._id,
             rating: this.rating,
-            stylerId: this.state.appointment.stylerId.userId
+            stylerId: this.state.appointment.stylerId.user
         });
     }
 
