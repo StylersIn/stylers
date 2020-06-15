@@ -216,7 +216,7 @@ class StylerMap extends React.Component {
                 }
                 var credentials = {
                     Id: appointment._id,
-                    userKey: appointment.publicId,
+                    userKey: appointment.userId.publicId,
                 }
                 this.props.socket.emit('stylerLocation', region, credentials);
             },
