@@ -50,6 +50,9 @@ class Login extends React.Component {
         if (nextProps.user.status == false && nextProps.user.status != this.props.user.status) {
             this.setState({ isProcessing: false, });
             if (nextProps.role == roles.styler) {
+                // if (!nextProps.styler.status) {
+                //     return this.props.navigation.dispatch(NavigationService.resetAction('StylerService'));
+                // }
                 alert("Sorry, this account has not been verified. If this error persists 48hours after regsitration, kindly contact the administrator.");
                 return;
             }

@@ -74,7 +74,7 @@ class ContactUs extends React.Component {
                                 style={{ fontSize: 24, color: "#606060" }}
                                 type="Ionicons"
                                 name="ios-mail" />
-                            <Text style={styles.basic__1}>contact@stylerin.com</Text>
+                            <Text style={styles.basic__1}>mail@stylerin.com</Text>
                         </View>
                     </View>
                     <View>

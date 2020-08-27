@@ -220,6 +220,7 @@ export default function userReducer(state = initialState, action) {
         case constants.SEND_CONFIRMATION_CODE:
             return Object.assign({}, state, {
                 error: undefined,
+                codeSent: undefined,
             })
         case constants.SEND_CONFIRMATION_CODE_SUCCESS:
             return {

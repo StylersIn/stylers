@@ -100,7 +100,7 @@ class ServicePrice extends React.Component {
                                                     placeholder='0.00'
                                                     keyboardType={'numeric'}
                                                     defaultValue={this.getDefaultVal(servicePrice, subService._id, 'adult')}
-                                                    onEndEditing={(e) => this.props.servicePrice({ serviceId: subService.serviceId, subServiceId: subService._id, adult: e.nativeEvent.text })}
+                                                    onEndEditing={(e) => this.props.servicePrice({ serviceId: subService.serviceId, subServiceId: subService._id, adult: e.nativeEvent.text || undefined })}
                                                 />
                                             </Item>
                                         </View>
@@ -116,7 +116,7 @@ class ServicePrice extends React.Component {
                                                     keyboardType={'numeric'}
                                                     defaultValue={this.getDefaultVal(servicePrice, subService._id, 'child')}
                                                     // onBlur={()=>alert('fff')}
-                                                    onEndEditing={(e) => this.props.servicePrice({ serviceId: subService.serviceId, subServiceId: subService._id, child: e.nativeEvent.text })}
+                                                    onEndEditing={(e) => this.props.servicePrice({ serviceId: subService.serviceId, subServiceId: subService._id, child: e.nativeEvent.text || undefined })}
                                                 />
                                             </Item>
                                         </View>

@@ -17,6 +17,7 @@ import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import Geolocation from '@react-native-community/geolocation';
+import * as constants from '../../constants/ActionTypes';
 Geocoder.init(MAP_API_KEY);
 
 const origin = { latitude: 37.3318456, longitude: -122.0296002 };
@@ -47,26 +48,10 @@ class StylerMap extends React.Component {
             longitudeDelta: LONGITUDE_DELTA,
         },
             this.props.socket.on('stylerLocation.send', (location) => {
-                // console.log(location);
-                // this.fitAllMarkers({
-                //     latitude: parseFloat(location.latitude),
-                //     longitude: parseFloat(location.longitude)
-                // })
                 this.props.updateUserStylerLocation(location);
-                // this.setState({ driverLocation: location, }, () => {
-                //     // if (!this.state.fitOnce) {
-                //     //     this.fitAllMarkersMain();
-                //     //     this.setState({ fitOnce: true, })
-                //     // }
-                // })
             })
-        this.props.socket.on('reviews.send', () => {
-            // console.log('show review');
-            Vibration.vibrate();
-            notify('Service completed', 'Styler has successfully completed your service');
-            this.setState({ showReview: true, })
-        })
     }
+
     state = {
         region: {
             latitude: 0,
@@ -138,20 +123,16 @@ class StylerMap extends React.Component {
             this.setState(prevState => {
                 return { count: prevState.count + 1 }
             })
-
-            // if (this.state.animateCount == 0) {
-            //     this.setState((prevState) => ({ animateCount: prevState.animateCount + 1, }));
-            //     var region = {
-            //         latitude: prevProps.driverLocation.latitude,
-            //         longitude: prevProps.driverLocation.longitude,
-            //         latitudeDelta: LATITUDE_DELTA,
-            //         longitudeDelta: LONGITUDE_DELTA,
-            //     }
-            //     this.map.animateToRegion(region);
-            // } else if (this.state.animateCount == 5) {
-            //     this.setState({ animateCount: 0, });
-            // }
-            // this.fitAllMarkersMain(prevProps.driverLocation);
+        }
+        if (prevProps.updated && prevProps.updated !== this.props.updated && this.state.completeService) {
+            alert('Successfully completed')
+            if (this.state.appointment.publicId === this.props.current.publicId) {
+                notify('Service Completed', 'Hi there! You just completed this service.');
+            }
+            // this.props.navigation.dispatch(NavigationService.resetAction('Appointments'))
+            this.props.socket.emit('serviceCompleted', this.state.appointment.stylerId.publicId);
+            this.setState({ showReview: true, })
+            // this.props.listStylerRequests();
         }
     }
 
@@ -240,7 +221,8 @@ class StylerMap extends React.Component {
 
     endService = () => {
         this.setState({ completeService: true, })
-        this.props.completeService({ appointmentId: this.state.appointment._id });
+        this.props.updateAppointmentStatus({ appointmentId: this.state.appointment._id }, constants.COMPLETED);
+        // this.props.socket.emit('serviceCompleted', this.state.appointment.stylerId.publicId);
     }
 
     rate = () => {
@@ -249,7 +231,7 @@ class StylerMap extends React.Component {
             message: this.review,
             appointmentId: this.state.appointment._id,
             rating: this.rating,
-            stylerId: this.state.appointment.stylerId.user
+            userId: this.state.appointment.stylerId.user
         });
     }
 
@@ -445,6 +427,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     location: state.map.location,
     completed: state.appointment.completed,
+    updated: state.appointment.updated,
     currentAddress: state.map.currentAddress,
     error: state.appointment.error,
     current: state.user.current,

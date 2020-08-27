@@ -40,6 +40,7 @@ import { WhatsAppIcon } from '../Appointments/AppointmentAssets';
 import BottomSheet from './BottomSheet';
 import avatar from '../../../assets/imgs/user_two.png';
 import { getTotalAmt, } from '../../utils/stylersUtils';
+import CustomNotify from '../../components/CustomNotify';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -55,6 +56,8 @@ class ServiceDetails extends React.Component {
             show: false,
             bottomSheet: undefined,
             isProcessing: undefined,
+            notify: false,
+            toastMsg: '',
         }
     }
 
@@ -121,7 +124,7 @@ class ServiceDetails extends React.Component {
         } = this.props;
         // const styler__data = navigation.getParam('styler', '');
         const totalAmt = calcTotalPrice.apply(this, [stylerData, this.props.styler.selectedService]);
-        if (this.state.dateSelected && this.props.selectedAddress && this.props.selectedAddress.name) {
+        if (this.state.dateSelected && this.state.timeSelected && this.props.selectedAddress && this.props.selectedAddress.name) {
             this.props.addStylerData(Object.assign(stylerData, { totalAmt, totalDue: getTotalAmt(balance, totalAmt), }));
             return this.props.navigation.navigate('Cards', { styler: stylerData, totalAmt })
         }
@@ -144,7 +147,11 @@ class ServiceDetails extends React.Component {
     }
 
     showToast = (text, type) => {
-        ShowToast(text, type);
+        this.setState({ notify: true, toastType: type, toastMsg: text, });
+        setTimeout(() => {
+            this.setState({ notify: false, });
+        }, 5000);
+        // ShowToast(text, type);
     }
 
     openWhatsApp = _ => {
@@ -167,7 +174,7 @@ class ServiceDetails extends React.Component {
     };
 
     render() {
-        const { show, date, mode, isProcessing, } = this.state;
+        const { show, date, mode, isProcessing, notify, toastMsg, } = this.state;
         const {
             navigation,
             styler,
@@ -181,6 +188,11 @@ class ServiceDetails extends React.Component {
 
         return (
             <>
+                {notify && <CustomNotify
+                    title="Message"
+                    message={toastMsg}
+                    type="danger"
+                />}
                 {stylerData ? <View style={styles.main}>
                     <View style={{ position: "absolute", top: Platform.OS == 'ios' ? 20 : 0, right: 0, padding: 20, zIndex: 1, }}>
                         <TouchableOpacity
@@ -242,10 +254,10 @@ class ServiceDetails extends React.Component {
                                     size={18}
                                 />
                             </View>
-                            <TouchableOpacity style={{ flexDirection: 'row' }} onPress={this.openWhatsApp}>
+                            {/* <TouchableOpacity style={{ flexDirection: 'row' }} onPress={this.openWhatsApp}>
                                 <WhatsAppIcon color={colors.whatsapp} size={18} />
                                 <Text style={{ fontFamily: fonts.medium, textDecorationLine: 'underline', paddingLeft: 5, fontSize: 16, }}>Send Message</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
 
                             <Reviews
                                 styler={stylerData}

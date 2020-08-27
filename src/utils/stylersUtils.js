@@ -52,8 +52,37 @@ export const getRating = (ratings = []) => {
 
 export const getStartingPrice = (services = []) => {
     if (services.length > 0) {
-        let e = services.reduce((p, c) => p < (c.adult < c.child ? c.adult : c.child) ? p : (c.adult < c.child ? c.adult : c.child));
-        return e;
+        services.filter(e => {
+            if (typeof e.adult != "number") {
+                e.adult = 0;
+            } else if (typeof e.child != "number") {
+                e.child = 0;
+            }
+            return e;
+        })
+        // console.warn(services)
+        let least;
+        services.map(p => {
+            if (!p.adult && p.child) {
+                return least = least && least < p.child ? least : p.child;
+            }
+            if (!p.child && p.adult) {
+                return least = least && least < p.adult ? least : p.adult;
+            }
+            if (!p.adult && !p.child) {
+                return least = least;
+            }
+            if (p.adult < p.child) {
+                return least = least && least < p.adult ? least : p.adult;
+            } else {
+                return least = least && least < p.child ? least : p.child;
+            }
+        })
+
+        // console.warn(least)
+        // let e = services.reduce((p, c) => (p.adult && p.adult < p.child ? p.adult : p.child) < (c.adult && c.adult < c.child ? c.adult : c.child) ?
+        //     (p.adult && p.adult < p.child ? p.adult : p.child) : (c.adult && c.adult < c.child ? c.adult : c.child));
+        return least;
     }
     return 0;
 }

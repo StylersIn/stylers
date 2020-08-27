@@ -60,6 +60,7 @@ class Requests extends React.Component {
             loading: true,
             notSeen: 0,
             opacity: new Animated.Value(0),
+            bottomLoader:false,
         }
         // this.props.socket.on('appointmentBooked.send', () => {
         //     notify('New Appointment!!!', 'Hi there! You have a new appointment.');
@@ -115,6 +116,13 @@ class Requests extends React.Component {
             if (!prevProps.requests.length) {
                 this.setState({ isFinished: true, });
             }
+
+            if (prevProps.requests.length < 10) {
+                this.setState({bottomLoader: false,})
+            } else {
+                this.setState({bottomLoader: true,})
+            }
+            
             this.setState((prevState) => ({
                 loading: false,
                 pageNumber: prevState.pageNumber + 1,
@@ -179,7 +187,7 @@ class Requests extends React.Component {
     }
 
     _onRefresh = () => {
-        this.setState({ refreshing: true });
+        this.setState({ refreshing: true, requests: [], loading: true, });
         this.props.listStylerRequests();
         this.props.getStats();
     }
@@ -213,6 +221,7 @@ class Requests extends React.Component {
             selectedReason,
             isProcessing,
             loading,
+            bottomLoader,
             requests,
             accept,
             isFinished,
@@ -290,7 +299,7 @@ class Requests extends React.Component {
                         </View>
 
                         <View style={{ padding: 20, }}>
-                            {!isFinished && !loading && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                            {!isFinished && bottomLoader && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                                 <Spinner
                                     color={colors.default}
                                 />

@@ -15,11 +15,12 @@ import { Rating, AirbnbRating } from 'react-native-ratings';
 import moment from 'moment';
 
 export default function (props) {
+    let reviews = props.styler.review.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt)) || [];
     return (
         <View style={{ marginTop: 20 }}>
             <Text style={{ fontFamily: fonts.bold, fontSize: 18 }}>Reviews</Text>
-            {!props.styler.review.length ?
-                <Text style={{ fontSize: 12, color: '#bbb' }}>No Reviews yet!</Text> : props.styler.review.slice(0, 2).map((review, i) => <Card key={i} style={styles.cardStyle}>
+            {!reviews.length ?
+                <Text style={{ fontSize: 12, color: '#bbb' }}>No Reviews yet!</Text> : reviews.slice(0, 2).map((review, i) => <Card key={i} style={styles.cardStyle}>
                     <CardItem>
                         <Body>
                             <View style={{ flexDirection: "row" }}>
@@ -45,7 +46,7 @@ export default function (props) {
                         </Body>
                     </CardItem>
                 </Card>)}
-            {props.styler.review.length ? <TouchableOpacity onPress={() => props.viewReviews()}>
+            {reviews.length ? <TouchableOpacity onPress={() => props.viewReviews()}>
                 <Text style={{ alignSelf: "flex-end", fontSize: 14, marginTop: 5, fontStyle: "italic", color: "#1E1C95", }}>All Reviews</Text>
             </TouchableOpacity> : null}
         </View>

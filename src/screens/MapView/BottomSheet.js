@@ -50,7 +50,7 @@ const getName = (appointment, role) => {
 export default function (props) {
     return (
         <>
-            {Platform.OS === 'ios' && <BottomSheet>
+            {Platform.OS === 'ios' && <BottomSheet top={props.role === roles.styler ? 540 : 350}>
                 {props.currentAddress && props.appointment ? <ScrollView contentContainerStyle={{ paddingHorizontal: 30, }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', }}>
@@ -127,7 +127,7 @@ export default function (props) {
                             </View>
                         </View>
                     </View>
-                    {props.role == roles.styler && <View style={{ marginTop: 20, }}>
+                    {props.role == roles.user && <View style={{ marginTop: 20, }}>
                         <SwipeButton
                             // thumbIconImageSource={service__1}
                             // onSwipeStart={() => this.showToastMessage('Swipe started!')}
@@ -235,7 +235,7 @@ export default function (props) {
                             </View>
                         </View>
                             </View>
-                            {props.role == roles.styler && <View style={{ marginBottom: 20, }}>
+                            {props.role == roles.user && <View style={{ marginBottom: 20, }}>
                                 <SwipeButton
                                     // thumbIconImageSource={service__1}
                                     // onSwipeStart={() => this.showToastMessage('Swipe started!')}

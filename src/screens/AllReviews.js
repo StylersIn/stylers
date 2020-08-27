@@ -40,6 +40,7 @@ class EditProfile extends React.Component {
 
     render() {
         let styler = this.props.navigation.getParam('styler', '');
+        let reviews = styler.review.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt)) || [];
         return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
@@ -49,8 +50,8 @@ class EditProfile extends React.Component {
                             title={'All Reviews'}
                         />
                         <View style={{ paddingHorizontal: 20, }}>
-                            {styler && !styler.review.length ?
-                                <Text style={{ fontSize: 12, color: '#bbb' }}>No Reviews yet!</Text> : styler.review.map((review, i) => <Card key={i} style={styles.cardStyle}>
+                            {!reviews.length ?
+                                <Text style={{ fontSize: 12, color: '#bbb' }}>No Reviews yet!</Text> : reviews.map((review, i) => <Card key={i} style={styles.cardStyle}>
                                     <CardItem>
                                         <Body>
                                             <View style={{ flexDirection: "row" }}>

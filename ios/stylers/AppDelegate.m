@@ -20,8 +20,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [GMSPlacesClient provideAPIKey:@"AIzaSyA-HjztLKyWGOUaIG9Bx_n6Ie_A5p1qMkQ"];
-  [GMSServices provideAPIKey:@"AIzaSyA-HjztLKyWGOUaIG9Bx_n6Ie_A5p1qMkQ"];
+  [GMSPlacesClient provideAPIKey:@"AIzaSyBHdDa33QVmJlDXAV4CC9MBts4f-W3T-EQ"];
+  [GMSServices provideAPIKey:@"AIzaSyBHdDa33QVmJlDXAV4CC9MBts4f-W3T-EQ"];
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"stylers"

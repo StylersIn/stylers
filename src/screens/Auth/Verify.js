@@ -38,7 +38,7 @@ class Verify extends React.Component {
             if (prevProps.resent == true) {
                 this.setState({ resent: true, resending: false, });
             } else {
-                this.setState({ resendFailed: true, resending: false, });
+                // this.setState({ resendFailed: true, resending: false, });
             }
         }
         if (prevProps.error && this.props.error !== prevProps.error) {
@@ -80,7 +80,7 @@ class Verify extends React.Component {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, }}>
                 <View style={styles.container}>
-                    <Text style={{ textAlign: 'center', fontFamily: fonts.bold, fontSize: 20, padding: 30, }}>Enter the 4-digit code sent to your phone</Text>
+                    <Text style={{ textAlign: 'center', fontFamily: fonts.bold, fontSize: 20, padding: 30, }}>Enter the 4-digit code sent to your email</Text>
 
                     {/* <Form style={{ width: '100%', marginTop: 50, }}>
                         <Item floatingLabel>

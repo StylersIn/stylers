@@ -44,21 +44,18 @@ class InitializeApp extends React.Component {
         if (nextProps.styler.status != this.props.styler.status) {
             if (typeof nextProps.styler.status !== 'undefined') {
                 if (nextProps.styler.status === true) {
-                    this.props.navigation.dispatch(NavigationService.resetAction('Requests'))
+                    //check that styler is verified
+                    alert(nextProps.styler.isVerified)
+                    if (nextProps.styler.isVerified) {
+                        this.props.navigation.dispatch(NavigationService.resetAction('Requests'))
+                    }
+                    alert("Sorry, this account has not been verified. If this error persists 48hours after regsitration, kindly contact the administrator.");
+                    AsyncStorage.removeItem(constants.TOKEN);
                 } else {
                     this.props.navigation.dispatch(NavigationService.resetAction('StylerService'))
                 }
             }
         }
-        // if (nextProps.resident.verified && nextProps.resident.verified != this.props.resident.verified) {
-        //     setTimeout(() => {
-        //         if (nextProps.resident.status === false) {
-        //             this.props.navigation.dispatch(resetAction('OnBoard'));
-        //         } else {
-        //             this.props.navigation.dispatch(resetAction('Dashboard'));
-        //         }
-        //     }, 0);
-        // }
     }
 
     render() {

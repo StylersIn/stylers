@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Linking, } from 'react-native';
 import { createAppContainer, NavigationActions, StackActions } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator, DrawerNavigatorItems } from "react-navigation-drawer";
@@ -50,8 +50,14 @@ const drawerContentComponents = (props) => (
         <Content contentContainerStyle={{ flex: 1, justifyContent: "center" }}>
             <DrawerNavigatorItems labelStyle={{ color: "white" }} {...props} />
             <View style={{ paddingVertical: 20, alignItems: "center", }}>
-                <Text style={styles.basic}>Terms and conditions</Text>
-                <Text style={styles.basic}>Privacy policy</Text>
+                <TouchableOpacity
+                    style={{ alignItems: "center", }}
+                    onPress={() => Linking.openURL("https://stylers.herokuapp.com/policy")}
+                >
+                    <Text style={styles.basic}>Terms and conditions</Text>
+                    <Text style={styles.basic}>Privacy policy</Text>
+                </TouchableOpacity>
+
             </View>
         </Content>
     </Container>

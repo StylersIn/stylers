@@ -10,6 +10,9 @@ function filterServicePrice(state, action) {
         let f = state.servicePrice.findIndex(e => e.subServiceId == action.payload.subServiceId);
         let obj = [];
         if (f == -1) {
+            if (!action.payload.adult && !action.payload.child) {
+                return state.servicePrice;
+            }
             return state.servicePrice.concat(action.payload);
         }
         obj = Object.assign(state.servicePrice[f], action.payload);
@@ -39,7 +42,7 @@ export default function stylerReducer(state = initialState, action) {
                 }
             }
             if (action.payload.response.data && action.payload.response.data.token) {
-                AsyncStorage.setItem(constants.TOKEN, action.payload.response.data.token);
+                // AsyncStorage.setItem(constants.TOKEN, action.payload.response.data.token);
                 return {
                     ...state,
                     authenticated: true,
@@ -61,6 +64,7 @@ export default function stylerReducer(state = initialState, action) {
         case constants.STYLER_REG_STATUS_SUCCESS:
             return {
                 ...state,
+                isVerified: action.payload.response.isVerified,
                 status: action.payload.response.success,
             }
         case constants.STYLER_REG_STATUS_FAILURE:

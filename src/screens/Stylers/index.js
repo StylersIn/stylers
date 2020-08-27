@@ -8,12 +8,14 @@ import Header from '../../components/Header';
 import SelectedService from './SelectedService';
 import ServiceList from './ServiceList';
 import Button from '../../components/Button';
-import { colors, fonts, toastType } from '../../constants/DefaultProps';
+import { colors, fonts, toastType, roles } from '../../constants/DefaultProps';
 import Modal from '../../components/Modal';
 import { Item, Input } from 'native-base';
 import ShowToast from '../../components/ShowToast';
 import NavigationService from '../../navigation/NavigationService';
 import Text from '../../config/AppText';
+import AsyncStorage from '@react-native-community/async-storage';
+import * as constants from '../../constants/ActionTypes';
 
 class Stylers extends React.Component {
     constructor(props) {
@@ -33,6 +35,13 @@ class Stylers extends React.Component {
         }
         if (nextProps.updated && nextProps.updated != this.props.updated) {
             this.setState({ fetching: false });
+            if (!this.props.user.status) {
+                if (this.props.user.current && this.props.user.current.role == roles.styler) {
+                    AsyncStorage.removeItem(constants.TOKEN)
+                        .then(() => alert("Registration completed!! Kindly wait for an admin to verify your account."))
+                    return this.props.navigation.dispatch(NavigationService.resetAction('Login'));
+                }
+            }
             this.props.navigation.dispatch(NavigationService.resetAction('Requests'));
         }
         if (nextProps.error && nextProps.error != this.props.error) {

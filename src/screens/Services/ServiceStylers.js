@@ -39,7 +39,7 @@ export default ServiceStylers = (props) => {
                 {isProcessing && Loader()}
                 {!isProcessing && stylers.length > 0 && <ScrollView>
                     {stylers.length ? <Text style={{ fontFamily: fonts.bold }}>Top Rated</Text> : null}
-                    {stylers && stylers.map((item, i) => <TouchableWithoutFeedback key={i} onPress={() => props.navigation.navigate('ServiceDetails', { styler: item })}>
+                    {stylers && stylers.map((item, i) => <TouchableWithoutFeedback key={i} onPress={() => item.isActive ? props.navigation.navigate('ServiceDetails', { styler: item }) : alert("Sorry, styler is currently not available")}>
                         <Card>
                             <CardItem style={{ marginRight: 10 }}>
                                 <Left>
@@ -73,7 +73,7 @@ export default ServiceStylers = (props) => {
                                     {/* <View style={{ width: 50, backgroundColor: colors.success, alignItems: "center", borderRadius: 10, marginTop: 5, }}>
                                         <Text style={{ fontSize: 10, color: colors.white, }}>Active</Text>
                                         </View> */}
-                                    <View style={{  flexDirection: "row" }}>
+                                    <View style={{ flexDirection: "row" }}>
                                         {/* {[0, 1, 2, 3, 4].map((e, n) => <Icon key={n} name='ios-star' style={{ color: colors.warning, fontSize: 13, }} />)} */}
                                         <AirbnbRating
                                             count={getRating(item.ratings)}
@@ -91,14 +91,17 @@ export default ServiceStylers = (props) => {
                                         <BarberIcon />
                                     </View>
                                     <View style={{ marginTop: "30%" }}>
-                                        <Button
+                                        {item.isActive && <Button
                                             onPress={() => props.navigation.navigate('ServiceDetails', { styler: item })}
                                             btnTxt={"Place booking"}
                                             size={"sm"}
                                             btnTxtStyles={{ color: colors.white, fontSize: 10, fontFamily: fonts.bold, }}
                                             styles={{ height: 24 }}
-                                        />
+                                        />}
                                     </View>
+                                    {!item.isActive && <View>
+                                        <Text style={{ fontSize: 13, color: colors.gray, }}>OFFLINE</Text>
+                                    </View>}
                                 </View>
                             </CardItem>
                         </Card>

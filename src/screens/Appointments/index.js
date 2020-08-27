@@ -92,7 +92,7 @@ class Appointment extends React.Component {
         }
         if (prevProps.updated && prevProps.updated !== this.props.updated && prevProps.status == constants.CANCELLED) {
             alert('Appointment has been cancelled successfully');
-            this.setState({ isVisible: false, isProcessing: false, });
+            this.setState({ isVisible: false, isProcessing: false, appointments: [], });
             if (this.props.role === roles.user) {
                 this.props.listAppointments();
             } else if (this.props.role === roles.styler) {
@@ -366,7 +366,7 @@ class Appointment extends React.Component {
                                 let child = r.child || 0;
                                 let data = appointment.stylerId.services.filter(e => e.subServiceId == r.subServiceId._id),
                                     filteredData = data.length ? data[0] : {};
-                                let tot = (adult * filteredData.adult) + (child * filteredData.child);
+                                let tot = (adult * (filteredData.adult || 0)) + (child * (filteredData.child || 0));
                                 return (
                                     <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, }}>
                                         <Text style={{ fontFamily: fonts.medium, fontSize: 14, }}>{r.subServiceId.name}</Text>
@@ -436,16 +436,18 @@ class Appointment extends React.Component {
                                     btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
                                 />
                             </View> */}
-                            <View style={{ marginTop: 10, width: '100%' }}>
-                                <Button
-                                    onPress={() => this.handleUrl(`whatsapp://send?text=hello&phone=+234${appointment.stylerId.phoneNumber}`)}
-                                    btnTxt={"Message"}
-                                    size={"lg"}
-                                    Icon={<WhatsAppIcon />}
-                                    styles={{ height: 40, backgroundColor: '#25D366', }}
-                                    btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
-                                />
-                            </View>
+                            {this.props.role === roles.user &&
+                                (appointment.status == constants.STARTED || appointment.status == constants.ACCEPTED) &&
+                                <View style={{ marginTop: 10, width: '100%' }}>
+                                    <Button
+                                        onPress={() => this.handleUrl(`whatsapp://send?text=hello&phone=+234${appointment.stylerId.phoneNumber}`)}
+                                        btnTxt={"Message"}
+                                        size={"lg"}
+                                        Icon={<WhatsAppIcon />}
+                                        styles={{ height: 40, backgroundColor: '#25D366', }}
+                                        btnTxtStyles={{ color: colors.white, fontSize: 12, fontFamily: fonts.bold }}
+                                    />
+                                </View>}
                         </View>
                     </View>
                 </Modal>

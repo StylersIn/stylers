@@ -2,7 +2,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import * as actionAcreators from '../../actions';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, Image, } from 'react-native';
+import { StyleSheet, View, Dimensions, Platform, Linking, TouchableOpacity, Image, Vibration, } from 'react-native';
 import MapView, { ProviderPropType, Marker, AnimatedRegion } from 'react-native-maps';
 import Text from '../../config/AppText';
 import { Thumbnail, Card, CardItem, Icon, Spinner, Textarea } from 'native-base';
@@ -49,7 +49,15 @@ const HEADER_HEIGHT = 30;
 class StylerMap extends React.Component {
     constructor(props) {
         super(props);
+
+        this.props.socket.on('review.sent', () => {
+            Vibration.vibrate();
+            notify('Service completed', 'User has successfully completed service');
+            this.props.navigation.navigate("Appointments");
+            alert("user completed service!")
+        })
     }
+
     state = {
         region: {
             latitude: 0,
@@ -70,6 +78,7 @@ class StylerMap extends React.Component {
         ready: true,
         hasRegion: false,
     }
+
     componentDidMount() {
         // this.props.getCurrentLocation();
         this.setState({ appointment: this.props.navigation.getParam('appointment', '') }, () => {
@@ -187,29 +196,6 @@ class StylerMap extends React.Component {
             position => {
                 const { latitude, longitude } = position.coords;
 
-                // const newCoordinate = {
-                //     latitude,
-                //     longitude
-                // };
-
-                // if (Platform.OS === "android") {
-                //     if (this.marker) {
-                //         this.marker._component.animateMarkerToCoordinate(
-                //             newCoordinate,
-                //             500 // 500 is the duration to animate the marker
-                //         );
-                //     }
-                // } else {
-                //     coordinate.timing(newCoordinate).start();
-                // }
-
-                // this.setState({
-                //     region: {
-                //         latitude,
-                //         longitude
-                //     }
-                // });
-
                 var region = {
                     latitude,
                     longitude
@@ -312,27 +298,8 @@ class StylerMap extends React.Component {
                     >
                         <PickUpIcon />
                     </Marker>}
-
-                    {/* <Marker
-                        title={'PickUp'}
-                        // image={pickUpIcon}
-                        key={appointment.userId}
-                        coordinate={appointment.pickUp}
-                    >
-                        <View style={styles.marker}>
-                            <Text style={styles.text}>5mins</Text>
-                        </View>
-                        <View style={{ position: 'absolute', left: 24, bottom: 2 }}>
-                            <PickUpIcon />
-                        </View>
-                    </Marker> */}
-                    {/* <Marker.Animated
-                        ref={marker => {
-                            this.marker = marker;
-                        }}
-                        coordinate={this.state.coordinate}
-                    /> */}
                 </MapView>
+
                 <BottomSheet
                     {...this.props}
                     {...this.state}
