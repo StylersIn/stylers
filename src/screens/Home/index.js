@@ -41,35 +41,9 @@ class Home extends React.Component {
         alert('Hi there!!');
     }
 
-    // showNotification = (appointments) => {
-    //     const {
-    //         current: { publicId, }
-    //     } = this.props;
-    //     let newAppoinments = appointments.filter(e => e.status == (constants.BOOKED) && e.userId.publicId == publicId && e.seen == false).length;
-    //     if (newAppoinments > 0) {
-    //         setTimeout(() => {
-    //             this.setState({ notify: undefined, })
-    //         }, 5000);
-    //         return (
-    //             <Card style={styles.Input___shadow}>
-    //                 <CardItem style={{ borderRadius: 4, backgroundColor: colors.pink, flexDirection: 'row', }}>
-    //                     <View>
-    //                         <Icon style={{ color: colors.white, }} name='ios-add' />
-    //                     </View>
-    //                     <View>
-    //                         <Text style={{ color: colors.white, fontFamily: fonts.bold, fontSize: 18, }}>{`New Appointments`}</Text>
-    //                         <Text style={{ color: colors.white, fontFamily: fonts.medium, }}>{`You have ${newAppoinments} new appointment(s)`}</Text>
-    //                     </View>
-    //                 </CardItem>
-    //             </Card>
-    //         )
-    //     }
-    // }
-
     render() {
         return (
             <SafeAreaView style={{ flex: 1 }}>
-                {/* {notify && requests && this.showNotification(requests || {})} */}
                 <View style={styles.container}>
                     <Header
                         search={true}
